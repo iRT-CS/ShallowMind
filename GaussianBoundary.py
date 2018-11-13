@@ -37,5 +37,14 @@ def distanceToCurve(coVec,ipVar,dpVar):
         cons = [lambda x: abs(ipVar-maxDistance)],\
         rhoend = 1e-3)
     return pointDistance(ipVar,dpVar,xMin[0], evalFunction(coVec, xMin[0]))
+
+def getGuassianAtPoint()
+def categorize(ipVar,dpVar,coVec,noiseRate):
+    boundaryPoint = evalFunction(coVec,ipVar)
+    rawCategory = (dpVar >= boundaryPoint)
+    #Find noise
+    distanceToCurve = distanceToCurve(coVec,ipVar,dpVar)
+    
+    
         
 
