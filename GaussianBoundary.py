@@ -59,7 +59,7 @@ def getPoints(coVec,numPoints,sigma,peak,xMin,xMax,yMin,yMax):
     flip = list(map(lambda g: (np.random.uniform()<g),gaussian))
     cleanVals = list(map(lambda d,b: (d>b),y,boundaryPoints))
     dirtyVals = list(map(lambda v,f: v^f, cleanVals,flip))
-    points = list(map(lambda i,d,v: [i,d,v],x,y,dirtyVals))
+    points = list(map(lambda i,d,v: [[i,d],v],x,y,dirtyVals))
     return points
     
         
