@@ -2,6 +2,9 @@ import numpy as np
 from scipy.optimize import fmin_cobyla
 import math
 #import timeit
+
+
+#Vector function 
 def genFunctionUniform(degree = 2,minimum = -7,maximum = 7):
     coefficients = []
     for i in range(degree+1):
@@ -13,11 +16,11 @@ def genFunctionGaussian(degree = 2,mean = 0,sigma = 7, scaling = False):
     coefficients = []
     for i in range(degree+1):
         if(scaling):
-            eMean = (1/(i+1))*mean
+            eSigma = sigma/(i+1)
         else:
-            eMean = mean
-        coefficient = gauss(eMean,sigma)
-        coefficients.insert(0,coefficient)
+            eSigma = sigma
+        coefficient = gauss(mean,eSigma)
+        coefficients.append(coefficient)
     return coefficients
 
 def evalFunction(coVec,ipVar):
