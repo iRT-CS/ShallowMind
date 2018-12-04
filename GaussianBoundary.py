@@ -64,6 +64,4 @@ def getPoints(coVec,numPoints,sigma,peak,xMin,xMax,yMin,yMax):
     dirtyVals = list(map(lambda v,f: v^f, cleanVals,flip))
     points = list(map(lambda i,d,v: [[i,d],v],x,y,dirtyVals))
     return points
-    
-        
 
