@@ -1,22 +1,33 @@
 from keras.models import Sequential
 from keras.layers import Dense, Activation
+import numpy as np
+import keras
 
 '''
-make neural net:
-in: number of nodes in input layer
-vec: numbers of nodes in hidden layers
-out: number of nodes in output layer
-shape: shape of input data (tuple describing range, with None to show no limit in range)
-act: activation function ('sigmoid' or 'tanh' most likely)
-TODO?: add initialization arguments 
+Testing Procedure:
+
+-Generate 1000 training points
+-Generate 1000 test points
+-For each step record training and test accuracy
+-Stop at ?
+
+-Record the number of steps
+-Record NN A. function
+-Record NN
+-Record sigmoid, peak (noise distribution) polynomial
 '''
 
-def make(ins, vec, out, shape, act):
+# make neural net:
+# in: number of nodes in input layer
+# vec: numbers of nodes in hidden layers
+# out: number of nodes in output layer
+# shape: shape of input data
+# act: activation function ('sigmoid' or 'tanh' most likely)
+
+def make(input, vec, out, shape, act):
     net = Sequential()
-    net.add(Dense(ins, input_shape = shape, activation = act))
+    net.add(Dense(input, input_shape = shape, activation = act))
     for i in vec:
         net.add(Dense(i, activation = act))
-    net.add(Dense(out, activation = act))
+    net.add(Dense(out, activation = 'sigmoid'))
     return net
-
-make(1, [1], 1, (0,1), 'tanh')
