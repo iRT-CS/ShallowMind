@@ -28,6 +28,11 @@ def iterate(nnID,maxLayers,maxNodes):
      for i in range(len(digits)):
          newID += (10**i)*digits[i]
      return newID
-     
-    
-    
+
+ids = []
+id = iterate(1, 4, 6)
+newid = 0
+while(id != -1):
+    print(id)
+    newid = iterate(id, 4,6)
+    id = newid 

@@ -2,12 +2,13 @@ from keras.models import Sequential
 from keras.layers import Dense, Activation
 import numpy as np
 import keras
+from Utils import iterate
 
 # Continuously runs epochs on neural net with given data points until error is minimized
 # nn: compiled neural net
 # data: list of data points
 #
-def test(nn, data):
+def test(nn, tdata, vdata):
     vErrorConsec = 0
     cont = True
     tError = []
@@ -26,8 +27,10 @@ def test(nn, data):
         if(vError[len(vError)-1] < 0.2 and vErrorConsec > 5):
             break
 
-# Generates Ids for all permutation neural nets
-# One digit represents one hidden layer with n nodes
-# Layer can have 1-6 nodes
-# NN can have 1-4 layers
-def generateId():
+ids = []
+id = iterate(1, 4, 6)
+newid = 0
+while(id != -1):
+    print(id)
+    newid = iterate(id, 4,6)
+    id = newid
