@@ -37,13 +37,16 @@ def test(nn, tdata, vdata):
         if(vError[len(vError)-1] < 0.2 and vErrorConsec > 5):
             break
 
+    return tError, vError,
 
+#
 MAX_NODES = 6
 MAX_LAYERS = 4
 
 IN_SHAPE = 2
 OUT_SHAPE = 1
 
+# create ids in list form
 ids = []
 id = iterate(1, MAX_LAYERS, MAX_NODES)
 newid = 0
@@ -52,6 +55,12 @@ while(id != -1):
     newid = iterate(id, MAX_LAYERS, MAX_NODES)
     id = newid
 
+# create data points
+coVec = genFunctionUniform()
+tdata = getPoints(coVec, 1000, 7, -100, 100, -100, 100)
+vdata = getPoints(coVec, 1000, 7, -100, 100, -100, 100)
+
+# iterates through all ids and creates neural nets
 nets = []
 for struct in ids:
     layers = []
@@ -59,3 +68,6 @@ for struct in ids:
         layers.append(int(i))
 
     nets.append(make(IN_SHAPE, layers, OUT_SHAPE, [,1], 'tanh'))
+
+# runs test for each neural net
+for nn in nets:
