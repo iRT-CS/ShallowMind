@@ -5,6 +5,7 @@ import GaussianBoundary as gb
 import numpy as np
 import keras
 from Utils import iterate
+import matplotlib.pyplot as plt
 
 # Continuously runs epochs on neural net with given data points until error is minimized
 # nn: compiled neural net
@@ -57,25 +58,25 @@ def test(nn, tdata, vdata):
         if( epoch % 5 == 0 ):
             stopC["Every 5 epochs"].append(finalStats)
         # if validation error this epoch increases from val error from the previous epoch
-        if(len(vError) > 1 and vError[len(vError)-1] > vError[len(vError)-2] and !comp[0]):
+        if(len(vError) > 1 and vError[len(vError)-1] > vError[len(vError)-2] and not comp[0]):
             vErrorConsec += 1
             comp[0] = True
-        if(vErrorConsec > 5 and !comp[1]):
+        if(vErrorConsec > 5 and not comp[1]):
             stopC["Validation error increases for 5 consec epochs"].append(finalStats)
             comp[1] = True
-        if(vErrorConsec > 10 and !comp[2]):
+        if(vErrorConsec > 10 and not comp[2]):
             stopC["Validation error increases for 10 consec epochs"].append(finalStats)
             comp[2] = True
-        if(vErrorConsec > 15 and !comp[3]):
+        if(vErrorConsec > 15 and not comp[3]):
             stopC["Validation error increases for 15 consec epochs"].append(finalStats)
             comp[3] = True
-        if( tError[len(tError)-1] < 0.15 and !comp[4]):
+        if( tError[len(tError)-1] < 0.15 and not comp[4]):
             stopC["Training error below 15%"].append(finalStats)
             comp[4] = True
-        if( tError[len(tError)-1] < 0.10 and !comp[5]):
+        if( tError[len(tError)-1] < 0.10 and not comp[5]):
             stopC["Training error below 10%"].append(finalStats)
             comp[5] = True
-        if( tError[len(tError)-1] < 0.05 !comp[6]):
+        if( tError[len(tError)-1] < 0.05 not comp[6]):
             stopC["Training error below 5%"].append(finalStats)
             comp[6] = True
         if(len(vError) > 1 and ( vError[len(vError)-2] - vError[len(vError)-1] ) < 0.01 ):
