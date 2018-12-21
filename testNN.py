@@ -24,15 +24,18 @@ def test(nn, tdata, vdata):
     # stopping criterion
     stopC = {
         "Every 5 epochs":[],
-        "Validation error increases for 5 consec epochs":[],
-        "Validation error increases for 10 consec epochs":[],
-        "Validation error increases for 15 consec epochs":[],
-        "Decrease in training error from 1 epoch to next is below %1":[],
-        "Training error below 15%":[],
-        "Training error below 10%":[],
-        "Training error below 5%":[],
-        "Lowest validation error":[],
+        "Validation error increases for 5 consec epochs":[], #0
+        "Validation error increases for 10 consec epochs":[], #1
+        "Validation error increases for 15 consec epochs":[], #2
+        "Decrease in training error from 1 epoch to next is below %1":[], #3
+        "Training error below 15%":[], #4
+        "Training error below 10%":[], #5
+        "Training error below 5%":[], #6
+        "Lowest validation error":[], #7
     }
+    #indicates if stopping criterion has been completed
+    comp = [False, False, False, False, False, False, False, False]
+
     while(cont):
         #train (1) epochs
         nn.fit(x=tdata, y=vdata, batch_size=100, epochs=1, verbose=1)
@@ -54,22 +57,30 @@ def test(nn, tdata, vdata):
         if( epoch % 5 == 0 ):
             stopC["Every 5 epochs"].append(finalStats)
         # if validation error this epoch increases from val error from the previous epoch
-        if(len(vError) > 1 and vError[len(vError)-1] > vError[len(vError)-2]):
+        if(len(vError) > 1 and vError[len(vError)-1] > vError[len(vError)-2] and !comp[0]):
             vErrorConsec += 1
-        if(vErrorConsec > 5):
+            comp[0] = True
+        if(vErrorConsec > 5 and !comp[1]):
             stopC["Validation error increases for 5 consec epochs"].append(finalStats)
-        if(vErrorConsec > 10):
+            comp[1] = True
+        if(vErrorConsec > 10 and !comp[2]):
             stopC["Validation error increases for 10 consec epochs"].append(finalStats)
-        if(vErrorConsec > 15):
+            comp[2] = True
+        if(vErrorConsec > 15 and !comp[3]):
             stopC["Validation error increases for 15 consec epochs"].append(finalStats)
-        if( tError[len(tError)-1] < 0.15 ):
+            comp[3] = True
+        if( tError[len(tError)-1] < 0.15 and !comp[4]):
             stopC["Training error below 15%"].append(finalStats)
-        if( tError[len(tError)-1] < 0.10 ):
+            comp[4] = True
+        if( tError[len(tError)-1] < 0.10 and !comp[5]):
             stopC["Training error below 10%"].append(finalStats)
-        if( tError[len(tError)-1] < 0.05 ):
+            comp[5] = True
+        if( tError[len(tError)-1] < 0.05 !comp[6]):
             stopC["Training error below 5%"].append(finalStats)
+            comp[6] = True
         if(len(vError) > 1 and ( vError[len(vError)-2] - vError[len(vError)-1] ) < 0.01 ):
             stopC["Decrease in training error from 1 epoch to next is below %1"].append(finalStats)
+            comp[7] = True
     stopC["Lowest validation error"] = statsAtLowestVError
     return tAcc, vAcc, stopC
 
@@ -95,6 +106,7 @@ tdata = np.array( gb.getPoints(coVec, 1000, 3, 7, -100, 100, -100, 100) )
 vdata = np.array( gb.getPoints(coVec, 1000, 3, 7, -100, 100, -100, 100) )
 createDatasetsDocument(coVec, [3, 7], [-100, 100, -100, 100], tdata, vdata)
 
+
 # iterates through all ids and creates neural nets
 nets = []
 for struct in ids:
@@ -103,14 +115,10 @@ for struct in ids:
         layers.append(int(i))
     # the shape wasn't working, so I took out the list dependency
     nets.append(make(IN_SHAPE, layers, OUT_SHAPE, 1, 'tanh'))
+    createNeuralNetsDocument(layers, IN_SHAPE, OUT_SHAPE, nn.get_weights(), 'glorot', 'sigmoid')
 
 # runs test for each neural net
 for index,nn in enumerate(nets):
-    # Colin did something with layer sizes above - what is that? Is below just repeating code?
-    layerSizes = []
-    for l in nn.layers:
-        layerSizes.append(l.get_output_at(0).get_shape())
-    createNeuralNetsDocument(layerSizes, IN_SHAPE, OUT_SHAPE, nn.get_weights(), 'glorot', 'sigmoid')
     # what is the dataset ID? for now, I'm just setting it to 1
     tAcc, vAcc, stoppingCriterionDictionary = test(nn, tdata, vdata)
     createExperimentsDocument(ids[index], layerSizes, IN_SHAPE, OUT_SHAPE, 1, tAcc, vAcc, stoppingCriterionDictionary)
