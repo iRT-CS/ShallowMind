@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 # nn: compiled neural net
 # tdata = training data
 # vdata = validation data
-#
+
 def test(nn, tdata, vdata):
     vErrorConsec = 0
     cont = True
@@ -32,7 +32,7 @@ def test(nn, tdata, vdata):
         "Training error below 15%":[], #4
         "Training error below 10%":[], #5
         "Training error below 5%":[], #6
-        "Lowest validation error":[], #7
+        "Lowest validation error":[] #7
     }
     #indicates if stopping criterion has been completed
     comp = [False, False, False, False, False, False, False, False]
@@ -43,15 +43,22 @@ def test(nn, tdata, vdata):
         # call evaluate - record test & validation error
         stats = model.evaluate(x=training, y=testing, batch_size=100, epochs=1, verbose=1)
         epoch += 1
-        # record test error & accuracy
-        tError.append(stats[0])
-        tAcc.append(stats[1])
+        # record training error & accuracy
+        tError.append(stats[0]) # training error
+        tAcc.append(stats[1]) # training accuracy
         # record validation error & accuracy
-        vError.append(stats[2])
-        vAcc.append(stats[3])
+        vError.append(stats[2]) # validation error
+        vAcc.append(stats[3]) # validation accuracy
+
         # final training error, final validation error, final weights if needed for stopC
         # get_weights returns a list of numpy arrays
-        finalStats = [stats[0], stats[2], nn.get_weights()]
+        finalStats = {
+            "Final validation error":stats[2],
+            "Final training error":stats[0], #0
+            "Final weights":nn.get_weights() #1
+        }
+
+        # finalStats = [stats[0], stats[2], nn.get_weights()]
         if( vError[len(vError)-1] < lowestVError ):
             lowestVError = vError[len(vError)-1]
             statsAtLowestVError = finalStats
@@ -76,7 +83,7 @@ def test(nn, tdata, vdata):
         if( tError[len(tError)-1] < 0.10 and not comp[5]):
             stopC["Training error below 10%"].append(finalStats)
             comp[5] = True
-        if( tError[len(tError)-1] < 0.05 not comp[6]):
+        if( tError[len(tError)-1] < 0.05 and not comp[6]):
             stopC["Training error below 5%"].append(finalStats)
             comp[6] = True
         if(len(vError) > 1 and ( vError[len(vError)-2] - vError[len(vError)-1] ) < 0.01 ):
