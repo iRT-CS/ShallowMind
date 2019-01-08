@@ -69,7 +69,7 @@ polynomial,
 #array that contains the constants describing the noise distribution [peak noise value, spread of the noise (sigma)]
 noiseDistribution,
 #array that describes the range of data points [x minimum, x maximum, y minimum, y maximum] (i.e. all data point obey -10<x<10 and 0<y<10 [-10,10,0,10])
-range,
+dataRange,
 #1000 values used to train the neural nets
 trainingValues,
 #1000 different values used to test the neural nets
@@ -79,7 +79,7 @@ testValues
     document = {
     "polynomial": polynomial,
     "noiseDistribution": noiseDistribution,
-    "range": range,
+    "range": dataRange,
     "trainingValues":trainingValues,
     "testValues": testValues
     }

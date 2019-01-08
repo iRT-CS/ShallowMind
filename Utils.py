@@ -1,4 +1,6 @@
 import math
+from db import createDatasetsDocument
+from GaussianBoundary import getPoints
 def iterate(nnID,maxLayers,maxNodes):
     #get digits of the function
     #find number of digits
@@ -28,3 +30,14 @@ def iterate(nnID,maxLayers,maxNodes):
      for i in range(len(digits)):
          newID += (10**i)*digits[i]
      return newID
+def addDataset(polynomial,noiseDistribution,dataRange):
+     peak = noiseDistribution[0]
+     sigma = noiseDistribution[1]
+     xMin= dataRange[0]
+     xMax = dataRange[1]
+     yMin = dataRange[2]
+     yMax = dataRange[3]
+     trainingValues = getPoints(polynomial,1000,sigma,peak,xMin,xMax,yMin,yMax)
+     testValues = getPoints(polynomial,1000,sigma,peak,xMin,xMax,yMin,yMax)
+     createDataSetsDocument(polynomial,noiseDistribution,dataRange,trainingValues,testValues)
+
