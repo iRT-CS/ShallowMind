@@ -1,14 +1,15 @@
 import numpy as np
 from scipy.optimize import fmin_cobyla
 import math
+import random
 #import timeit
 
 
-#Vector function 
+#Vector function
 def genFunctionUniform(degree = 2,minimum = -7,maximum = 7):
     coefficients = []
     for i in range(degree+1):
-        coefficient = randrange(minimum,maximum)
+        coefficient = random.randrange(minimum,maximum)
         coefficients.insert(0,coefficient)
     return coefficients
 
@@ -42,6 +43,7 @@ def distanceToCurve(coVec,ipVar,dpVar):
         cons = [lambda x: abs(ipVar-maxDistance)],\
         rhoend = 1e-3)
     return pointDistance(ipVar,dpVar,xMin[0], evalFunction(coVec, xMin[0]))
+
 def gauss(distance, sigma):
     sigmaComponent = pow(sigma,2)*2
     #denominator = math.sqrt(math.pi*sigmaComponent)
@@ -49,6 +51,7 @@ def gauss(distance, sigma):
     denominator = 1
     numerator = math.exp(-pow(distance,2)/sigmaComponent)
     return numerator/denominator
+
 def getPoints(coVec,numPoints,sigma,peak,xMin,xMax,yMin,yMax):
     x = np.random.rand(numPoints)
     xRange = xMax - xMin
@@ -64,4 +67,3 @@ def getPoints(coVec,numPoints,sigma,peak,xMin,xMax,yMin,yMax):
     dirtyVals = list(map(lambda v,f: v^f, cleanVals,flip))
     points = list(map(lambda i,d,v: [[i,d],v],x,y,dirtyVals))
     return points
-
