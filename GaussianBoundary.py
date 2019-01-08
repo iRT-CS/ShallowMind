@@ -60,7 +60,8 @@ def getPoints(coVec,numPoints,sigma,peak,xMin,xMax,yMin,yMax):
     yRange = yMax - yMin
     y = list(map(lambda v: (v*yRange)+yMin,y))
     boundaryPoints = np.polyval(coVec,x)
-    distances = peak*list(map(lambda m,n: distanceToCurve(coVec,m,n),x,y))
+    distances = list(map(lambda m,n: distanceToCurve(coVec,m,n),x,y))
+    distances = list(map(lambda: x:peak*x,distances)
     gaussian = list(map(lambda d: gauss(d,sigma),distances))
     flip = list(map(lambda g: (np.random.uniform()<g),gaussian))
     cleanVals = list(map(lambda d,b: (d>b),y,boundaryPoints))
