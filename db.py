@@ -1,5 +1,5 @@
 from pymongo import MongoClient
-client = MongoClient('shallowmind.pingry.org',27017)
+client = MongoClient('shallowmind.pingry.org', 27017)
 db = client["ShallowMind"]
 
 def createExperimentsDocument(\
@@ -12,7 +12,7 @@ trainingAccuracyOverTime,\ #training accuracy at each epoch
 validationAccuracyOverTime,\ #validation accuracy at each epoch
 stoppingCriterionDictionary\ #dictionary whose keys are stopping criterion
 #i.e. stoppingCriterionDictionary["Stop when the validation error increases for 5 consecutive epochs"]
-#The value will be another dictionary which will have three keys
+#the value will be another dictionary which will have three keys
 #"Final validation error","Final training error", and "Final weights"
 ):
     collection = db.Experiments
@@ -26,7 +26,7 @@ stoppingCriterionDictionary\ #dictionary whose keys are stopping criterion
     "validationAccuracyOverTime": validationAccuracyOverTime,
     "stoppingCriterionDictionary": stoppingCriterionDictionary
     }
-    collection.insertOne(document)
+    collection.insert_one(document)
 
 
 
@@ -47,7 +47,7 @@ activationFunction\ #function used to calculate activation in each neuron (i.e. 
     "initializationFunction": initializationFunction,
     "activationFunction": activationFunction
     }
-    collection.insertOne(document)
+    collection.insert_one(document)
 
 def createDatasetsDocument(\
 polynomial,\ #array of polynomial coefficient. Higher order coefficient first (i.e. x^2 + 2x + 3 is [1,2,3])
@@ -64,4 +64,4 @@ testValues\ #1000 different values used to test the nerual nets
     "trainingValues":trainingValues,
     "testValues": testValues
     }
-    collection.insertOne(document)
+    collection.insert_one(document)
