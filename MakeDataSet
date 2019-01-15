@@ -1,0 +1,33 @@
+import GaussianBoundary as gb
+import Utils
+import db
+
+lownoise = [0.1, 0.5]
+midnoise = [0.25, 1]
+highnoise = [0.5, 2]
+r = [-10, 10, -10, 10]
+
+covec = gb.genFunctionUniform(degree = 1)
+Utils.addDataset(covec, midnoise, r)
+
+covec = gb.genFunctionUniform(degree = 2)
+Utils.addDataset(covec, lownoise, r)
+covec = gb.genFunctionUniform(degree = 2)
+Utils.addDataset(covec, highnoise, r)
+
+covec = gb.genFunctionUniform(degree = 3)
+Utils.addDataset(covec, lownoise, r)
+covec = gb.genFunctionUniform(degree = 3)
+Utils.addDataset(covec, midnoise, r)
+covec = gb.genFunctionUniform(degree = 3)
+Utils.addDataset(covec, highnoise, r)
+
+covec = gb.genFunctionUniform(degree = 4)
+Utils.addDataset(covec, lownoise, r)
+covec = gb.genFunctionUniform(degree = 4)
+Utils.addDataset(covec, highnoise, r)
+
+covec = gb.genFunctionUniform(degree = 5)
+Utils.addDataset(covec, lownoise, r)
+covec = gb.genFunctionUniform(degree = 5)
+Utils.addDataset(covec, highnoise, r)
