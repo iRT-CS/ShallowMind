@@ -112,7 +112,7 @@ while(id != -1):
 coVec = gb.genFunctionUniform()
 tdata = np.array( gb.getPoints(coVec, 1000, 3, 7, -100, 100, -100, 100) )
 vdata = np.array( gb.getPoints(coVec, 1000, 3, 7, -100, 100, -100, 100) )
-createDatasetsDocument(coVec, [3, 7], [-100, 100, -100, 100], tdata, vdata)
+createDatasetsDocument(coVec, [3, 7], [-100, 100, -100, 100], tdata.tolist(), vdata.tolist())
 
 
 # iterates through all ids and creates neural nets
