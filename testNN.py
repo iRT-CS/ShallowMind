@@ -92,18 +92,6 @@ def test(nn, tdata, vdata):
     stopC["Lowest validation error"] = statsAtLowestVError
     return tAcc, vAcc, stopC
 
-def plotData(data):
-    xs = [pt[0][0] for pt in data]
-    ys = [pt[0][1] for pt in data]
-
-    for i in range(0,len(data)):
-        if data[i][1] == 1:
-            plt.plot(xs[i], ys[i], 'y^')
-        else:
-            plt.plot(xs[i], ys[i], 'bs')
-
-    plt.show()
-
 #
 MAX_NODES = 6
 MAX_LAYERS = 4
@@ -113,7 +101,7 @@ OUT_SHAPE = 1
 
 # create ids in list form
 ids = []
-id = iterate(1, MAX_LAYERS, MAX_NODES)
+id = iterate([1], MAX_LAYERS, MAX_NODES)
 newid = 0
 while(id != -1):
     ids.append(id)
@@ -124,10 +112,6 @@ while(id != -1):
 coVec = gb.genFunctionUniform()
 tdata = np.array( gb.getPoints(coVec, 1000, 3, 7, -100, 100, -100, 100) )
 vdata = np.array( gb.getPoints(coVec, 1000, 3, 7, -100, 100, -100, 100) )
-
-plotData(tdata)
-plotData(vdata)
-
 createDatasetsDocument(coVec, [3, 7], [-100, 100, -100, 100], tdata.tolist(), vdata.tolist())
 
 
