@@ -121,9 +121,11 @@ while(id != -1):
     id = newid
 
 # create data points
-coVec = gb.genFunctionUniform()
-tdata = np.array( gb.getPoints(coVec, 1000, 3, 7, -100, 100, -100, 100) )
-vdata = np.array( gb.getPoints(coVec, 1000, 3, 7, -100, 100, -100, 100) )
+coVec = gb.genFunctionUniform(3, 0, 4)
+print(coVec)
+coVec = [1, 1, 1]
+tdata = np.array( gb.getPoints(coVec, 1000, 0, 0, -10, 10, -10, 10) )
+vdata = np.array( gb.getPoints(coVec, 1000, 0, 0, -10, 10, -10, 10) )
 
 plotData(tdata)
 plotData(vdata)
