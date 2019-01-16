@@ -1,6 +1,7 @@
 import math
 from db import createDatasetsDocument
 from GaussianBoundary import getPoints
+import matplotlib as plt
 def iterate(nnID,maxLayers,maxNodes):
      curLayer = 0
      while(curLayer<len(nnID)):
@@ -54,4 +55,15 @@ def addDataset(polynomial,noiseDistribution,dataRange):
      trainingValues = getPoints(polynomial,1000,sigma,peak,xMin,xMax,yMin,yMax)
      testValues = getPoints(polynomial,1000,sigma,peak,xMin,xMax,yMin,yMax)
      createDataSetsDocument(polynomial,noiseDistribution,dataRange,trainingValues,testValues)
+def plotData(data):
+    xs = [pt[0][0] for pt in data]
+    ys = [pt[0][1] for pt in data]
+
+    for i in range(0,len(data)):
+        if data[i][1] == 1:
+            plt.plot(xs[i], ys[i], 'y^')
+        else:
+            plt.plot(xs[i], ys[i], 'bs')
+
+    plt.show()
 
