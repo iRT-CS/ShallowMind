@@ -1,7 +1,21 @@
 import math
 from db import createDatasetsDocument
 from GaussianBoundary import getPoints
+import matplotlib.pyplot as plt
 def iterate(nnID,maxLayers,maxNodes):
+     curLayer = 0
+     while(curLayer<len(nnID)):
+          if(nnID[curLayer] < maxNodes):
+               nnID[curLayer] += 1
+               return nnID
+          else:
+               curLayer += 1
+     if(curLayer >= maxLayers):
+          return -1
+     else:
+          nnID = [1]*(curLayer+1)
+          return nnID
+     '''
     #get digits of the function
     #find number of digits
      numDigits = math.log10(nnID)
@@ -30,6 +44,7 @@ def iterate(nnID,maxLayers,maxNodes):
      for i in range(len(digits)):
          newID += (10**i)*digits[i]
      return newID
+     '''
 def addDataset(polynomial,noiseDistribution,dataRange):
      peak = noiseDistribution[0]
      sigma = noiseDistribution[1]
@@ -41,3 +56,14 @@ def addDataset(polynomial,noiseDistribution,dataRange):
      testValues = getPoints(polynomial,1000,sigma,peak,xMin,xMax,yMin,yMax)
      createDataSetsDocument(polynomial,noiseDistribution,dataRange,trainingValues,testValues)
 
+def plotData(data):
+    xs = [pt[0][0] for pt in data]
+    ys = [pt[0][1] for pt in data]
+
+    for i in range(0,len(data)):
+        if data[i][1] == 1:
+            plt.plot(xs[i], ys[i], 'y^')
+        else:
+            plt.plot(xs[i], ys[i], 'bs')
+
+    plt.show()

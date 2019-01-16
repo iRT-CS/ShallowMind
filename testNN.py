@@ -4,7 +4,7 @@ from db import createDatasetsDocument, createNeuralNetsDocument, createExperimen
 import GaussianBoundary as gb
 import numpy as np
 import keras
-from Utils import iterate
+from Utils import iterate, plotData
 import matplotlib.pyplot as plt
 
 # Continuously runs epochs on neural net with given data points until error is minimized
@@ -92,18 +92,6 @@ def test(nn, tdata, vdata):
     stopC["Lowest validation error"] = statsAtLowestVError
     return tAcc, vAcc, stopC
 
-def plotData(data):
-    xs = [pt[0][0] for pt in data]
-    ys = [pt[0][1] for pt in data]
-
-    for i in range(0,len(data)):
-        if data[i][1] == 1:
-            plt.plot(xs[i], ys[i], 'y^')
-        else:
-            plt.plot(xs[i], ys[i], 'bs')
-
-    plt.show()
-
 #
 MAX_NODES = 6
 MAX_LAYERS = 4
@@ -113,7 +101,7 @@ OUT_SHAPE = 1
 
 # create ids in list form
 ids = []
-id = iterate(1, MAX_LAYERS, MAX_NODES)
+id = iterate([1], MAX_LAYERS, MAX_NODES)
 newid = 0
 while(id != -1):
     ids.append(id)
@@ -123,13 +111,12 @@ while(id != -1):
 # create data points
 coVec = gb.genFunctionUniform(3, 0, 4)
 print(coVec)
-coVec = [1, 1, 1]
-tdata = np.array( gb.getPoints(coVec, 1000, 0, 0, -10, 10, -10, 10) )
-vdata = np.array( gb.getPoints(coVec, 1000, 0, 0, -10, 10, -10, 10) )
+coVec = [1,5, 2, 1]
+tdata = np.array( gb.getPoints(coVec, 1000, 13, 0.1, -10, 10, -10, 10) )
+vdata = np.array( gb.getPoints(coVec, 1000, 13, 0.1, -10, 10, -10, 10) )
 
 plotData(tdata)
 plotData(vdata)
-
 createDatasetsDocument(coVec, [3, 7], [-100, 100, -100, 100], tdata.tolist(), vdata.tolist())
 
 
@@ -148,3 +135,6 @@ for index,nn in enumerate(nets):
     # what is the dataset ID? for now, I'm just setting it to 1
     tAcc, vAcc, stoppingCriterionDictionary = test(nn, tdata, vdata)
     createExperimentsDocument(ids[index], layerSizes, IN_SHAPE, OUT_SHAPE, 1, tAcc, vAcc, stoppingCriterionDictionary)
+
+
+

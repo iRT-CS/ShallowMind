@@ -50,6 +50,9 @@ def gauss(distance, sigma):
     #I want to control the max height
     denominator = 1
     numerator = math.exp(-pow(distance,2)/sigmaComponent)
+    print(distance)
+    print(numerator)
+    print(sigmaComponent)
     return numerator/denominator
 
 def getPoints(coVec,numPoints,sigma,peak,xMin,xMax,yMin,yMax):
