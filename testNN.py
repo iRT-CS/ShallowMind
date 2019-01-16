@@ -4,7 +4,7 @@ from db import createDatasetsDocument, createNeuralNetsDocument, createExperimen
 import GaussianBoundary as gb
 import numpy as np
 import keras
-from Utils import iterate
+from Utils import iterate,plotData
 import matplotlib.pyplot as plt
 
 # Continuously runs epochs on neural net with given data points until error is minimized
@@ -109,11 +109,6 @@ while(id != -1):
     id = newid
 
 # create data points
-<<<<<<< HEAD
-coVec = gb.genFunctionUniform()
-tdata = np.array( gb.getPoints(coVec, 1000, 3, 7, -100, 100, -100, 100) )
-vdata = np.array( gb.getPoints(coVec, 1000, 3, 7, -100, 100, -100, 100) )
-=======
 coVec = gb.genFunctionUniform(3, 0, 4)
 print(coVec)
 coVec = [1, 1, 1]
@@ -123,7 +118,6 @@ vdata = np.array( gb.getPoints(coVec, 1000, 0, 0, -10, 10, -10, 10) )
 plotData(tdata)
 plotData(vdata)
 
->>>>>>> Collin's-branch
 createDatasetsDocument(coVec, [3, 7], [-100, 100, -100, 100], tdata.tolist(), vdata.tolist())
 
 
