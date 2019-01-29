@@ -9,14 +9,8 @@ x,y = np.meshgrid(xaxis,yaxis)
 
 @np.vectorize
 def func(m,n):
-    return distanceToCurve([1,0,0],m,n)
+    return distanceToCurve([0,0,0,1],m,n)
 z = func(x,y)
 
-#plt.pcolormesh(x,y,z)
-#plt.show()
-
-@np.vectorize
-def func2(x):
-    evalFunction([1,0,0],x)
-
-print(evalFunction([0,0,1],2))
+plt.pcolormesh(x,y,z)
+plt.show()

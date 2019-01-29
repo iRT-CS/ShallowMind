@@ -5,6 +5,7 @@ import GaussianBoundary as gb
 import numpy as np
 import keras
 from Utils import iterate,plotData
+from generateNN import make
 import matplotlib.pyplot as plt
 
 # Continuously runs epochs on neural net with given data points until error is minimized
@@ -110,10 +111,17 @@ while(id != -1):
 
 # create data points
 coVec = gb.genFunctionUniform(3, 0, 4)
-print(coVec)
-coVec = [1, 1, 1]
-tdata = np.array( gb.getPoints(coVec, 1000, 0, 0, -10, 10, -10, 10) )
-vdata = np.array( gb.getPoints(coVec, 1000, 0, 0, -10, 10, -10, 10) )
+# print(coVec)
+coVec = [2, 1, 1]
+
+tdata = np.array( gb.getPoints(coVec, 1000, .5, .5, -10, 10, -10, 10) )
+vdata = np.array( gb.getPoints(coVec, 1000, .5, .5, -10, 10, -10, 10) )
+
+# plotting the normal dataset, no noise
+# plot the dataset, with noise
+# use a parabola, not too wide
+
+# print(tdata)
 
 plotData(tdata)
 plotData(vdata)
