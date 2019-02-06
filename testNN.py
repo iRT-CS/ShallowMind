@@ -98,7 +98,10 @@ MAX_NODES = 6
 MAX_LAYERS = 4
 
 IN_SHAPE = 2
-OUT_SHAPE = 1
+OUT_SHAPE = (2,)
+
+NODES_INLAYER = 2
+NODES_OUTLAYER = 2
 
 # create ids in list form
 ids = []
@@ -112,10 +115,10 @@ while(id != -1):
 # create data points
 coVec = gb.genFunctionUniform(3, 0, 4)
 # print(coVec)
-coVec = [2, 1, 1]
+coVec = [1, 1, 1]
 
-tdata = np.array( gb.getPoints(coVec, 1000, .5, .5, -10, 10, -10, 10) )
-vdata = np.array( gb.getPoints(coVec, 1000, .5, .5, -10, 10, -10, 10) )
+tdata = np.array( gb.getPoints(coVec, 1000, 0, 0, -10, 10, -10, 10) )
+vdata = np.array( gb.getPoints(coVec, 1000, 0, 0, -10, 10, -10, 10) )
 
 # plotting the normal dataset, no noise
 # plot the dataset, with noise
@@ -123,8 +126,8 @@ vdata = np.array( gb.getPoints(coVec, 1000, .5, .5, -10, 10, -10, 10) )
 
 # print(tdata)
 
-plotData(tdata)
-plotData(vdata)
+# plotData(tdata)
+# plotData(vdata)
 
 createDatasetsDocument(coVec, [3, 7], [-100, 100, -100, 100], tdata.tolist(), vdata.tolist())
 
@@ -136,7 +139,7 @@ for struct in ids:
     for i in struct:
         layers.append(int(i))
     # the shape wasn't working, so I took out the list dependency
-    nets.append(make(IN_SHAPE, layers, OUT_SHAPE, 1, 'tanh'))
+    nets.append(make(NODES_INLAYER, layers, NODES_OUTLAYER, OUT_SHAPE, 'tanh'))
     createNeuralNetsDocument(layers, IN_SHAPE, OUT_SHAPE, nn.get_weights(), 'glorot', 'sigmoid')
 
 # runs test for each neural net

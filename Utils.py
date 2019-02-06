@@ -66,5 +66,7 @@ def plotData(data):
             plt.plot(xs[i], ys[i], 'y^')
         else:
             plt.plot(xs[i], ys[i], 'bs')
-
+    plt.xlabel("x")
+    plt.ylabel("y")
+    plt.title("sigma = 0, peak = 0")
     plt.show()
