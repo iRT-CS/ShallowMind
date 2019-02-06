@@ -140,7 +140,9 @@ for struct in ids:
         layers.append(int(i))
     # the shape wasn't working, so I took out the list dependency
     nets.append(make(NODES_INLAYER, layers, NODES_OUTLAYER, OUT_SHAPE, 'tanh'))
-    createNeuralNetsDocument(layers, IN_SHAPE, OUT_SHAPE, nn.get_weights(), 'glorot', 'sigmoid')
+    # change the np arrays of weights to lists of lists
+    # https://stackoverflow.com/questions/46817085/keras-interpreting-the-output-of-get-weights 
+    createNeuralNetsDocument(layers, IN_SHAPE, OUT_SHAPE, nets[len(nets)-1].get_weights(), 'glorot', 'sigmoid')
 
 # runs test for each neural net
 for index,nn in enumerate(nets):
