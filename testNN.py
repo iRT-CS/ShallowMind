@@ -131,7 +131,6 @@ vdata = np.array( gb.getPoints(coVec, 1000, 0, 0, -10, 10, -10, 10) )
 
 createDatasetsDocument(coVec, [3, 7], [-100, 100, -100, 100], tdata.tolist(), vdata.tolist())
 
-
 # iterates through all ids and creates neural nets
 nets = []
 for struct in ids:
@@ -140,9 +139,12 @@ for struct in ids:
         layers.append(int(i))
     # the shape wasn't working, so I took out the list dependency
     nets.append(make(NODES_INLAYER, layers, NODES_OUTLAYER, OUT_SHAPE, 'tanh'))
+
     # change the np arrays of weights to lists of lists
-    # https://stackoverflow.com/questions/46817085/keras-interpreting-the-output-of-get-weights 
-    createNeuralNetsDocument(layers, IN_SHAPE, OUT_SHAPE, nets[len(nets)-1].get_weights(), 'glorot', 'sigmoid')
+    # https://stackoverflow.com/questions/46817085/keras-interpreting-the-output-of-get-weights
+
+    weights = list(map(np.ndarray.tolist, nets[len(nets)-1].get_weights()))
+    createNeuralNetsDocument(layers, IN_SHAPE, OUT_SHAPE, weights, 'glorot', 'sigmoid')
 
 # runs test for each neural net
 for index,nn in enumerate(nets):
