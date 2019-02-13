@@ -2,6 +2,7 @@ import numpy as np
 from scipy.optimize import fmin_cobyla
 import math
 import random
+from distanceToCurve import distanceToCurve
 #import timeit
 
 
@@ -34,7 +35,7 @@ def evalFunction(coVec,ipVar):
     return boundaryPoint
 def pointDistance(x1,y1,x2,y2):
     return np.sqrt(pow((x1-x2),2)+pow((y1-y2),2))
-
+'''
 def distanceToCurve(coVec,ipVar,dpVar):
     maxDistance = abs(dpVar - evalFunction(coVec, ipVar))
     xMin = fmin_cobyla(\
@@ -43,7 +44,7 @@ def distanceToCurve(coVec,ipVar,dpVar):
         cons = [lambda x: abs(ipVar-maxDistance)],\
         rhoend = 1e-3)
     return pointDistance(ipVar,dpVar,xMin[0], evalFunction(coVec, xMin[0]))
-
+'''
 def gauss(distance, sigma):
     sigmaComponent = pow(sigma,2)*2
     #denominator = math.sqrt(math.pi*sigmaComponent)
