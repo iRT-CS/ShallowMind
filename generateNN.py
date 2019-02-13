@@ -32,5 +32,5 @@ def make(input, vec, out, shape, act):
     net.add(Dense(out, activation = 'sigmoid'))
     net.compile(loss='categorical_crossentropy',
               optimizer='sgd',
-              metrics=['accuracy'])
+              metrics=['acc'])
     return net

@@ -5,6 +5,7 @@ import GaussianBoundary as gb
 import numpy as np
 import keras
 from Utils import iterate,plotData
+from generateNN import make
 import matplotlib.pyplot as plt
 
 # Continuously runs epochs on neural net with given data points until error is minimized
@@ -97,7 +98,10 @@ MAX_NODES = 6
 MAX_LAYERS = 4
 
 IN_SHAPE = 2
-OUT_SHAPE = 1
+OUT_SHAPE = (2,)
+
+NODES_INLAYER = 2
+NODES_OUTLAYER = 2
 
 # create ids in list form
 ids = []
@@ -110,16 +114,22 @@ while(id != -1):
 
 # create data points
 coVec = gb.genFunctionUniform(3, 0, 4)
-print(coVec)
+# print(coVec)
 coVec = [1, 1, 1]
+
 tdata = np.array( gb.getPoints(coVec, 1000, 0, 0, -10, 10, -10, 10) )
 vdata = np.array( gb.getPoints(coVec, 1000, 0, 0, -10, 10, -10, 10) )
 
-plotData(tdata)
-plotData(vdata)
+# plotting the normal dataset, no noise
+# plot the dataset, with noise
+# use a parabola, not too wide
+
+# print(tdata)
+
+# plotData(tdata)
+# plotData(vdata)
 
 createDatasetsDocument(coVec, [3, 7], [-100, 100, -100, 100], tdata.tolist(), vdata.tolist())
-
 
 # iterates through all ids and creates neural nets
 nets = []
@@ -128,8 +138,13 @@ for struct in ids:
     for i in struct:
         layers.append(int(i))
     # the shape wasn't working, so I took out the list dependency
-    nets.append(make(IN_SHAPE, layers, OUT_SHAPE, 1, 'tanh'))
-    createNeuralNetsDocument(layers, IN_SHAPE, OUT_SHAPE, nn.get_weights(), 'glorot', 'sigmoid')
+    nets.append(make(NODES_INLAYER, layers, NODES_OUTLAYER, OUT_SHAPE, 'tanh'))
+
+    # change the np arrays of weights to lists of lists
+    # https://stackoverflow.com/questions/46817085/keras-interpreting-the-output-of-get-weights
+
+    weights = list(map(np.ndarray.tolist, nets[len(nets)-1].get_weights()))
+    createNeuralNetsDocument(layers, IN_SHAPE, OUT_SHAPE, weights, 'glorot', 'sigmoid')
 
 # runs test for each neural net
 for index,nn in enumerate(nets):
