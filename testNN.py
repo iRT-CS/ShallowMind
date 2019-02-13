@@ -1,5 +1,6 @@
 from keras.models import Sequential
 from keras.layers import Dense, Activation
+from keras.utils import to_categorical
 from db import createDatasetsDocument, createNeuralNetsDocument, createExperimentsDocument
 import GaussianBoundary as gb
 import numpy as np
@@ -14,6 +15,15 @@ import matplotlib.pyplot as plt
 # vdata = validation data
 
 def test(nn, tdata, vdata):
+    tCoords = tdata[:, [0,1]]
+    tLabels = tdata[:, [2]]
+    #tLabels = to_categorical(tLabels, num_classes=None)
+
+    # print(tLabels)
+
+    vCoords = vdata[:, [0,1]]
+    vLabels = tdata[:, [2]]
+
     vErrorConsec = 0
     cont = True
     tError = []
@@ -40,16 +50,19 @@ def test(nn, tdata, vdata):
 
     while(cont):
         #train (1) epochs
-        nn.fit(x=tdata, y=vdata, batch_size=100, epochs=1, verbose=1)
+        nn.fit(x=tCoords, y=tLabels, batch_size=100, epochs=1, verbose=1)
         # call evaluate - record test & validation error
-        stats = model.evaluate(x=training, y=testing, batch_size=100, epochs=1, verbose=1)
+        stats = nn.evaluate(x=vCoords, y=vLabels, batch_size=100, verbose=1)
         epoch += 1
+
+        print(stats)
+
         # record training error & accuracy
         tError.append(stats[0]) # training error
         tAcc.append(stats[1]) # training accuracy
         # record validation error & accuracy
-        vError.append(stats[2]) # validation error
-        vAcc.append(stats[3]) # validation accuracy
+        vError.append(stats[0]) # validation error
+        vAcc.append(stats[1]) # validation accuracy
 
         # final training error, final validation error, final weights if needed for stopC
         # get_weights returns a list of numpy arrays
@@ -97,11 +110,11 @@ def test(nn, tdata, vdata):
 MAX_NODES = 6
 MAX_LAYERS = 4
 
-IN_SHAPE = 2
-OUT_SHAPE = (2,)
+IN_SHAPE = (2,)
+OUT_SHAPE = (1,)
 
 NODES_INLAYER = 2
-NODES_OUTLAYER = 2
+NODES_OUTLAYER = 1
 
 # create ids in list form
 ids = []
@@ -138,7 +151,7 @@ for struct in ids:
     for i in struct:
         layers.append(int(i))
     # the shape wasn't working, so I took out the list dependency
-    nets.append(make(NODES_INLAYER, layers, NODES_OUTLAYER, OUT_SHAPE, 'tanh'))
+    nets.append(make(NODES_INLAYER, layers, NODES_OUTLAYER, IN_SHAPE, 'tanh'))
 
     # change the np arrays of weights to lists of lists
     # https://stackoverflow.com/questions/46817085/keras-interpreting-the-output-of-get-weights

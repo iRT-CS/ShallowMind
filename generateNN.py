@@ -30,7 +30,7 @@ def make(input, vec, out, shape, act):
     for i in vec:
         net.add(Dense(i, activation = act))
     net.add(Dense(out, activation = 'sigmoid'))
-    net.compile(loss='categorical_crossentropy',
+    net.compile(loss='mse',
               optimizer='sgd',
               metrics=['acc'])
     return net
