@@ -103,6 +103,10 @@ def test(nn, tdata, vdata):
         if(len(vError) > 1 and ( vError[len(vError)-2] - vError[len(vError)-1] ) < 0.01 ):
             stopC["Decrease in training error from 1 epoch to next is below %1"].append(finalStats)
             comp[7] = True
+
+        if all( x == True for x in comp ):
+            cont = False
+
     stopC["Lowest validation error"] = statsAtLowestVError
     return tAcc, vAcc, stopC
 
