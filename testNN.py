@@ -49,10 +49,10 @@ def test(nn, tdata, vdata):
     comp = [False, False, False, False, False, False, False, False]
 
     while(cont):
-        #train (1) epochs
-        nn.fit(x=tCoords, y=tLabels, batch_size=100, epochs=1, verbose=1)
+        #train (10) epochs
+        nn.fit(x=tCoords, y=tLabels, batch_size=100, epochs=10, verbose=0)
         # call evaluate - record test & validation error
-        stats = nn.evaluate(x=vCoords, y=vLabels, batch_size=100, verbose=1)
+        stats = nn.evaluate(x=vCoords, y=vLabels, batch_size=100, verbose=0)
         epoch += 1
 
         print(stats)
@@ -67,7 +67,7 @@ def test(nn, tdata, vdata):
         # final training error, final validation error, final weights if needed for stopC
         # get_weights returns a list of numpy arrays
         finalStats = {
-            "Final validation error":stats[2],
+            "Final validation error":stats[1],
             "Final training error":stats[0], #0
             "Final weights":nn.get_weights() #1
         }
@@ -161,6 +161,8 @@ for struct in ids:
 
 # runs test for each neural net
 for index,nn in enumerate(nets):
+    print(ids[index])
+
     # what is the dataset ID? for now, I'm just setting it to 1
     tAcc, vAcc, stoppingCriterionDictionary = test(nn, tdata, vdata)
     createExperimentsDocument(ids[index], layerSizes, IN_SHAPE, OUT_SHAPE, 1, tAcc, vAcc, stoppingCriterionDictionary)
