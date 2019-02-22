@@ -48,7 +48,7 @@ def test(nn, tdata, vdata):
     #indicates if stopping criterion has been completed
     comp = [False, False, False, False, False, False, False, False]
 
-    while(all(value for value in comp)):
+    while(any(not value for value in comp)):
         #train (1) epochs
         nn.fit(x=tCoords, y=tLabels, batch_size=100, epochs=1, verbose=1)
         # call evaluate - record test & validation error
