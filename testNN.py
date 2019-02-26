@@ -50,7 +50,7 @@ def test(nn, tdata, vdata):
 
     while(any(not value for value in comp)):
         #train (1) epochs
-        nn.fit(x=tCoords, y=tLabels, batch_size=100, epochs=1, verbose=1)
+        nn.fit(x=tCoords, y=tLabels, batch_size=100, epochs=1, verbose=0)
         # call evaluate - record test & validation error
         stats = nn.evaluate(x=vCoords, y=vLabels, batch_size=100, verbose=1)
         epoch += 1
