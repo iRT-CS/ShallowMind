@@ -34,7 +34,7 @@ stoppingCriterionDictionary
     "validationAccuracyOverTime": validationAccuracyOverTime,
     "stoppingCriterionDictionary": stoppingCriterionDictionary
     }
-    collection.insert_one(document)
+    return collection.insert_one(document)
 
 
 
@@ -61,7 +61,7 @@ activationFunction
     "initializationFunction": initializationFunction,
     "activationFunction": activationFunction
     }
-    collection.insert_one(document)
+    return collection.insert_one(document)
 
 def createDatasetsDocument(
 #array of polynomial coefficient. Higher order coefficient first (i.e. x^2 + 2x + 3 is [1,2,3])
@@ -83,4 +83,4 @@ testValues
     "trainingValues":trainingValues,
     "testValues": testValues
     }
-    collection.insert_one(document)
+    return collection.insert_one(document)
