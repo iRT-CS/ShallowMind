@@ -67,7 +67,7 @@ def test(nn, tdata, vdata):
         # final training error, final validation error, final weights if needed for stopC
         # get_weights returns a list of numpy arrays
         finalStats = {
-            "Final validation error":stats[2],
+            "Final validation error":stats[1],
             "Final training error":stats[0], #0
             "Final weights":nn.get_weights() #1
         }
@@ -163,4 +163,4 @@ for struct in ids:
 for index,nn in enumerate(nets):
     # what is the dataset ID? for now, I'm just setting it to 1
     tAcc, vAcc, stoppingCriterionDictionary = test(nn, tdata, vdata)
-    createExperimentsDocument(ids[index], layerSizes, IN_SHAPE, OUT_SHAPE, 1, tAcc, vAcc, stoppingCriterionDictionary)
+    createExperimentsDocument(ids[index], layers, IN_SHAPE, OUT_SHAPE, 1, tAcc, vAcc, stoppingCriterionDictionary)
