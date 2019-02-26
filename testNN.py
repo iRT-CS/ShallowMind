@@ -133,6 +133,7 @@ coVec = [1, 1, 1]
 tdata = np.array( gb.getPoints(coVec, 1000, 0, 0, -10, 10, -10, 10) )
 vdata = np.array( gb.getPoints(coVec, 1000, 0, 0, -10, 10, -10, 10) )
 
+
 # plotting the normal dataset, no noise
 # plot the dataset, with noise
 # use a parabola, not too wide
