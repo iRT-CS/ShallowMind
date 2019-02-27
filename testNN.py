@@ -33,6 +33,7 @@ def test(nn, tdata, vdata):
     epoch = 0
     lowestVError = 1
     statsAtLowestVError = []
+    flatline = 0
     # stopping criterion
     stopC = {
         "Every 5 epochs":[],
@@ -48,7 +49,8 @@ def test(nn, tdata, vdata):
     #indicates if stopping criterion has been completed
     comp = [False, False, False, False, False, False, False, False]
 
-    while(any(not value for value in comp)):
+    #while(any(not value for value in comp)):
+    while(not (comp[7] and (comp[2]or flatline> 10))):
         #train (1) epochs
         nn.fit(x=tCoords, y=tLabels, batch_size=100, epochs=1, verbose=0)
         # call evaluate - record test & validation error
@@ -110,7 +112,10 @@ def test(nn, tdata, vdata):
         if(len(vError) > 1 and ( vError[len(vError)-2] - vError[len(vError)-1] ) < 0.01 ):
             stopC["Decrease in training error from 1 epoch to next is below %1"].append(finalStats)
             comp[7] = True
+            flatline += 1
             print(7)
+        else:
+            flatline = 0
     stopC["Lowest validation error"] = statsAtLowestVError
     return tAcc, vAcc, stopC
 
