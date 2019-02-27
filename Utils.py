@@ -2,19 +2,19 @@ import math
 from db import createDatasetsDocument
 from GaussianBoundary import getPoints
 import matplotlib.pyplot as plt
-def iterate(nnID,maxLayers,maxNodes):
+def iterate(hiddenLayers,maxLayers,maxNodes):
      curLayer = 0
-     while(curLayer<len(nnID)):
-          if(nnID[curLayer] < maxNodes):
-               nnID[curLayer] += 1
-               return nnID
+     while(curLayer<len(hiddenLayers)):
+          if(hiddenLayers[curLayer] < maxNodes):
+               hiddenLayers[curLayer] += 1
+               return hiddenLayers
           else:
                curLayer += 1
      if(curLayer >= maxLayers):
           return -1
      else:
-          nnID = [1]*(curLayer+1)
-          return nnID
+          hiddenLayers = [1]*(curLayer+1)
+          return hiddenLayers
      '''
     #get digits of the function
     #find number of digits
