@@ -57,7 +57,7 @@ def test(nn, tdata, vdata):
         stats = nn.evaluate(x=vCoords, y=vLabels, batch_size=100, verbose=0)
         epoch += 1
 
-        #print(stats)
+        # print(stats)
 
         # record training error & accuracy
         tError.append(stats[0]) # training error
@@ -67,11 +67,12 @@ def test(nn, tdata, vdata):
         vAcc.append(stats[1]) # validation accuracy
 
         # final training error, final validation error, final weights if needed for stopC
-        # get_weights returns a list of numpy arrays
+        # get_weights returns a list of numpy arrays - convert to arrays using map and tolist
+
         finalStats = {
             "Final validation error":stats[1],
             "Final training error":stats[0], #0
-            "Final weights":nn.get_weights() #1
+            "Final weights":list(map(np.ndarray.tolist, nn.get_weights())) #1
         }
 
         # finalStats = [stats[0], stats[2], nn.get_weights()]
@@ -175,4 +176,5 @@ for struct in neuralNets:
 for index,nn in enumerate(actualNets):
     # what is the dataset ID? for now, I'm just setting it to 1
     tAcc, vAcc, stoppingCriterionDictionary = test(nn, tdata, vdata)
+    print(stoppingCriterionDictionary)
     createExperimentsDocument(nnIDs[index], neuralNets[index], IN_SHAPE, OUT_SHAPE, datasetID, tAcc, vAcc, stoppingCriterionDictionary)

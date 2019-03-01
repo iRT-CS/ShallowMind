@@ -10,10 +10,10 @@ from generateNN import make
 import matplotlib.pyplot as plt
 from testNN import test
 
+coVec = [1,0]
+
 tdata = np.array( gb.getPoints(coVec, 1000, 0, 0, -10, 10, -10, 10) )
 vdata = np.array( gb.getPoints(coVec, 1000, 0, 0, -10, 10, -10, 10) )
-
-coVec = [1,0]
 
 createDatasetsDocument(coVec, [0, 0], [-100, 100, -100, 100], tdata.tolist(), vdata.tolist())
 
@@ -26,10 +26,12 @@ OUT_SHAPE = (1,)
 NODES_INLAYER = 2
 NODES_OUTLAYER = 1
 
+layers = iterate([], MAX_LAYERS, MAX_NODES)
+
 test1nn = make(NODES_INLAYER, layers, NODES_OUTLAYER, IN_SHAPE, 'tanh')
 
 weights = list(map(np.ndarray.tolist, test1nn.get_weights()))
-createNeuralNetsDocument(layers, IN_SHAPE, OUT_SHAPE, weights, 'glorot', 'sigmoid')
+nnID = createNeuralNetsDocument(layers, IN_SHAPE, OUT_SHAPE, weights, 'glorot', 'sigmoid')
 
-tAcc, vAcc, stoppingCriterionDictionary = test(nn, tdata, vdata)
-createExperimentsDocument(ids[index], layers, IN_SHAPE, OUT_SHAPE, 1, tAcc, vAcc, stoppingCriterionDictionary)
+tAcc, vAcc, stoppingCriterionDictionary = test(test1nn, tdata, vdata)
+createExperimentsDocument(nnID, layers, IN_SHAPE, OUT_SHAPE, 1, tAcc, vAcc, stoppingCriterionDictionary)
