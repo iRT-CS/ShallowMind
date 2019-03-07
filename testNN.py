@@ -29,7 +29,7 @@ def test(nn, tdata, vdata):
     tError = []
     vError = []
     tAcc = []
-    vAcc = [];
+    vAcc = []
     epoch = 0
     lowestVError = 1
     statsAtLowestVError = []
@@ -120,31 +120,7 @@ def test(nn, tdata, vdata):
     stopC["Lowest validation error"] = statsAtLowestVError
     return tAcc, vAcc, stopC
 
-#
-MAX_NODES = 6
-MAX_LAYERS = 4
-
-IN_SHAPE = (2,)
-OUT_SHAPE = (1,)
-
-NODES_INLAYER = 2
-NODES_OUTLAYER = 1
-
-# create ids in list form
-neuralNets = []
-hiddenLayers = iterate([], MAX_LAYERS, MAX_NODES)
-#while(hiddenLayers != -1):
-for i in range(1):
-    neuralNets.append(hiddenLayers)
-    newHidden = iterate(hiddenLayers, MAX_LAYERS, MAX_NODES)
-    hiddenLayers = newHidden
-
-# create data points
-coVec = gb.genFunctionUniform(3, 0, 4)
-# print(coVec)
-coVec = [1, 1, 1]
-
-tdata = np.array( gb.getPoints(coVec, 1000, 0, 0, -10, 10, -10, 10) )
+"""tdata = np.array( gb.getPoints(coVec, 1000, 0, 0, -10, 10, -10, 10) )
 vdata = np.array( gb.getPoints(coVec, 1000, 0, 0, -10, 10, -10, 10) )
 
 # plotting the normal dataset, no noise
@@ -178,3 +154,6 @@ for index,nn in enumerate(actualNets):
     tAcc, vAcc, stoppingCriterionDictionary = test(nn, tdata, vdata)
     # print(stoppingCriterionDictionary)
     createExperimentsDocument(nnIDs[index], neuralNets[index], IN_SHAPE, OUT_SHAPE, datasetID, tAcc, vAcc, stoppingCriterionDictionary)
+"""
+
+
