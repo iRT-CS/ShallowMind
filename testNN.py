@@ -176,5 +176,5 @@ for struct in neuralNets:
 for index,nn in enumerate(actualNets):
     # what is the dataset ID? for now, I'm just setting it to 1
     tAcc, vAcc, stoppingCriterionDictionary = test(nn, tdata, vdata)
-    print(stoppingCriterionDictionary)
+    # print(stoppingCriterionDictionary)
     createExperimentsDocument(nnIDs[index], neuralNets[index], IN_SHAPE, OUT_SHAPE, datasetID, tAcc, vAcc, stoppingCriterionDictionary)

@@ -52,6 +52,10 @@ initializationFunction,
 #function used to calculate activation in each neuron (i.e. sigmoid, tanh)
 activationFunction
 ):
+    if (neuralNetHiddenStructure == [2]):
+        print( "ERROR FOUND")
+    if (neuralNetHiddenStructure == [1]):
+        print( "CORRECT THING HAPPENED")
     collection = db.NeuralNets
     document = {
     "neuralNetHiddenStructure": neuralNetHiddenStructure,
