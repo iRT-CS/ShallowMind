@@ -28,7 +28,7 @@ NODES_OUTLAYER = 1
 
 layers = iterate([], MAX_LAYERS, MAX_NODES)
 
-# print(layers)
+print(layers)
 
 test1nn = make(NODES_INLAYER, layers, NODES_OUTLAYER, IN_SHAPE, 'tanh')
 

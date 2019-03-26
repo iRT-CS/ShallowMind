@@ -5,7 +5,7 @@ from db import createDatasetsDocument, createNeuralNetsDocument, createExperimen
 import GaussianBoundary as gb
 import numpy as np
 import keras
-from testNN.py import test
+from testNN import test
 from Utils import iterate,plotData
 from generateNN import make
 import matplotlib.pyplot as plt
@@ -14,6 +14,10 @@ import matplotlib.pyplot as plt
 # nn: compiled neural net
 # tdata = training data
 # vdata = validation data
+
+# coVec = [1,0]
+
+coVec = [1,0]
 
 tdata = np.array( gb.getPoints(coVec, 1000, 0, 0, -10, 10, -10, 10) )
 vdata = np.array( gb.getPoints(coVec, 1000, 0, 0, -10, 10, -10, 10) )
