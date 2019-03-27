@@ -31,25 +31,28 @@ vdata = np.array( gb.getPoints(coVec, 1000, 0, 0, -10, 10, -10, 10) )
 # plotData(tdata)
 # plotData(vdata)
 
+MAX_NODES = 6
+MAX_LAYERS = 4
+
+IN_SHAPE = (2,)
+OUT_SHAPE = (1,)
+
+NODES_INLAYER = 2
+NODES_OUTLAYER = 1
+
 datasetID = createDatasetsDocument(coVec, [3, 7], [-100, 100, -100, 100], tdata.tolist(), vdata.tolist()) # in the first list is peak & sigma, second list is the bounds for the data generation piece
 
 # iterates through all ids and creates neural nets
-actualNets = []
-nnIDs = []
-for struct in actualNets:
-    # the shape wasn't working, so I took out the list dependency
-    actualNets.append(make(NODES_INLAYER, struct, NODES_OUTLAYER, IN_SHAPE, 'tanh'))
+curr_net = []
+iter = iterate(curr_net,MAX_LAYERS,MAX_NODES)
+while(iter != -1):
+    print(iter)
+    actualNet = make(NODES_INLAYER, iter, NODES_OUTLAYER, IN_SHAPE, 'tanh')
+    weights = list(map(np.ndarray.tolist, actualNet.get_weights()))
+    nnID = createNeuralNetsDocument(curr_net, IN_SHAPE, OUT_SHAPE, weights, 'glorot', 'sigmoid')
 
-    # change the np arrays of weights to lists of lists
-    # https://stackoverflow.com/questions/46817085/keras-interpreting-the-output-of-get-weights
+    tAcc, vAcc, stoppingCriterionDictionary = test(actualNet, tdata, vdata)
+    createExperimentsDocument(nnID, curr_net, IN_SHAPE, OUT_SHAPE, datasetID, tAcc, vAcc, stoppingCriterionDictionary)
 
-    weights = list(map(np.ndarray.tolist, actualNets[len(actualNets)-1].get_weights()))
-    nnID = createNeuralNetsDocument(struct, IN_SHAPE, OUT_SHAPE, weights, 'glorot', 'sigmoid')
-    nnIDs.append(nnID)
-
-# runs test for each neural net
-for index,nn in enumerate(actualNets):
-    # what is the dataset ID? for now, I'm just setting it to 1
-    tAcc, vAcc, stoppingCriterionDictionary = test(nn, tdata, vdata)
-    # print(stoppingCriterionDictionary)
-    createExperimentsDocument(nnIDs[index], actualNets[index], IN_SHAPE, OUT_SHAPE, datasetID, tAcc, vAcc, stoppingCriterionDictionary)
+    curr_net = iter
+    iter = iterate(curr_net,MAX_LAYERS,MAX_NODES)

@@ -9,11 +9,13 @@ def iterate(hiddenLayers,maxLayers,maxNodes):
                hiddenLayers[curLayer] += 1
                return hiddenLayers
           else:
+               hiddenLayers[curLayer] = 1
                curLayer += 1
      if(curLayer >= maxLayers):
           return -1
      else:
           hiddenLayers = [1]*(curLayer+1)
+          print("[1]*(curLayer+1) = " + str([1]*(curLayer+1)))
           return hiddenLayers
      '''
     #get digits of the function
