@@ -33,6 +33,8 @@ vdata = np.array(gb.getPoints(coVec, 1000, 0, 0, -10, 10, -10, 10))
 # plotData(tdata)
 # plotData(vdata)
 
+# try all at once for 500 epochs
+
 MAX_NODES = 6
 MAX_LAYERS = 4
 
