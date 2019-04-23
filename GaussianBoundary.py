@@ -50,6 +50,8 @@ def gauss(distance, sigma):
     #denominator = math.sqrt(math.pi*sigmaComponent)
     #I want to control the max height
     denominator = 1
+    if( sigmaComponent == 0):
+        return 0
     numerator = math.exp(-pow(distance,2)/sigmaComponent)
     return numerator/denominator
 

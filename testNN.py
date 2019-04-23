@@ -29,7 +29,7 @@ def test(nn, tdata, vdata):
     tError = []
     vError = []
     tAcc = []
-    vAcc = [];
+    vAcc = []
     epoch = 0
     lowestVError = 1
     statsAtLowestVError = []
@@ -119,62 +119,3 @@ def test(nn, tdata, vdata):
             flatline = 0
     stopC["Lowest validation error"] = statsAtLowestVError
     return tAcc, vAcc, stopC
-
-#
-MAX_NODES = 6
-MAX_LAYERS = 4
-
-IN_SHAPE = (2,)
-OUT_SHAPE = (1,)
-
-NODES_INLAYER = 2
-NODES_OUTLAYER = 1
-
-# create ids in list form
-neuralNets = []
-hiddenLayers = iterate([], MAX_LAYERS, MAX_NODES)
-#while(hiddenLayers != -1):
-for i in range(1):
-    neuralNets.append(hiddenLayers)
-    newHidden = iterate(hiddenLayers, MAX_LAYERS, MAX_NODES)
-    hiddenLayers = newHidden
-
-# create data points
-coVec = gb.genFunctionUniform(3, 0, 4)
-# print(coVec)
-coVec = [1, 1, 1]
-
-tdata = np.array( gb.getPoints(coVec, 1000, 0, 0, -10, 10, -10, 10) )
-vdata = np.array( gb.getPoints(coVec, 1000, 0, 0, -10, 10, -10, 10) )
-
-# plotting the normal dataset, no noise
-# plot the dataset, with noise
-# use a parabola, not too wide
-
-# print(tdata)
-
-# plotData(tdata)
-# plotData(vdata)
-
-datasetID = createDatasetsDocument(coVec, [3, 7], [-100, 100, -100, 100], tdata.tolist(), vdata.tolist())
-
-# iterates through all ids and creates neural nets
-actualNets = []
-nnIDs = []
-for struct in neuralNets:
-    # the shape wasn't working, so I took out the list dependency
-    actualNets.append(make(NODES_INLAYER, struct, NODES_OUTLAYER, IN_SHAPE, 'tanh'))
-
-    # change the np arrays of weights to lists of lists
-    # https://stackoverflow.com/questions/46817085/keras-interpreting-the-output-of-get-weights
-
-    weights = list(map(np.ndarray.tolist, actualNets[len(actualNets)-1].get_weights()))
-    nnID = createNeuralNetsDocument(struct, IN_SHAPE, OUT_SHAPE, weights, 'glorot', 'sigmoid')
-    nnIDs.append(nnID)
-
-# runs test for each neural net
-for index,nn in enumerate(actualNets):
-    # what is the dataset ID? for now, I'm just setting it to 1
-    tAcc, vAcc, stoppingCriterionDictionary = test(nn, tdata, vdata)
-    # print(stoppingCriterionDictionary)
-    createExperimentsDocument(nnIDs[index], neuralNets[index], IN_SHAPE, OUT_SHAPE, datasetID, tAcc, vAcc, stoppingCriterionDictionary)
