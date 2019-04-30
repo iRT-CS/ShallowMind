@@ -27,6 +27,20 @@ stopC = {
 
 class MonitorNN(keras.callbacks.Callback):
 
+    #Log function
+    def log(self, criterion):
+        finalStats = {
+            "Final validation error":self.val_losses[-1],
+            "Final training error":self.losses[-1], #0
+            "Final weights":list(map(np.ndarray.tolist, self.model.get_weights())) #1
+        }
+        self.stoppingCriterionDictionary[criterion].append(finalStats)
+
+    #Stop function
+    def end(self):
+        self.model.stop_training = True
+        createExperimentsDocument(self.nnid, self.struct, self.inshape, self.outshape, self.dsid, self.losses, self.val_losses, self.stoppingCriterionDictionary)
+
     def __init__(self, nnid, struct, inshape, outshape, dsid):
         self.nnid = nnid
         self.struct = struct
@@ -60,50 +74,37 @@ class MonitorNN(keras.callbacks.Callback):
 
         #Epoch-wise log
         if epoch % 5 == 0:
-            log("Every 5 epochs")
+            self.log("Every 5 epochs")
 
         #Increment counter if validation loss increases
-        if (len(self.val_losses >= 2) && (self.val_losses[-1] - self.val_losses[-2] > 0)):
+        if (len(self.val_losses) >= 2) and (self.val_losses[-1] - self.val_losses[-2] > 0):
             self.val_loss_count += 1
         else:
             self.val_loss_count = 0
 
-        if self.val_loss_count = 5:
-            log("Validation error increases for 5 consec epochs")
-        if self.val_loss_count = 10:
-            log("Validation error increases for 10 consec epochs")
-        if self.val_loss_count = 15:
-            log("Validation error increases for 15 consec epochs")
+        if self.val_loss_count == 5:
+            self.log("Validation error increases for 5 consec epochs")
+        if self.val_loss_count == 10:
+            self.log("Validation error increases for 10 consec epochs")
+        if self.val_loss_count == 15:
+            self.log("Validation error increases for 15 consec epochs")
 
         #Hard stop for slow validation error improvement
-        if (len(self.losses >= 2) && (self.losses[-1] - self.losses[-2] < 0.1)):
-            end()
+        if (len(self.losses) >= 2) and (self.losses[-1] - self.losses[-2] < 0.1):
+            self.end()
 
         #Log training error milestones
-        if self.loss < 0.05:
-            log("Training error below 5%")
-        elif self.loss < 0.1:
-            log("Training error below 1%")
-        elif self.loss < 0.15:
-            log("Training error below 15%")
+        if self.losses[-1] < 0.05:
+            self.log("Training error below 5%")
+        elif self.losses[-1] < 0.1:
+            self.log("Training error below 1%")
+        elif self.losses[-1] < 0.15:
+            self.log("Training error below 15%")
 
         #Hard training stop
-        if epoch = 2000:
-            end()
+        if epoch == 2000:
+            self.end()
 
-    #Log function
-    def log(criterion):
-        finalStats = {
-            "Final validation error":self.val_losses[-1],
-            "Final training error":self.losses[-1], #0
-            "Final weights":list(map(np.ndarray.tolist, self.model.get_weights())) #1
-        }
-        self.stoppingCriterionDictionary[criterion].append(finalStats)
-
-    #Stop function
-    def end():
-        self.model.stop_training = True
-        createExperimentsDocument(self.nnid, self.shape, self.inshape, self.outshape, self.dsid, self.val_loss, self.loss, self.stoppingCriterionDictionary)
 
 earlyStoppingLoss = keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=0.01, patience=0, verbose=0, mode='min', baseline=None, restore_best_weights=False)
 
@@ -113,7 +114,7 @@ earlyStoppingLoss = keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=
 # tdata = training data
 # vdata = validation data
 
-def test(nn, tdata, vdata):
+def test(nn, tdata, vdata, nnid, struct, inshape, outshape, dsid):
     tCoords = tdata[:, [0,1]]
     tLabels = tdata[:, [2]]
     #tLabels = to_categorical(tLabels, num_classes=None)
@@ -123,21 +124,12 @@ def test(nn, tdata, vdata):
     vCoords = vdata[:, [0,1]]
     vLabels = tdata[:, [2]]
 
-    vErrorConsec = 0
-    cont = True
-    tError = []
-    vError = []
-    tAcc = []
-    vAcc = []
-    epoch = 0
     lowestVError = 1
     statsAtLowestVError = []
     flatline = 0
 
-    monitor = MonitorNN()
-    nn.fit(x=tCoords, y=tLabels, batch_size=100, epochs=100, verbose=1, callbacks=[monitor], validation_data=(vCoords, vLabels))
-
-    return -1
+    monitor = MonitorNN(nnid, struct, inshape, outshape, dsid)
+    nn.fit(x=tCoords, y=tLabels, batch_size=100, epochs=2000, verbose=1, callbacks=[monitor], validation_data=(vCoords, vLabels))
 
     '''
     # stopping criterion
@@ -226,7 +218,7 @@ def test(nn, tdata, vdata):
     stopC["Lowest validation error"] = statsAtLowestVError
     '''
 
-
+'''
 tdata = np.array( gb.getPoints(coVec, 1000, 0, 0, -10, 10, -10, 10) )
 vdata = np.array( gb.getPoints(coVec, 1000, 0, 0, -10, 10, -10, 10) )
 
@@ -261,3 +253,4 @@ for index,nn in enumerate(actualNets):
     test(nn, tdata, vdata)
     # print(stoppingCriterionDictionary)
     createExperimentsDocument(nnIDs[index], neuralNets[index], IN_SHAPE, OUT_SHAPE, datasetID, tAcc, vAcc, stoppingCriterionDictionary)
+'''
