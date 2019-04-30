@@ -9,6 +9,22 @@ from Utils import iterate,plotData
 from generateNN import make
 import matplotlib.pyplot as plt
 
+# Keras Callback Function
+# on_epoch_end: return training loss, validation loss
+
+class LossHistory(keras.callbacks.Callback):
+    def on_train_begin(self, logs={}):
+        self.losses = []
+        self.val_losses = []
+        self.acc = []
+
+    def on_epoch_end(self, epoch, logs={}):
+        if epoch % 5 == 0:
+            self.losses.append(logs.get('loss'))
+            self.val_losses.append(logs.get('val_loss'))
+            self.acc.append(logs.get('acc'))
+
+
 # Continuously runs epochs on neural net with given data points until error is minimized
 # nn: compiled neural net
 # tdata = training data
@@ -34,6 +50,13 @@ def test(nn, tdata, vdata):
     lowestVError = 1
     statsAtLowestVError = []
     flatline = 0
+
+    history = LossHistory()
+    nn.fit(x=tCoords, y=tLabels, batch_size=100, epochs=100, verbose=1, callbacks=[history], validation_data=(vCoords, vLabels))
+
+    return -1
+
+    '''
     # stopping criterion
     stopC = {
         "Every 5 epochs":[],
@@ -118,4 +141,41 @@ def test(nn, tdata, vdata):
         else:
             flatline = 0
     stopC["Lowest validation error"] = statsAtLowestVError
-    return tAcc, vAcc, stopC
+    '''
+
+'''
+tdata = np.array( gb.getPoints(coVec, 1000, 0, 0, -10, 10, -10, 10) )
+vdata = np.array( gb.getPoints(coVec, 1000, 0, 0, -10, 10, -10, 10) )
+
+# plotting the normal dataset, no noise
+# plot the dataset, with noise
+# use a parabola, not too wide
+
+# print(tdata)
+
+# plotData(tdata)
+# plotData(vdata)
+
+datasetID = createDatasetsDocument(coVec, [3, 7], [-100, 100, -100, 100], tdata.tolist(), vdata.tolist())
+
+# iterates through all ids and creates neural nets
+actualNets = []
+nnIDs = []
+for struct in neuralNets:
+    # the shape wasn't working, so I took out the list dependency
+    actualNets.append(make(NODES_INLAYER, struct, NODES_OUTLAYER, IN_SHAPE, 'tanh'))
+
+    # change the np arrays of weights to lists of lists
+    # https://stackoverflow.com/questions/46817085/keras-interpreting-the-output-of-get-weights
+
+    weights = list(map(np.ndarray.tolist, actualNets[len(actualNets)-1].get_weights()))
+    nnID = createNeuralNetsDocument(struct, IN_SHAPE, OUT_SHAPE, weights, 'glorot', 'sigmoid')
+    nnIDs.append(nnID)
+
+# runs test for each neural net
+for index,nn in enumerate(actualNets):
+    # what is the dataset ID? for now, I'm just setting it to 1
+    tAcc, vAcc, stoppingCriterionDictionary = test(nn, tdata, vdata)
+    # print(stoppingCriterionDictionary)
+    createExperimentsDocument(nnIDs[index], neuralNets[index], IN_SHAPE, OUT_SHAPE, datasetID, tAcc, vAcc, stoppingCriterionDictionary)
+'''
