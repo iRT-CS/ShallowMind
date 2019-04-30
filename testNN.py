@@ -12,17 +12,70 @@ import matplotlib.pyplot as plt
 # Keras Callback Function
 # on_epoch_end: return training loss, validation loss
 
-class LossHistory(keras.callbacks.Callback):
+# stopping criterion
+stopC = {
+    "Every 5 epochs":[],
+    "Validation error increases for 5 consec epochs":[], #0
+    "Validation error increases for 10 consec epochs":[], #1
+    "Validation error increases for 15 consec epochs":[], #2
+    "Decrease in training error from 1 epoch to next is below %1":[], #3
+    "Training error below 15%":[], #4
+    "Training error below 10%":[], #5
+    "Training error below 5%":[], #6
+    "Lowest validation error":[] #7
+}
+
+class MonitorNN(keras.callbacks.Callback):
+
+    def __init__(self, id):
+        self.id = id
+
     def on_train_begin(self, logs={}):
         self.losses = []
         self.val_losses = []
         self.acc = []
+        self.val_loss_count = 0
+        self.stoppingCriterionDictionary = {
+            "Every 5 epochs":[],
+            "Validation error increases for 5 consec epochs":[], #0
+            "Validation error increases for 10 consec epochs":[], #1
+            "Validation error increases for 15 consec epochs":[], #2
+            "Decrease in training error from 1 epoch to next is below %1":[], #3
+            "Training error below 15%":[], #4
+            "Training error below 10%":[], #5
+            "Training error below 5%":[], #6
+            "Lowest validation error":[] #7
+        }
 
     def on_epoch_end(self, epoch, logs={}):
+        self.losses.append(logs.get('loss'))
+        self.val_losses.append(logs.get('val_loss'))
+        self.acc.append(logs.get('acc'))
+
         if epoch % 5 == 0:
-            self.losses.append(logs.get('loss'))
-            self.val_losses.append(logs.get('val_loss'))
-            self.acc.append(logs.get('acc'))
+
+
+        if len((self.losses >= 2) && (self.losses[-1] - self.losses[-2] < 0.1)):
+
+            self.model.stop_training = 1
+
+            log("")
+
+        if epoch = 2000:
+            self.model.stop_training = 1
+
+    def log(criterion):
+        finalStats = {
+            "Final validation error":self.val_losses[-1],
+            "Final training error":self.losses[-1], #0
+            "Final weights":list(map(np.ndarray.tolist, self.model.get_weights())) #1
+        }
+        self.stoppingCriterionDictionary[criterion].append(finalStats)
+
+    def end():
+        createExperimentsDocument()
+
+earlyStoppingLoss = keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=0.01, patience=0, verbose=0, mode='min', baseline=None, restore_best_weights=False)
 
 
 # Continuously runs epochs on neural net with given data points until error is minimized
@@ -51,8 +104,8 @@ def test(nn, tdata, vdata):
     statsAtLowestVError = []
     flatline = 0
 
-    history = LossHistory()
-    nn.fit(x=tCoords, y=tLabels, batch_size=100, epochs=100, verbose=1, callbacks=[history], validation_data=(vCoords, vLabels))
+    monitor = MonitorNN()
+    nn.fit(x=tCoords, y=tLabels, batch_size=100, epochs=100, verbose=1, callbacks=[monitor], validation_data=(vCoords, vLabels))
 
     return -1
 
@@ -143,7 +196,7 @@ def test(nn, tdata, vdata):
     stopC["Lowest validation error"] = statsAtLowestVError
     '''
 
-'''
+
 tdata = np.array( gb.getPoints(coVec, 1000, 0, 0, -10, 10, -10, 10) )
 vdata = np.array( gb.getPoints(coVec, 1000, 0, 0, -10, 10, -10, 10) )
 
@@ -175,7 +228,6 @@ for struct in neuralNets:
 # runs test for each neural net
 for index,nn in enumerate(actualNets):
     # what is the dataset ID? for now, I'm just setting it to 1
-    tAcc, vAcc, stoppingCriterionDictionary = test(nn, tdata, vdata)
+    test(nn, tdata, vdata)
     # print(stoppingCriterionDictionary)
     createExperimentsDocument(nnIDs[index], neuralNets[index], IN_SHAPE, OUT_SHAPE, datasetID, tAcc, vAcc, stoppingCriterionDictionary)
-'''
