@@ -27,8 +27,12 @@ stopC = {
 
 class MonitorNN(keras.callbacks.Callback):
 
-    def __init__(self, id):
-        self.id = id
+    def __init__(self, nnid, struct, inshape, outshape, dsid):
+        self.nnid = nnid
+        self.struct = struct
+        self.inshape = inshape
+        self.outshape = outshape
+        self.dsid = dsid
 
     def on_train_begin(self, logs={}):
         self.losses = []
@@ -47,23 +51,47 @@ class MonitorNN(keras.callbacks.Callback):
             "Lowest validation error":[] #7
         }
 
+    #TODO: implement lowest validation error
+
     def on_epoch_end(self, epoch, logs={}):
         self.losses.append(logs.get('loss'))
         self.val_losses.append(logs.get('val_loss'))
         self.acc.append(logs.get('acc'))
 
+        #Epoch-wise log
         if epoch % 5 == 0:
+            log("Every 5 epochs")
 
+        #Increment counter if validation loss increases
+        if (len(self.val_losses >= 2) && (self.val_losses[-1] - self.val_losses[-2] > 0)):
+            self.val_loss_count += 1
+        else:
+            self.val_loss_count = 0
 
-        if len((self.losses >= 2) && (self.losses[-1] - self.losses[-2] < 0.1)):
+        if self.val_loss_count = 5:
+            log("Validation error increases for 5 consec epochs")
+        if self.val_loss_count = 10:
+            log("Validation error increases for 10 consec epochs")
+        if self.val_loss_count = 15:
+            log("Validation error increases for 15 consec epochs")
 
-            self.model.stop_training = 1
+        #Hard stop for slow validation error improvement
+        if (len(self.losses >= 2) && (self.losses[-1] - self.losses[-2] < 0.1)):
+            end()
 
-            log("")
+        #Log training error milestones
+        if self.loss < 0.05:
+            log("Training error below 5%")
+        elif self.loss < 0.1:
+            log("Training error below 1%")
+        elif self.loss < 0.15:
+            log("Training error below 15%")
 
+        #Hard training stop
         if epoch = 2000:
-            self.model.stop_training = 1
+            end()
 
+    #Log function
     def log(criterion):
         finalStats = {
             "Final validation error":self.val_losses[-1],
@@ -72,8 +100,10 @@ class MonitorNN(keras.callbacks.Callback):
         }
         self.stoppingCriterionDictionary[criterion].append(finalStats)
 
+    #Stop function
     def end():
-        createExperimentsDocument()
+        self.model.stop_training = True
+        createExperimentsDocument(self.nnid, self.shape, self.inshape, self.outshape, self.dsid, self.val_loss, self.loss, self.stoppingCriterionDictionary)
 
 earlyStoppingLoss = keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=0.01, patience=0, verbose=0, mode='min', baseline=None, restore_best_weights=False)
 
