@@ -1,4 +1,4 @@
-from keras.models import Sequential
+n from keras.models import Sequential
 from keras.layers import Dense, Activation
 from keras.utils import to_categorical
 from db import createDatasetsDocument, createNeuralNetsDocument, createExperimentsDocument
@@ -91,7 +91,7 @@ class MonitorNN(keras.callbacks.Callback):
             self.log("Validation error increases for 15 consec epochs")
 
         #Hard stop for slow validation error improvement
-        if (len(self.losses) >= 2) and (self.losses[-2] - self.losses[-1] < 0.001):
+        if (len(self.losses) >= 5) and (self.losses[-2] - self.losses[-1] < 0.001):
             print('Ended (slow improvement)')
             self.end()
 
@@ -134,5 +134,3 @@ def test(nn, tdata, vdata, nnid, struct, inshape, outshape, dsid):
     monitor = MonitorNN(nnid, struct, inshape, outshape, dsid)
     nn.fit(x=tCoords, y=tLabels, batch_size=100, epochs=2000, verbose=1, callbacks=[monitor], validation_data=(vCoords, vLabels))
     print(monitor.stoppingCriterionDictionary)
-
-    # createExperimentsDocument(nnid, iter, inshpae, outshape, dsid, monitor.acc, monitor.val_loss, stoppingCriterionDictionary)
