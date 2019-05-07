@@ -1,4 +1,4 @@
-n from keras.models import Sequential
+from keras.models import Sequential
 from keras.layers import Dense, Activation
 from keras.utils import to_categorical
 from db import createDatasetsDocument, createNeuralNetsDocument, createExperimentsDocument
@@ -53,6 +53,7 @@ class MonitorNN(keras.callbacks.Callback):
         self.val_losses = []
         self.acc = []
         self.val_loss_count = 0
+        self.lowest_val_acc = float('inf')
         self.stoppingCriterionDictionary = {
             "Every 5 epochs":[],
             "Validation error increases for 5 consec epochs":[], #0
@@ -67,6 +68,7 @@ class MonitorNN(keras.callbacks.Callback):
         }
 
     #TODO: implement lowest validation error
+    # stop when training error is very low for a while
 
     def on_epoch_end(self, epoch, logs={}):
         self.losses.append(logs.get('loss'))
@@ -96,16 +98,22 @@ class MonitorNN(keras.callbacks.Callback):
             self.end()
 
         #Log training error milestones
-        if self.losses[-1] < 0.05:
+        if self.losses[-1] < 0.01:
+            self.log("Training error below 1%")
+        elif self.losses[-1] < 0.05:
             self.log("Training error below 5%")
         elif self.losses[-1] < 0.1:
             self.log("Training error below 1%")
         elif self.losses[-1] < 0.15:
             self.log("Training error below 15%")
 
+        if self.lowest_val_acc >= logs.get('acc'):
+            self.lowest_val_acc = logs.get('acc')
+
         #Hard training stop
         if epoch == 2000:
             print('Ended (2000 epochs complete)')
+            self.log("Lowest validation error")
             self.end()
 
 
