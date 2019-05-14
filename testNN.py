@@ -139,6 +139,11 @@ def test(nn, tdata, vdata, nnid, struct, inshape, outshape, dsid):
     statsAtLowestVError = []
     flatline = 0
 
+    #workaround for bug asssociated with validation_data argument
+    #TODO figure out why we can't train with validation_data
+    tCoords = np.concatenate(tCoords, vCoords)
+    tLabels = np.concatenate(tLabels, vLabels)
+
     monitor = MonitorNN(nnid, struct, inshape, outshape, dsid)
-    nn.fit(x=tCoords, y=tLabels, batch_size=100, epochs=2000, verbose=1, callbacks=[monitor], validation_data=(vCoords, vLabels))
+    nn.fit(x=tCoords, y=tLabels, batch_size=100, epochs=2000, verbose=1, callbacks=[monitor], validation_split=0.5)
     print(monitor.stoppingCriterionDictionary)
