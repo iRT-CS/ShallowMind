@@ -117,7 +117,7 @@ class MonitorNN(keras.callbacks.Callback):
             self.end()
 
 
-earlyStoppingLoss = keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=0.01, patience=0, verbose=0, mode='min', baseline=None, restore_best_weights=False)
+#earlyStoppingLoss = keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=0.01, patience=0, verbose=0, mode='min', baseline=None, restore_best_weights=False)
 
 
 # Continuously runs epochs on neural net with given data points until error is minimized
@@ -141,8 +141,8 @@ def test(nn, tdata, vdata, nnid, struct, inshape, outshape, dsid):
 
     #workaround for bug asssociated with validation_data argument
     #TODO figure out why we can't train with validation_data
-    tCoords = np.concatenate(tCoords, vCoords)
-    tLabels = np.concatenate(tLabels, vLabels)
+    tCoords = np.concatenate((tCoords, vCoords))
+    tLabels = np.concatenate((tLabels, vLabels))
 
     monitor = MonitorNN(nnid, struct, inshape, outshape, dsid)
     nn.fit(x=tCoords, y=tLabels, batch_size=100, epochs=2000, verbose=1, callbacks=[monitor], validation_split=0.5)
