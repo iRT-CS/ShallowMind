@@ -93,7 +93,7 @@ class MonitorNN(keras.callbacks.Callback):
             self.log("Validation error increases for 15 consec epochs")
 
         #Hard stop for slow validation error improvement
-        if (len(self.losses) >= 5) and (self.losses[-2] - self.losses[-1] < 0.001):
+        if (len(self.losses) >= 5) and (self.losses[-2] - self.losses[-1] < 0.00001):
             print('Ended (slow improvement)')
             self.end()
 
@@ -141,9 +141,9 @@ def test(nn, tdata, vdata, nnid, struct, inshape, outshape, dsid):
 
     #workaround for bug asssociated with validation_data argument
     #TODO figure out why we can't train with validation_data
-    tCoords = np.concatenate((tCoords, vCoords))
-    tLabels = np.concatenate((tLabels, vLabels))
+    # tCoords = np.concatenate((tCoords, vCoords))
+    # tLabels = np.concatenate((tLabels, vLabels))
 
     monitor = MonitorNN(nnid, struct, inshape, outshape, dsid)
     nn.fit(x=tCoords, y=tLabels, batch_size=100, epochs=2000, verbose=1, callbacks=[monitor], validation_split=0.5)
-    print(monitor.stoppingCriterionDictionary)
+    # print(monitor.stoppingCriterionDictionary)
