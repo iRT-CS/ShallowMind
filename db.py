@@ -14,9 +14,9 @@ outputShape,
 #links to Dataset collection
 datasetUniqueID,
 #training accuracy at each epoch
-trainingAccuracyOverTime,
+trainingLossOverTime,
 #validation accuracy at each epoch
-validationAccuracyOverTime,
+validationLossOverTime,
 #dictionary whose keys are stopping criterion
 stoppingCriterionDictionary
 #i.e. stoppingCriterionDictionary["Stop when the validation error increases for 5 consecutive epochs"]
