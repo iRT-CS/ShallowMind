@@ -27,7 +27,7 @@ stopC = {
 
 class MonitorNN(keras.callbacks.Callback):
 
-    #Log function
+    #log function
     def log(self, criterion):
         finalStats = {
             "Final validation error":self.val_losses[-1],
@@ -39,7 +39,7 @@ class MonitorNN(keras.callbacks.Callback):
     #Stop function
     def end(self):
         self.model.stop_training = True
-        createExperimentsDocument(self.nnid, self.struct, self.inshape, self.outshape, self.dsid, self.losses, self.val_losses, self.stoppingCriterionDictionary)
+        # createExperimentsDocument(self.nnid, self.struct, self.inshape, self.outshape, self.dsid, self.losses, self.val_losses, self.stoppingCriterionDictionary)
 
     def __init__(self, nnid, struct, inshape, outshape, dsid):
         self.nnid = nnid
@@ -135,15 +135,27 @@ def test(nn, tdata, vdata, nnid, struct, inshape, outshape, dsid):
     vCoords = vdata[:, [0,1]]
     vLabels = tdata[:, [2]]
 
+    # flatten = lambda l: [for sublist in l sublist[1]]
+    # flatten2 = lambda l: [for sublist in l sublist[2]]
+
+    print(vCoords)
+    print(vLabels)
+
     lowestVError = 1
     statsAtLowestVError = []
     flatline = 0
 
     #workaround for bug asssociated with validation_data argument
     #TODO figure out why we can't train with validation_data
-    # tCoords = np.concatenate((tCoords, vCoords))
-    # tLabels = np.concatenate((tLabels, vLabels))
+    tCoords = np.concatenate((tCoords, vCoords))
+    tLabels = np.concatenate((tLabels, vLabels))
+
+    coords = np.concatenate((tCoords.T, tLabels.T), axis = 0)
+    coords = coords.T
+    print(coords.shape)
+
+    plotData(coords)
 
     monitor = MonitorNN(nnid, struct, inshape, outshape, dsid)
-    nn.fit(x=tCoords, y=tLabels, batch_size=100, epochs=2000, verbose=1, callbacks=[monitor], validation_split=0.5)
+    nn.fit(x=tCoords, y=tLabels, batch_size=100, epochs=2000, verbose=1, callbacks=[monitor], validation_split=.5) #validation_data=(flatten, flatten2))
     # print(monitor.stoppingCriterionDictionary)

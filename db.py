@@ -30,8 +30,8 @@ stoppingCriterionDictionary
     "inputShape": inputShape,
     "outputShape": outputShape,
     "datasetUniqueID": datasetUniqueID,
-    "trainingAccuracyOverTime": trainingAccuracyOverTime,
-    "validationAccuracyOverTime": validationAccuracyOverTime,
+    "trainingLossOverTime": trainingLossOverTime,
+    "validationLossOverTime": validationLossOverTime,
     "stoppingCriterionDictionary": stoppingCriterionDictionary
     }
     return collection.insert_one(document).inserted_id

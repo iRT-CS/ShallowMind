@@ -24,7 +24,7 @@ def test(nn, tdata, vdata):
     tError = []
     vError = []
     tAcc = []
-    vAcc = [];
+    vAcc = []
     epoch = 0
     lowestVError = 1
     statsAtLowestVError = []
