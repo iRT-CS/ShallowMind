@@ -120,6 +120,8 @@ coVec = [1,0]
 tdata = np.array( gb.getPoints(coVec, 1000, 0, 0, -10, 10, -10, 10) )
 vdata = np.array( gb.getPoints(coVec, 1000, 0, 0, -10, 10, -10, 10) )
 
+plotData(tdata)
+
 datasetID = createDatasetsDocument(coVec, [0, 0], [-100, 100, -100, 100], tdata.tolist(), vdata.tolist())
 
 MAX_NODES = 6
