@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 # Keras Callback Function
 # on_epoch_end: return training loss, validation loss
 
-# stopping criterion
+# Array of stopping criterion that is logged during training
 stopC = {
     "Every 5 epochs":[],
     "Validation error increases for 5 consec epochs":[], #0
@@ -25,6 +25,7 @@ stopC = {
     "Lowest validation error":[] #7
 }
 
+#A class that lies atop a neural net as it trains and calls functions at certain intervals
 class MonitorNN(keras.callbacks.Callback):
 
     #log function
@@ -41,6 +42,7 @@ class MonitorNN(keras.callbacks.Callback):
         self.model.stop_training = True
         # createExperimentsDocument(self.nnid, self.struct, self.inshape, self.outshape, self.dsid, self.losses, self.val_losses, self.stoppingCriterionDictionary)
 
+    #Variable initialization, called when neural net is created
     def __init__(self, nnid, struct, inshape, outshape, dsid):
         self.nnid = nnid
         self.struct = struct
@@ -48,12 +50,17 @@ class MonitorNN(keras.callbacks.Callback):
         self.outshape = outshape
         self.dsid = dsid
 
+    #Initialization function that creates a bunch of lists to contain logs at the beginning of training
     def on_train_begin(self, logs={}):
+        #Basic logs
         self.losses = []
         self.val_losses = []
         self.acc = []
+        #Counter for epochs where loss goes up
         self.val_loss_count = 0
+        #Logs the lowest validation accuracy
         self.lowest_val_acc = float('inf')
+        #Initializes the stopping criterion dictionary
         self.stoppingCriterionDictionary = {
             "Every 5 epochs":[],
             "Validation error increases for 5 consec epochs":[], #0
@@ -70,12 +77,14 @@ class MonitorNN(keras.callbacks.Callback):
     #TODO: implement lowest validation error
     # stop when training error is very low for a while
 
+    #Callback function that run at the end of every epoch
     def on_epoch_end(self, epoch, logs={}):
+        #Adding important values to lists in the class
         self.losses.append(logs.get('loss'))
         self.val_losses.append(logs.get('val_loss'))
         self.acc.append(logs.get('acc'))
 
-        #Epoch-wise log
+        #Less frequent logger
         if epoch % 5 == 0:
             self.log("Every 5 epochs")
 
@@ -85,6 +94,7 @@ class MonitorNN(keras.callbacks.Callback):
         else:
             self.val_loss_count = 0
 
+        #Logs if the loss has gone up for many epochs
         if self.val_loss_count == 5:
             self.log("Validation error increases for 5 consec epochs")
         if self.val_loss_count == 10:
