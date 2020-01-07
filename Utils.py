@@ -2,6 +2,8 @@ import math
 from db import createDatasetsDocument
 from GaussianBoundary import getPoints
 import matplotlib.pyplot as plt
+
+# to generate all possible combinations of neural net structures.
 def iterate(hiddenLayers,maxLayers,maxNodes):
      curLayer = 0
      while(curLayer<len(hiddenLayers)):
@@ -15,7 +17,7 @@ def iterate(hiddenLayers,maxLayers,maxNodes):
           return -1
      else:
           hiddenLayers = [1]*(curLayer+1)
-          print("[1]*(curLayer+1) = " + str([1]*(curLayer+1)))
+          # print("[1]*(curLayer+1) = " + str([1]*(curLayer+1)))
           return hiddenLayers
      '''
     #get digits of the function

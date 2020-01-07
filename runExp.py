@@ -19,10 +19,10 @@ import matplotlib.pyplot as plt
 
 # later - explicitly create 10 datasets, for each dataset, create & test all neural nets
 
-coVec = [1,0]
+coVec = [0.125, 0, -4]
 
-tdata = np.array(gb.getPoints(coVec, 2000, 0, 0, -10, 10, -10, 10))
-vdata = np.array(gb.getPoints(coVec, 2000, 0, 0, -10, 10, -10, 10))
+tdata = np.array(gb.getPoints(coVec, 2000, 0.05, 0.2, -10, 10, -10, 10))
+vdata = np.array(gb.getPoints(coVec, 2000, 0.05, 0.2, -10, 10, -10, 10))
 
 # plotting the normal dataset, no noise
 # plot the dataset, with noise
@@ -46,7 +46,7 @@ NODES_OUTLAYER = 1
 
 # datasetID = createDatasetsDocument(coVec, [3, 7], [-100, 100, -100, 100], tdata.tolist(), vdata.tolist()) # in the first list is peak & sigma, second list is the bounds for the data generation piece
 
-iter = [1]
+iter = []
 
 print("iter = " + str(iter))
 actualNet = make(NODES_INLAYER, iter, NODES_OUTLAYER, IN_SHAPE, 'tanh')
@@ -57,7 +57,7 @@ test(actualNet, tdata, vdata, "12829", iter, IN_SHAPE, OUT_SHAPE, "12829")
 # createExperimentsDocument(nnID, iter, IN_SHAPE, OUT_SHAPE, datasetID, tAcc, vAcc, stoppingCriterionDictionary)
 iter = iterate(iter,MAX_LAYERS,MAX_NODES)
 
-"""while(iter != -1):
+while(iter != -1):
     print("iter = " + str(iter))
     actualNet = make(NODES_INLAYER, iter, NODES_OUTLAYER, IN_SHAPE, 'tanh')
     weights = list(map(np.ndarray.tolist, actualNet.get_weights()))
@@ -65,4 +65,4 @@ iter = iterate(iter,MAX_LAYERS,MAX_NODES)
 
     test(actualNet, tdata, vdata, nnID, iter, IN_SHAPE, OUT_SHAPE, datasetID)
     # createExperimentsDocument(nnID, iter, IN_SHAPE, OUT_SHAPE, datasetID, tAcc, vAcc, stoppingCriterionDictionary)
-    iter = iterate(iter,MAX_LAYERS,MAX_NODES)"""
+    iter = iterate(iter,MAX_LAYERS,MAX_NODES)
