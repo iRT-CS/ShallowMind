@@ -46,7 +46,7 @@ NODES_OUTLAYER = 1
 
 datasetID = createDatasetsDocument(coVec, [3, 7], [-100, 100, -100, 100], tdata.tolist(), vdata.tolist()) # in the first list is peak & sigma, second list is the bounds for the data generation piece
 
-iter = []
+iter = [1]
 
 print("iter = " + str(iter))
 actualNet = make(NODES_INLAYER, iter, NODES_OUTLAYER, IN_SHAPE, 'tanh')
