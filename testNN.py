@@ -148,24 +148,29 @@ def test(nn, tdata, vdata, nnid, struct, inshape, outshape, dsid):
     # flatten = lambda l: [for sublist in l sublist[1]]
     # flatten2 = lambda l: [for sublist in l sublist[2]]
 
-    print(vCoords)
-    print(vLabels)
+    # print(vCoords)
+    # print(vLabels)
 
-    lowestVError = 1
-    statsAtLowestVError = []
-    flatline = 0
+    # lowestVError = 1
+    # statsAtLowestVError = []
+    # flatline = 0
 
     #workaround for bug asssociated with validation_data argument
     #TODO figure out why we can't train with validation_data
-    tCoords = np.concatenate((tCoords, vCoords))
-    tLabels = np.concatenate((tLabels, vLabels))
+    #tCoords = np.concatenate((tCoords, vCoords))
+    #tLabels = np.concatenate((tLabels, vLabels))
 
-    coords = np.concatenate((tCoords.T, tLabels.T), axis = 0)
-    coords = coords.T
-    print(coords.shape)
+    # WE DON'T USE VALIDATION DATA - workaround. We just split the training data into 2
 
-    plotData(coords)
+    # print(tCoords)
+
+    # coords = np.concatenate((tCoords.T, tLabels.T), axis = 0)
+    # coords = coords.T
+    # print(coords.shape)
+
+    # plotData(coords)
 
     monitor = MonitorNN(nnid, struct, inshape, outshape, dsid)
-    nn.fit(x=tCoords, y=tLabels, batch_size=100, epochs=2000, verbose=1, callbacks=[monitor], validation_split=.5) #validation_data=(flatten, flatten2))
+    nn.fit(x=tCoords, y=tLabels, batch_size=100, epochs=2000, verbose=1, callbacks=[monitor], validation_split=.5) #, validation_data = ) #validation_data=(flatten, flatten2))
     # print(monitor.stoppingCriterionDictionary)
+    return(monitor.losses, monitor.val_losses, monitor.stoppingCriterionDictionary)

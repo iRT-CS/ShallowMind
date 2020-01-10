@@ -44,25 +44,24 @@ OUT_SHAPE = (1,)
 NODES_INLAYER = 2
 NODES_OUTLAYER = 1
 
-# datasetID = createDatasetsDocument(coVec, [3, 7], [-100, 100, -100, 100], tdata.tolist(), vdata.tolist()) # in the first list is peak & sigma, second list is the bounds for the data generation piece
+datasetID = createDatasetsDocument(coVec, [3, 7], [-100, 100, -100, 100], tdata.tolist(), vdata.tolist()) # in the first list is peak & sigma, second list is the bounds for the data generation piece
 
 iter = []
 
-print("iter = " + str(iter))
-actualNet = make(NODES_INLAYER, iter, NODES_OUTLAYER, IN_SHAPE, 'tanh')
-weights = list(map(np.ndarray.tolist, actualNet.get_weights()))
+# print("iter = " + str(iter))
+# actualNet = make(NODES_INLAYER, iter, NODES_OUTLAYER, IN_SHAPE, 'tanh')
+# weights = list(map(np.ndarray.tolist, actualNet.get_weights()))
 # nnID = createNeuralNetsDocument(iter, IN_SHAPE, OUT_SHAPE, weights, 'glorot', 'sigmoid')
 
-test(actualNet, tdata, vdata, "12829", iter, IN_SHAPE, OUT_SHAPE, "12829")
+# test(actualNet, tdata, vdata, "12829", iter, IN_SHAPE, OUT_SHAPE, "12829")
 # createExperimentsDocument(nnID, iter, IN_SHAPE, OUT_SHAPE, datasetID, tAcc, vAcc, stoppingCriterionDictionary)
-iter = iterate(iter,MAX_LAYERS,MAX_NODES)
+# iter = iterate(iter,MAX_LAYERS,MAX_NODES)
 
 while(iter != -1):
     print("iter = " + str(iter))
     actualNet = make(NODES_INLAYER, iter, NODES_OUTLAYER, IN_SHAPE, 'tanh')
     weights = list(map(np.ndarray.tolist, actualNet.get_weights()))
-    # nnID = createNeuralNetsDocument(iter, IN_SHAPE, OUT_SHAPE, weights, 'glorot', 'sigmoid')
-
-    test(actualNet, tdata, vdata, nnID, iter, IN_SHAPE, OUT_SHAPE, datasetID)
-    # createExperimentsDocument(nnID, iter, IN_SHAPE, OUT_SHAPE, datasetID, tAcc, vAcc, stoppingCriterionDictionary)
+    nnID = createNeuralNetsDocument(iter, IN_SHAPE, OUT_SHAPE, weights, 'glorot', 'sigmoid')
+    tAcc, vAcc, stoppingCriterionDictionary = test(actualNet, tdata, vdata, nnID, iter, IN_SHAPE, OUT_SHAPE, datasetID)
+    createExperimentsDocument(nnID, iter, IN_SHAPE, OUT_SHAPE, datasetID, tAcc, vAcc, stoppingCriterionDictionary)
     iter = iterate(iter,MAX_LAYERS,MAX_NODES)
