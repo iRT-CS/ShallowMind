@@ -21,8 +21,10 @@ import matplotlib.pyplot as plt
 
 coVec = [0.125, 0, -4]
 
-tdata = np.array(gb.getPoints(coVec, 2000, 0.05, 0.2, -10, 10, -10, 10))
-vdata = np.array(gb.getPoints(coVec, 2000, 0.05, 0.2, -10, 10, -10, 10))
+# peak, sigma
+noiseDist = [0.05, 0.2]
+tdata = np.array(gb.getPoints(coVec, 2000, noiseDist[0], noiseDist[1], -10, 10, -10, 10))
+vdata = np.array(gb.getPoints(coVec, 2000, noiseDist[0], noiseDist[1], -10, 10, -10, 10))
 
 # plotting the normal dataset, no noise
 # plot the dataset, with noise
@@ -44,7 +46,7 @@ OUT_SHAPE = (1,)
 NODES_INLAYER = 2
 NODES_OUTLAYER = 1
 
-datasetID = createDatasetsDocument(coVec, [3, 7], [-100, 100, -100, 100], tdata.tolist(), vdata.tolist()) # in the first list is peak & sigma, second list is the bounds for the data generation piece
+datasetID = createDatasetsDocument(coVec, noiseDist, [-10, 10, -10, 10], tdata.tolist(), vdata.tolist()) # in the first list is peak & sigma, second list is the bounds for the data generation piece
 
 iter = [1]
 
