@@ -55,6 +55,7 @@ def gauss(distance, sigma):
     numerator = math.exp(-pow(distance,2)/sigmaComponent)
     return numerator/denominator
 
+# [1,1] y = x + 0, y = x + 1
 def getPoints(coVec,numPoints,sigma,peak,xMin,xMax,yMin,yMax):
     x = np.random.rand(numPoints)
     xRange = xMax - xMin
