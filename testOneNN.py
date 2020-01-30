@@ -15,14 +15,14 @@ import matplotlib.pyplot as plt
 # tdata = training data
 # vdata = validation data
 
-# coVec = [1,0]
+coVec = [1,0]
 
 # later - explicitly create 10 datasets, for each dataset, create & test all neural nets
 
-coVec = [0.125, 0, -4] # 0.125x^2 + 0x -4
+# coVec = [0.125, 0, -4] # 0.125x^2 + 0x -4
 
 # peak - max probability of miscategorizing a point, sigma - band of miscategorized points
-noiseDist = [0.05, 0.2]
+noiseDist = [0, 0]
 tdata = np.array(gb.getPoints(coVec, 2000, noiseDist[0], noiseDist[1], -10, 10, -10, 10))
 vdata = np.array(gb.getPoints(coVec, 2000, noiseDist[0], noiseDist[1], -10, 10, -10, 10))
 
@@ -46,15 +46,15 @@ OUT_SHAPE = (1,)
 NODES_INLAYER = 2
 NODES_OUTLAYER = 1
 
-datasetID = createDatasetsDocument(coVec, noiseDist, [-10, 10, -10, 10], tdata.tolist(), vdata.tolist()) # in the first list is peak & sigma, second list is the bounds for the data generation piece
+# datasetID = createDatasetsDocument(coVec, noiseDist, [-10, 10, -10, 10], tdata.tolist(), vdata.tolist()) # in the first list is peak & sigma, second list is the bounds for the data generation piece
 
 iter = [1]
 
 print("iter = " + str(iter))
 actualNet = make(NODES_INLAYER, iter, NODES_OUTLAYER, IN_SHAPE, 'tanh')
 weights = list(map(np.ndarray.tolist, actualNet.get_weights()))
-nnID = createNeuralNetsDocument(iter, IN_SHAPE, OUT_SHAPE, weights, 'glorot', 'sigmoid')
+# nnID = createNeuralNetsDocument(iter, IN_SHAPE, OUT_SHAPE, weights, 'glorot', 'sigmoid')
 
 tAcc, vAcc, stoppingCriterionDictionary = test(actualNet, tdata, vdata, nnID, iter, IN_SHAPE, OUT_SHAPE, datasetID)
-createExperimentsDocument(nnID, iter, IN_SHAPE, OUT_SHAPE, datasetID, tAcc, vAcc, stoppingCriterionDictionary)
+# createExperimentsDocument(nnID, iter, IN_SHAPE, OUT_SHAPE, datasetID, tAcc, vAcc, stoppingCriterionDictionary)
 iter = iterate(iter,MAX_LAYERS,MAX_NODES)

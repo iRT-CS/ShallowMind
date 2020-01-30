@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 
 # later - explicitly create 10 datasets, for each dataset, create & test all neural nets
 
-coVec = [0.125, 0, -4]
+coVec = [1,0]
 
 #peak, sigma
 # peak - max probability of miscategorizing a point, sigma - band of miscategorized points
@@ -27,7 +27,7 @@ coVec = [0.125, 0, -4]
 # raise the peak - concentration of miscategorized points goes up
 # noiseDist = [0.05, 0.2]
 # #peak, sigma
-noiseDist = [0.05, 0.2]
+noiseDist = [0,0]
 # generate double the points in tdata  (validation split is later), vdata is just a placeholder
 tdata = np.array(gb.getPoints(coVec, 2000, noiseDist[0], noiseDist[1], -10, 10, -10, 10))
 vdata = np.array(gb.getPoints(coVec, 2000, noiseDist[0], noiseDist[1], -10, 10, -10, 10))
@@ -55,7 +55,7 @@ NODES_OUTLAYER = 1
 #vdata is actually never used... fix later with the training split somehow
 datasetID = createDatasetsDocument(coVec, noiseDist, [-10, 10, -10, 10], tdata.tolist(), vdata.tolist()) # in the first list is peak & sigma, second list is the bounds for the data generation piece
 
-iter = [4,2,4,6]
+iter = [1]
 
 # print("iter = " + str(iter))
 # actualNet = make(NODES_INLAYER, iter, NODES_OUTLAYER, IN_SHAPE, 'tanh')
