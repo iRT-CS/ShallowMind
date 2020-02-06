@@ -55,7 +55,7 @@ NODES_OUTLAYER = 1
 #vdata is actually never used... fix later with the training split somehow
 datasetID = createDatasetsDocument(coVec, noiseDist, [-10, 10, -10, 10], tdata.tolist(), vdata.tolist()) # in the first list is peak & sigma, second list is the bounds for the data generation piece
 
-iter = [1]
+iter = [2,1,3,6]
 
 # print("iter = " + str(iter))
 # actualNet = make(NODES_INLAYER, iter, NODES_OUTLAYER, IN_SHAPE, 'tanh')
