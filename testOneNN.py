@@ -25,36 +25,5 @@ coVec = [1,0]
 noiseDist = [0, 0]
 tdata = np.array(gb.getPoints(coVec, 2000, noiseDist[0], noiseDist[1], -10, 10, -10, 10))
 vdata = np.array(gb.getPoints(coVec, 2000, noiseDist[0], noiseDist[1], -10, 10, -10, 10))
-
-# plotting the normal dataset, no noise
-# plot the dataset, with noise
-# use a parabola, not too wide
-
-# print(tdata)
-
-plotData(tdata)
-# plotData(vdata)
-
-# try all at once for 500 epochs
-
-MAX_NODES = 6
-MAX_LAYERS = 4
-
-IN_SHAPE = (2,)
-OUT_SHAPE = (1,)
-
-NODES_INLAYER = 2
-NODES_OUTLAYER = 1
-
-# datasetID = createDatasetsDocument(coVec, noiseDist, [-10, 10, -10, 10], tdata.tolist(), vdata.tolist()) # in the first list is peak & sigma, second list is the bounds for the data generation piece
-
-iter = [1]
-
-print("iter = " + str(iter))
-actualNet = make(NODES_INLAYER, iter, NODES_OUTLAYER, IN_SHAPE, 'tanh')
-weights = list(map(np.ndarray.tolist, actualNet.get_weights()))
-# nnID = createNeuralNetsDocument(iter, IN_SHAPE, OUT_SHAPE, weights, 'glorot', 'sigmoid')
-
-tAcc, vAcc, stoppingCriterionDictionary = test(actualNet, tdata, vdata, nnID, iter, IN_SHAPE, OUT_SHAPE, datasetID)
-# createExperimentsDocument(nnID, iter, IN_SHAPE, OUT_SHAPE, datasetID, tAcc, vAcc, stoppingCriterionDictionary)
-iter = iterate(iter,MAX_LAYERS,MAX_NODES)
+datasetID = createDatasetsDocument(coVec, noiseDist, [-10, 10, -10, 10], tdata, vdata)
+# in the first list is peak & sigma, second list is the bounds for the data generation piece
