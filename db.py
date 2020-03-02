@@ -78,6 +78,10 @@ dataRange,
 trainingValues,
 #1000 different values used to test the neural nets
 testValues
+
+#NOTE: The data points will be stored in an array of shape (3,n) where n is the number of points
+#In this array, index 0 contains X values, 1 contains Y values, and 2 contains classifications
+
 ):
     collection = db.Datasets
     document = {
