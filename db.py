@@ -84,7 +84,7 @@ testValues
     "polynomial": polynomial,
     "noiseDistribution": noiseDistribution,
     "range": dataRange,
-    "trainingValues":trainingValues,
-    "testValues": testValues
+    "trainingValues":trainingValues.T,
+    "testValues": testValues.T
     }
     return collection.insert_one(document).inserted_id
