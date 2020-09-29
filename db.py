@@ -1,4 +1,6 @@
 from pymongo import MongoClient
+import numpy
+
 client = MongoClient('shallowmind.pingry.org', 27017)
 db = client["ShallowMind"]
 
@@ -88,7 +90,7 @@ testValues
     "polynomial": polynomial,
     "noiseDistribution": noiseDistribution,
     "range": dataRange,
-    "trainingValues":trainingValues.T.tolist(),
-    "testValues": testValues.T.tolist()
+    "trainingValues": numpy.transpose(trainingValues).tolist(),
+    "testValues": numpy.transpose(testValues).tolist()
     }
     return collection.insert_one(document).inserted_id
