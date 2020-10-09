@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 
 # later - explicitly create 10 datasets, for each dataset, create & test all neural nets
 
-coVec = [1,0]
+coVec = [.25, 0, -5]
 
 #peak, sigma
 # peak - max probability of miscategorizing a point, sigma - band of miscategorized points
@@ -27,7 +27,7 @@ coVec = [1,0]
 # raise the peak - concentration of miscategorized points goes up
 # noiseDist = [0.05, 0.2]
 # #peak, sigma
-noiseDist = [0,0]
+noiseDist = [.075, .2]
 # generate double the points in tdata  (validation split is later), vdata is just a placeholder
 tdata = np.array(gb.getPoints(coVec, 2000, noiseDist[0], noiseDist[1], -10, 10, -10, 10))
 vdata = np.array(gb.getPoints(coVec, 2000, noiseDist[0], noiseDist[1], -10, 10, -10, 10))
