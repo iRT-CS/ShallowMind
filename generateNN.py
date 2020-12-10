@@ -29,7 +29,7 @@ def make(input, vec, out, shape, act):
     net.add(Dense(input, input_shape = shape, activation = act))
     for i in vec:
         net.add(Dense(i, activation = act))
-    net.add(Dense(out, activation = 'sigmoid'))
+    net.add(Dense(out, activation = 'sigmoid')) # why does it change from tanh to sigmoid here
     net.compile(loss='mse',
               optimizer='sgd',
               metrics=['acc'])
