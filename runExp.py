@@ -30,7 +30,7 @@ coVec = [.25, 0, -5]
 noiseDist = [.075, .2]
 # generate double the points in tdata  (validation split is later), vdata is just a placeholder
 tdata = np.array(gb.getPoints(coVec, 2000, noiseDist[1], noiseDist[0], -10, 10, -10, 10))
-vdata = np.array(gb.getPoints(coVec, 2000, noiseDist[1], noiseDist[0], -10, 10, -10, 10))
+vdata = np.array(gb.getPoints(coVec, 2000, noiseDist[1], noiseDist[0], -10, 10, -10, 10)) # vdata is never actually used, just a bug fix. tdata is split in two
 
 # plotting the normal dataset, no noise
 # plot the dataset, with noise
