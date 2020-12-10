@@ -29,8 +29,8 @@ coVec = [.25, 0, -5]
 # #peak, sigma
 noiseDist = [.075, .2]
 # generate double the points in tdata  (validation split is later), vdata is just a placeholder
-tdata = np.array(gb.getPoints(coVec, 2000, noiseDist[0], noiseDist[1], -10, 10, -10, 10))
-vdata = np.array(gb.getPoints(coVec, 2000, noiseDist[0], noiseDist[1], -10, 10, -10, 10))
+tdata = np.array(gb.getPoints(coVec, 2000, noiseDist[1], noiseDist[0], -10, 10, -10, 10))
+vdata = np.array(gb.getPoints(coVec, 2000, noiseDist[1], noiseDist[0], -10, 10, -10, 10))
 
 # plotting the normal dataset, no noise
 # plot the dataset, with noise
