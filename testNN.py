@@ -22,7 +22,7 @@ stopC = {
     "Training error below 15%":[], #4
     "Training error below 10%":[], #5
     "Training error below 5%":[], #6
-    "Lowest validation error":[] #7
+    # "Lowest validation error":[] #7
 }
 
 #A class that lies atop a neural net as it trains and calls functions at certain intervals
@@ -102,10 +102,10 @@ class MonitorNN(keras.callbacks.Callback):
         if self.val_loss_count == 15:
             self.log("Validation error increases for 15 consec epochs")
 
-        #Hard stop for slow validation error improvement
-        if (len(self.losses) >= 5) and (self.losses[-2] - self.losses[-1] < 0.00001):
-            print('Ended (slow improvement)')
-            self.end()
+        # Hard stop for slow validation error improvement
+        # if (len(self.losses) >= 5) and (self.losses[-2] - self.losses[-1] < 0.00001):
+            # print('Ended (slow improvement)')
+            # self.end()
 
         #Log training error milestones
         if self.losses[-1] < 0.01:
@@ -120,10 +120,10 @@ class MonitorNN(keras.callbacks.Callback):
         if self.lowest_val_acc >= logs.get('acc'):
             self.lowest_val_acc = logs.get('acc')
 
-        #Hard training stop
-        if epoch == 2000:
-            print('Ended (2000 epochs complete)')
-            self.log("Lowest validation error")
+        # Hard training stop (for averaging)
+        if epoch == 900:
+            print('Ended (900 epochs complete)')
+            # self.log("Lowest validation error")
             self.end()
 
 
