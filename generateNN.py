@@ -1,3 +1,8 @@
+seedNum = 1
+from numpy.random import seed
+seed(seedNum)
+from tensorflow import set_random_seed
+set_random_seed(seedNum)
 from keras.models import Sequential
 from keras.layers import Dense, Activation
 import numpy as np
