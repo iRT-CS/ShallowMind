@@ -21,6 +21,9 @@ import matplotlib.pyplot as plt
 
 coVec = [.25, 0, -5]
 
+# the seed to generate neural networks with - a number that serves as identifier for the experiment (can be used to reproduce results)
+seedNum = 1
+
 #peak, sigma
 # peak - max probability of miscategorizing a point, sigma - band of miscategorized points
 # raise the sigma - noise points can get farther and farther away from the boundary line
