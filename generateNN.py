@@ -1,4 +1,4 @@
-seedNum = 1
+from runExp import seedNum
 from numpy.random import seed
 seed(seedNum)
 from tensorflow import set_random_seed
