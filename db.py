@@ -1,5 +1,6 @@
 from pymongo import MongoClient
 import numpy
+from runExp import seedNum
 
 client = MongoClient('shallowmind.pingry.org', 27017)
 db = client["ShallowMind"]
@@ -24,8 +25,6 @@ stoppingCriterionDictionary,
 #i.e. stoppingCriterionDictionary["Stop when the validation error increases for 5 consecutive epochs"]
 #the value will be another dictionary which will have three keys
 #"Final validation error","Final training error", and "Final weights"
-seedNum
-# The seed of the neural network generation, to name the collection
 ):
     collectionName = "Experiments" + str(seedNum)
     collection = db[collectionName]
@@ -61,7 +60,8 @@ activationFunction
         print( "ERROR FOUND")
     if (neuralNetHiddenStructure == [1]):
         print( "CORRECT THING HAPPENED")
-    collection = db.NeuralNets
+    collectionName = "NeuralNets" + str(seedNum)
+    collection = db[collectionName]
     document = {
     "neuralNetHiddenStructure": neuralNetHiddenStructure,
     "inputShape": inputShape,
@@ -88,7 +88,8 @@ testValues
 #In this array, index 0 contains X values, 1 contains Y values, and 2 contains classifications
 
 ):
-    collection = db.Datasets
+    collectionName = "Datasets" + str(seedNum)
+    collection = db[collectionName]
     document = {
     "polynomial": polynomial,
     "noiseDistribution": noiseDistribution,
