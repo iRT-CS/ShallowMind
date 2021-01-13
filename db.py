@@ -20,12 +20,15 @@ trainingLossOverTime,
 #validation accuracy at each epoch
 validationLossOverTime,
 #dictionary whose keys are stopping criterion
-stoppingCriterionDictionary
+stoppingCriterionDictionary,
 #i.e. stoppingCriterionDictionary["Stop when the validation error increases for 5 consecutive epochs"]
 #the value will be another dictionary which will have three keys
 #"Final validation error","Final training error", and "Final weights"
+seedNum
+# The seed of the neural network generation, to name the collection
 ):
-    collection = db.Experiments
+    collectionName = "Experiments" + str(seedNum)
+    collection = db[collectionName]
     document = {
     "neuralNetUniqueID": neuralNetUniqueID,
     "neuralNetHiddenStructure": neuralNetHiddenStructure,
