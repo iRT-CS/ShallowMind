@@ -1,15 +1,20 @@
 import numpy as np
+from numpy.random import seed
 from scipy.optimize import fmin_cobyla
 import math
 import random
 from distanceToCurve import distanceToCurve
+import seed
 #import timeit
 
+# seed for reproduceable datasets
+seedNum = seed.getSeed()
 
 #Vector function
 def genFunctionUniform(degree = 2,minimum = -7,maximum = 7):
     coefficients = []
     for i in range(degree+1):
+        random.seed(seedNum)
         coefficient = random.randrange(minimum,maximum)
         coefficients.insert(0,coefficient)
     return coefficients
@@ -57,9 +62,11 @@ def gauss(distance, sigma):
 
 # [1,1] y = x + 0, y = x + 1
 def getPoints(coVec,numPoints,sigma,peak,xMin,xMax,yMin,yMax):
+    seed(seedNum)
     x = np.random.rand(numPoints)
     xRange = xMax - xMin
     x = list(map(lambda v: (v*xRange)+xMin,x))
+    seed(seedNum)
     y = np.random.rand(numPoints)
     yRange = yMax - yMin
     y = list(map(lambda v: (v*yRange)+yMin,y))
@@ -67,6 +74,7 @@ def getPoints(coVec,numPoints,sigma,peak,xMin,xMax,yMin,yMax):
     distances = list(map(lambda m,n: distanceToCurve(coVec,m,n),x,y))
     distances = list(map(lambda x:peak*x,distances))
     gaussian = list(map(lambda d: gauss(d,sigma),distances))
+    seed(seedNum)
     flip = list(map(lambda g: (np.random.uniform()<g),gaussian))
     cleanVals = list(map(lambda d,b: (d>b),y,boundaryPoints))
     dirtyVals = list(map(lambda v,f: v^f, cleanVals,flip))
