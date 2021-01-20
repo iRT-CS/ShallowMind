@@ -8,7 +8,7 @@ import keras
 from testNN import test
 from Utils import iterate,plotData
 from generateNN import make
-from seed import getSeed
+from seeding import getSeed
 import matplotlib.pyplot as plt
 
 # Continuously runs epochs on neural net with given data points until error is minimized
