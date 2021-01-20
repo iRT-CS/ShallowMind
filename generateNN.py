@@ -1,4 +1,4 @@
-from seed import getSeed
+from seeding import getSeed
 seedNum = getSeed()
 from numpy.random import seed
 seed(seedNum)
