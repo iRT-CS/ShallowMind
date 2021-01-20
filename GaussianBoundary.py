@@ -4,11 +4,11 @@ from scipy.optimize import fmin_cobyla
 import math
 import random
 from distanceToCurve import distanceToCurve
-import seed
+import Seeding
 #import timeit
 
 # seed for reproduceable datasets
-seedNum = seed.getSeed()
+seedNum = Seeding.getSeed()
 
 #Vector function
 def genFunctionUniform(degree = 2,minimum = -7,maximum = 7):
