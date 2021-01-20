@@ -8,6 +8,7 @@ import keras
 from testNN import test
 from Utils import iterate,plotData
 from generateNN import make
+from seed import getSeed
 import matplotlib.pyplot as plt
 
 # Continuously runs epochs on neural net with given data points until error is minimized
@@ -22,7 +23,7 @@ import matplotlib.pyplot as plt
 coVec = [.25, 0, -5]
 
 # the seed to generate neural networks with - a number that serves as identifier for the experiment (can be used to reproduce results)
-seedNum = 1
+seedNum = getSeed()
 
 #peak, sigma
 # peak - max probability of miscategorizing a point, sigma - band of miscategorized points
