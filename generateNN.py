@@ -1,4 +1,5 @@
-from runExp import seedNum
+from seed import getSeed
+seedNum = getSeed()
 from numpy.random import seed
 seed(seedNum)
 from tensorflow import set_random_seed
@@ -7,6 +8,7 @@ from keras.models import Sequential
 from keras.layers import Dense, Activation
 import numpy as np
 import keras
+
 
 '''
 Testing Procedure:
