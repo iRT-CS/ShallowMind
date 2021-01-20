@@ -1,9 +1,10 @@
 from pymongo import MongoClient
 import numpy
-from runExp import seedNum
+from seed import getSeed
 
 client = MongoClient('shallowmind.pingry.org', 27017)
 db = client["ShallowMind"]
+seedNum = getSeed()
 
 def createExperimentsDocument(
 #links to NeuralNets collection
