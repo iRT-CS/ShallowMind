@@ -74,8 +74,6 @@ iter = [1]
 
 EXPERIMENT_COUNT = 10
 for experimentNum in range(EXPERIMENT_COUNT):
-    setSeed(getSeed() + 1)
-
     while(iter != -1):
         print("iter = " + str(iter))
         actualNet = make(NODES_INLAYER, iter, NODES_OUTLAYER, IN_SHAPE, 'tanh')
@@ -84,3 +82,5 @@ for experimentNum in range(EXPERIMENT_COUNT):
         tAcc, vAcc, stoppingCriterionDictionary = test(actualNet, tdata, vdata, nnID, iter, IN_SHAPE, OUT_SHAPE, datasetID)
         createExperimentsDocument(nnID, iter, IN_SHAPE, OUT_SHAPE, datasetID, tAcc, vAcc, stoppingCriterionDictionary)
         iter = iterate(iter,MAX_LAYERS,MAX_NODES)
+
+    setSeed(getSeed() + 1)
