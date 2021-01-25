@@ -2,3 +2,7 @@
 seed = 1
 def getSeed():
   return seed
+
+def setSeed(newSeed):
+  seed = newSeed
+   
