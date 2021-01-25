@@ -66,7 +66,7 @@ def getPoints(coVec,numPoints,sigma,peak,xMin,xMax,yMin,yMax):
     x = np.random.rand(numPoints)
     xRange = xMax - xMin
     x = list(map(lambda v: (v*xRange)+xMin,x))
-    seed(seedNum)
+    seed(seedNum*2)
     y = np.random.rand(numPoints)
     yRange = yMax - yMin
     y = list(map(lambda v: (v*yRange)+yMin,y))
