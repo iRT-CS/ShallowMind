@@ -27,7 +27,7 @@ stoppingCriterionDictionary,
 #the value will be another dictionary which will have three keys
 #"Final validation error","Final training error", and "Final weights"
 ):
-    collectionName = "Experiments" + str(seedNum)
+    collectionName = "Experiments|" + str(seedNum)
     collection = db[collectionName]
     document = {
     "neuralNetUniqueID": neuralNetUniqueID,
@@ -61,7 +61,7 @@ activationFunction
         print( "ERROR FOUND")
     if (neuralNetHiddenStructure == [1]):
         print( "CORRECT THING HAPPENED")
-    collectionName = "NeuralNets" + str(seedNum)
+    collectionName = "NeuralNets|" + str(seedNum)
     collection = db[collectionName]
     document = {
     "neuralNetHiddenStructure": neuralNetHiddenStructure,
@@ -89,7 +89,7 @@ testValues
 #In this array, index 0 contains X values, 1 contains Y values, and 2 contains classifications
 
 ):
-    collectionName = "Datasets" + str(seedNum)
+    collectionName = "Datasets|" + str(seedNum)
     collection = db[collectionName]
     document = {
     "polynomial": polynomial,
