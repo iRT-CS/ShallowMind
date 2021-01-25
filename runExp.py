@@ -23,7 +23,9 @@ import matplotlib.pyplot as plt
 coVec = [.25, 0, -5]
 
 # the seed to generate neural networks with - a number that serves as identifier for the experiment (can be used to reproduce results)
-seedNum = getSeed()
+# EDIT THE SEED HERE (default seed is 1)
+seedNum = 1
+setSeed(seedNum)
 
 #peak, sigma
 # peak - max probability of miscategorizing a point, sigma - band of miscategorized points
