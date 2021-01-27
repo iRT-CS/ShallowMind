@@ -79,7 +79,7 @@ while(iter != -1):
     stoppingCriterionDictionary = {}
     for experimentNum in range(REPEAT_EXPERIMENTS):
         actualNet = make(NODES_INLAYER, iter, NODES_OUTLAYER, IN_SHAPE, 'tanh', seedNum + (experimentNum**2))
-        weights = list(map(np.ndarray.tolist, actualNet.get_weights()))
+        # weights = list(map(np.ndarray.tolist, actualNet.get_weights()))
         nnID = createNeuralNetsDocument(iter, IN_SHAPE, OUT_SHAPE, weights, 'glorot', 'sigmoid')
         tAccCurrent, vAccCurrent, stoppingCriterionDictionary = test(actualNet, tdata, vdata, nnID, iter, IN_SHAPE, OUT_SHAPE, datasetID)
         tAcc = np.add(tAcc, tAccCurrent)
