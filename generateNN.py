@@ -1,9 +1,5 @@
-from seeding import getSeed
-seedNum = getSeed()
 from numpy.random import seed
-seed(seedNum)
 import tensorflow
-tensorflow.random.set_seed(seedNum)
 from keras.models import Sequential
 from keras.layers import Dense, Activation
 import numpy as np
@@ -31,7 +27,10 @@ Testing Procedure:
 # shape: shape of input data
 # act: activation function ('sigmoid' or 'tanh' most likely)
 
-def make(input, vec, out, shape, act):
+def make(input, vec, out, shape, act, seed):
+    seed(seed)
+    tensorflow.random.set_seed(seed)
+    
     net = Sequential()
     net.add(Dense(input, input_shape = shape, activation = act))
     for i in vec:
