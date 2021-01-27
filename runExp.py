@@ -73,7 +73,6 @@ iter = [1]
 # iter = iterate(iter,MAX_LAYERS,MAX_NODES)
 
 REPEAT_EXPERIMENTS = 10
-# for experimentNum in range(EXPERIMENT_COUNT):
 while(iter != -1):
     print("iter = " + str(iter))
     tAcc = vAcc = []
