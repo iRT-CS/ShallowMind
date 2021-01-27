@@ -89,4 +89,14 @@ while(iter != -1):
     vAcc = [x / REPEAT_EXPERIMENTS for x in vAcc]
     createExperimentsDocument(nnID, iter, IN_SHAPE, OUT_SHAPE, datasetID, tAcc, vAcc, stoppingCriterionDictionary)
     iter = iterate(iter,MAX_LAYERS,MAX_NODES)
+    
+# ORIGINAL CODE (NO AVERAGING)
+# while(iter != -1):
+#     print("iter = " + str(iter))
+#     actualNet = make(NODES_INLAYER, iter, NODES_OUTLAYER, IN_SHAPE, 'tanh')
+#     weights = list(map(np.ndarray.tolist, actualNet.get_weights()))
+#     nnID = createNeuralNetsDocument(iter, IN_SHAPE, OUT_SHAPE, weights, 'glorot', 'sigmoid')
+#     tAcc, vAcc, stoppingCriterionDictionary = test(actualNet, tdata, vdata, nnID, iter, IN_SHAPE, OUT_SHAPE, datasetID)
+#     createExperimentsDocument(nnID, iter, IN_SHAPE, OUT_SHAPE, datasetID, tAcc, vAcc, stoppingCriterionDictionary)
+#     iter = iterate(iter,MAX_LAYERS,MAX_NODES)
 
