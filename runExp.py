@@ -82,6 +82,9 @@ while(iter != -1):
         weights = list(map(np.ndarray.tolist, actualNet.get_weights()))
         nnID = createNeuralNetsDocument(iter, IN_SHAPE, OUT_SHAPE, weights, 'glorot', 'sigmoid')
         tAccCurrent, vAccCurrent, stoppingCriterionDictionary = test(actualNet, tdata, vdata, nnID, iter, IN_SHAPE, OUT_SHAPE, datasetID)
+        if (len(tAcc) == 0):
+            tAcc.resize(tAccCurrent.shape)
+            vAcc.resize(vAccCurrent.shape)
         tAcc = np.add(tAcc, tAccCurrent)
         vAcc = np.add(vAcc, vAccCurrent)
         
