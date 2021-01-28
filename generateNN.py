@@ -27,9 +27,9 @@ Testing Procedure:
 # shape: shape of input data
 # act: activation function ('sigmoid' or 'tanh' most likely)
 
-def make(input, vec, out, shape, act, seed):
-    seed(seed)
-    tensorflow.random.set_seed(seed)
+def make(input, vec, out, shape, act, seedNum):
+    seed(seedNum)
+    tensorflow.random.set_seed(seedNum)
     
     net = Sequential()
     net.add(Dense(input, input_shape = shape, activation = act))
