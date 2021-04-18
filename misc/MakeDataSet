@@ -1,4 +1,4 @@
-import GaussianBoundary as gb
+import Datasets.GaussianBoundary as gb
 import Utils
 import db
 

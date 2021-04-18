@@ -1,0 +1,152 @@
+r"""
+Setup venv:
+    $ Set-ExecutionPolicy -Scope CurrentUser remotesigned
+    $ .local\.venv\Scripts\Activate.ps1
+
+launch tensorboard:
+    - open anaconda powershell
+    - enter: tensorboard --logdir='C:\Users\okt28\OneDrive\Compsci_Main\ShallowMind\Clone\ShallowMind\.local\logs'
+"""
+
+from tensorflow.python.keras.backend import switch
+from VisualizationModel import VisualizationModel
+from numpy.random import seed as np_seed
+import tensorflow as tf
+from keras.models import Sequential
+from keras.layers import Dense, Activation
+import numpy as np
+import keras
+import generateNN
+import datetime
+import time
+import Datasets.GaussianBoundary as gb
+from Utils import seeding
+import os
+import math
+import matplotlib.pyplot as plt
+import matplotlib as mpl
+from pathlib import Path
+import Utils.VisualizationColormaps as vcmap
+from Datasets import DatasetGenerator as dg
+
+
+"""Graphs the dataset provided and saves
+:param dataset: np.ndarray - the dataset to graph
+:param save_path: str - the save location
+"""
+def graphDataset(dataset:np.ndarray, save_path:str):
+    print(f"Dataset boundary, seed {seeding.getSeed()}")
+    name = f"dataset_{seeding.getSeed()}"
+    coords, labels = dataset
+    xcoords = coords[:,[0]]
+    ycoords = coords[:,[1]]
+    fig = plt.figure()
+    ax = fig.add_subplot()
+    scatter = ax.scatter(xcoords, ycoords, s=10, c=labels, cmap="RdYlBu")
+    # plt.show()
+    saveFigure(save_path=save_path, figure=fig, name=name)
+
+"""Graphs the given model's predictions agaisnt the actual results
+also displays confidence in predictions as a contour map
+
+:param dataset: np.ndarray - the dataset to check predictions for
+:param model: tf.keras.model - the model use
+:param save_path: str - the path to save the visualizations to
+:param name: str - the name of the model
+"""
+def graphPredictions(dataset:np.ndarray, model:tf.keras.models, save_path:str, name:str):
+    print(f"Prediction boundary, b_{name}, seed {seeding.getSeed()}")
+    name = f"b_{name}"
+    fig = plt.figure()
+
+    coords, y_true = dataset
+    y_pred = model.predict(coords)
+    y_pred_rounded = np.around(y_pred)
+
+    # define bounds of the domain
+    min1, max1 = coords[:, 0].min()-1, coords[:, 0].max()+1
+    min2, max2 = coords[:, 1].min()-1, coords[:, 1].max()+1
+
+    # define the x and y scale
+    x1grid = np.arange(min1, max1, 0.1)
+    x2grid = np.arange(min2, max2, 0.1)
+
+    # create all of the lines and rows of the grid
+    xx, yy = np.meshgrid(x1grid, x2grid)
+
+    # flatten each grid to a vector
+    r1, r2 = xx.flatten(), yy.flatten()
+    r1, r2 = r1.reshape((len(r1), 1)), r2.reshape((len(r2), 1))
+
+    # horizontal stack vectors to create x1,x2 input for the model
+    grid = np.hstack((r1,r2))
+
+    # make predictions for the grid
+    y_grid = model.predict(grid)
+    # reshape the predictions back into a grid
+    zz = y_grid.reshape(xx.shape)
+
+    # plot the grid of x, y and z values as a surface
+    # issue with this was that it wasnt scaled
+    # old RdBu
+    cmap = vcmap.createColormap()
+    plt.contourf(xx, yy, zz, cmap=cmap, vmin=0, vmax=1)
+    redCmp1 = mpl.cm.get_cmap("seismic")
+    redCmp2 = mpl.cm.get_cmap("YlOrRd")
+    blueCmp =  mpl.cm.get_cmap("coolwarm")
+    # old RdYlBu
+    # dark points were classified as being that color, while theyre actually the other one
+    # ^ i have no idea what that means
+    # red right, blue right, red wrong, blue wrong
+    # color = [redCmp2(0.65), blueCmp(0.20), redCmp1(0.93), blueCmp(0)]
+    color = [redCmp2(0.65), blueCmp(0.15), redCmp1(0.93), blueCmp(0)]
+    # create scatter plot for samples from each class
+    for class_value in range(2):
+        # get row indexes for samples with this class
+        true_rows = np.where(y_true == class_value)
+        # get rows where model predicted this class
+        predicted_rows = np.where(y_pred_rounded == class_value)
+        correct_rows = np.intersect1d(true_rows[0], predicted_rows[0])
+        incorrect_rows = np.array(np.setdiff1d(predicted_rows[0], true_rows[0]))
+        # create scatter of these samples
+        # plt.scatter(coords[row_ix, 0], coords[row_ix, 1], s=10, color=color[class_value])
+        # plot correct predictions
+        # edgeColor = "#FFFFFF"
+        # lineWidth = 0.04
+        size = 12
+        plt.scatter(coords[
+            correct_rows, 0], coords[correct_rows, 1], s=size, color=color[class_value])
+        # plot incorrect predictions
+        plt.scatter(
+            coords[incorrect_rows, 0], coords[incorrect_rows, 1], s=size,
+            color=color[class_value+2])
+    # plt.show()
+    saveFigure(save_path=save_path, name=name, figure=fig)
+
+"""Saves a figure to the given path with the given filename
+:param save_path: str - the path to save the file to
+:param figure: matplotlib.pyply.Figure - the figure to save
+:param name: the filename to save the figure as
+"""
+def saveFigure(save_path:str, figure:plt.Figure, name:str):
+    Path(save_path).mkdir(parents=True, exist_ok=True)
+    file_path = f"{save_path}\\{name}.png"
+    figure.savefig(file_path, bbox_inches='tight', pad_inches=0.25, dpi=400)
+
+"""Gets visualizations for a model
+:param model: tf.keras.model - the model to use
+:param save_path: str - the path to save the visualizations to
+:param name: str - the name of the model, used for saving and organization
+:param dataset_options: dg.DataTypes(.options) - the options for dataset generation
+:param plotDataset: boolean - whether to plot the generated dataset or not
+"""
+def getVisualizations(model:tf.keras.models, save_path:str, name:str, dataset_options:dg.DataTypes, plotDataset:bool =False):
+    network = VisualizationModel(seeding.getSeed())
+    dataset = dg.getDataset(dataset_options.name, dataset_options)
+    if plotDataset:
+        index = save_path.index("seed-")
+        data_save_path = save_path[:save_path.index("\\", index)]
+        graphDataset(dataset, data_save_path)
+    graphPredictions(dataset=dataset, model=model, save_path=save_path, name=name)
+
+

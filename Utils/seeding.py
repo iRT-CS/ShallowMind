@@ -4,5 +4,6 @@ def getSeed():
   return seed
 
 def setSeed(newSeed):
+  global seed
   seed = newSeed
    

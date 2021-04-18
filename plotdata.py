@@ -1,7 +1,7 @@
 
-import GaussianBoundary as gb
+import Datasets.GaussianBoundary as gb
 import numpy as np
-from Utils import plotData
+from Utils.utils import plotData
 import matplotlib.pyplot as plt
 
 

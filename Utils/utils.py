@@ -1,6 +1,6 @@
 import math
 from db import createDatasetsDocument
-from GaussianBoundary import getPoints
+from Datasets.GaussianBoundary import getPoints
 import matplotlib.pyplot as plt
 
 # to generate all possible combinations of neural net structures.
@@ -58,7 +58,7 @@ def addDataset(polynomial,noiseDistribution,dataRange):
      yMax = dataRange[3]
      trainingValues = getPoints(polynomial,1000,sigma,peak,xMin,xMax,yMin,yMax)
      testValues = getPoints(polynomial,1000,sigma,peak,xMin,xMax,yMin,yMax)
-     createDataSetsDocument(polynomial,noiseDistribution,dataRange,trainingValues,testValues)
+     createDatasetsDocument(polynomial,noiseDistribution,dataRange,trainingValues,testValues)
 
 def plotData(data):
     xs = [pt[0] for pt in data]

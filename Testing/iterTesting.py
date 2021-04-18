@@ -2,11 +2,11 @@ from keras.models import Sequential
 from keras.layers import Dense, Activation
 from keras.utils import to_categorical
 from db import createDatasetsDocument, createNeuralNetsDocument, createExperimentsDocument
-import GaussianBoundary as gb
+import Datasets.GaussianBoundary as gb
 import numpy as np
 import keras
 from testNN import test
-from Utils import iterate,plotData
+from Utils.utils import iterate,plotData
 from generateNN import make
 import matplotlib.pyplot as plt
 

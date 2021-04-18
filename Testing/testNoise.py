@@ -1,9 +1,9 @@
 from Utils import plotData
-from GaussianBoundary import *
+from Datasets.GaussianBoundary import *
 import matplotlib.pyplot as plt
 import numpy as np
 import math
-from conicDistances import getEDistance,car2pol
+from Utils.conicDistances import getEDistance,car2pol
 
 yaxis = np.linspace(-10,10,50)
 xaxis = np.linspace(-10,10,50)

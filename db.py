@@ -1,6 +1,6 @@
 from pymongo import MongoClient
 import numpy
-from seeding import getSeed
+from Utils.seeding import getSeed
 
 client = MongoClient('shallowmind.pingry.org', 27017)
 db = client["ShallowMind"]

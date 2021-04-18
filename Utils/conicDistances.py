@@ -5,7 +5,7 @@ import numpy as np
 from scipy.optimize import fmin_cobyla
 import math
 import random
-from Utils import iterate,plotData
+from Utils.utils import iterate,plotData
 
 def pol2car(r,theta):
     x = r*np.cos(theta)

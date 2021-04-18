@@ -40,3 +40,9 @@ vignettes/*.pdf
 rsconnect/
 
 .DS_Store
+
+# local model/visualization saves
+.local
+
+# visual studio configs
+.vscode

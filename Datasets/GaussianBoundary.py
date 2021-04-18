@@ -3,8 +3,8 @@ from numpy.random import seed
 from scipy.optimize import fmin_cobyla
 import math
 import random
-from distanceToCurve import distanceToCurve
-import seeding
+from Utils.distanceToCurve import distanceToCurve
+from Utils import seeding
 #import timeit
 
 # seed for reproduceable datasets
@@ -61,7 +61,8 @@ def gauss(distance, sigma):
     return numerator/denominator
 
 # [1,1] y = x + 0, y = x + 1
-def getPoints(coVec,numPoints,sigma,peak,xMin,xMax,yMin,yMax):
+def getPoints(coVec,numPoints,sigma,peak,xMin,xMax,yMin,yMax, newSeed=seeding.getSeed()):
+    seedNum = newSeed
     seed(seedNum)
     x = np.random.rand(numPoints)
     xRange = xMax - xMin
