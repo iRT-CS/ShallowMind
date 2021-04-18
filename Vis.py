@@ -9,14 +9,12 @@ launch tensorboard:
 """
 
 from tensorflow.python.keras.backend import switch
-from VisualizationModel import VisualizationModel
 from numpy.random import seed as np_seed
 import tensorflow as tf
 from keras.models import Sequential
 from keras.layers import Dense, Activation
 import numpy as np
 import keras
-import generateNN
 import datetime
 import time
 import Datasets.GaussianBoundary as gb
@@ -26,8 +24,9 @@ import math
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 from pathlib import Path
-import Utils.VisualizationColormaps as vcmap
+import Utils.VisColormaps as vcmap
 from Datasets import DatasetGenerator as dg
+from VisModel import VisualizationModel
 
 
 """Graphs the dataset provided and saves
@@ -38,8 +37,8 @@ def graphDataset(dataset:np.ndarray, save_path:str):
     print(f"Dataset boundary, seed {seeding.getSeed()}")
     name = f"dataset_{seeding.getSeed()}"
     coords, labels = dataset
-    xcoords = coords[:,[0]]
-    ycoords = coords[:,[1]]
+    xcoords = coords[:,0]
+    ycoords = coords[:,1]
     fig = plt.figure()
     ax = fig.add_subplot()
     scatter = ax.scatter(xcoords, ycoords, s=10, c=labels, cmap="RdYlBu")

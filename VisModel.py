@@ -1,19 +1,14 @@
 from numpy.random import seed
 import tensorflow as tf
-from keras.models import Sequential
-from keras.layers import Dense, Activation
 import numpy as np
-import keras
 import generateNN
 import datetime
 import time
-import Datasets.GaussianBoundary as gb
 from Utils import seeding
 import os
 import math
 from pathlib import Path
-from Datasets import DatasetGenerator as dg
-from VisualizationCallbacks import VisualizationCallbacks
+from VisCallbacks import VisualizationCallbacks
 import Datasets.DatasetGenerator as dg
 # import runExp
 

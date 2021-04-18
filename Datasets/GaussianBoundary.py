@@ -1,5 +1,4 @@
 import numpy as np
-from numpy.random import seed
 from scipy.optimize import fmin_cobyla
 import math
 import random
@@ -61,13 +60,12 @@ def gauss(distance, sigma):
     return numerator/denominator
 
 # [1,1] y = x + 0, y = x + 1
-def getPoints(coVec,numPoints,sigma,peak,xMin,xMax,yMin,yMax, newSeed=seeding.getSeed()):
-    seedNum = newSeed
-    seed(seedNum)
+def getPoints(coVec,numPoints,sigma,peak,xMin,xMax,yMin,yMax, seed=seeding.getSeed()):
+    random.seed(seed)
     x = np.random.rand(numPoints)
     xRange = xMax - xMin
     x = list(map(lambda v: (v*xRange)+xMin,x))
-    seed(seedNum*2)
+    random.seed(seed*2)
     y = np.random.rand(numPoints)
     yRange = yMax - yMin
     y = list(map(lambda v: (v*yRange)+yMin,y))
@@ -75,9 +73,14 @@ def getPoints(coVec,numPoints,sigma,peak,xMin,xMax,yMin,yMax, newSeed=seeding.ge
     distances = list(map(lambda m,n: distanceToCurve(coVec,m,n),x,y))
     distances = list(map(lambda x:peak*x,distances))
     gaussian = list(map(lambda d: gauss(d,sigma),distances))
-    seed(seedNum)
+    random.seed(seed)
     flip = list(map(lambda g: (np.random.uniform()<g),gaussian))
     cleanVals = list(map(lambda d,b: (d>b),y,boundaryPoints))
     dirtyVals = list(map(lambda v,f: v^f, cleanVals,flip))
     points = list(map(lambda i,d,v: [i,d,v],x,y,dirtyVals))
+    
+    npPoints = np.array(points)
+    labels = npPoints[:,2]
+    pairs = np.transpose([x,y])
+    points = (pairs, labels)
     return points

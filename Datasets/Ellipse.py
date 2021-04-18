@@ -42,7 +42,9 @@ angle:int=0, center:tuple=(0,0), vMin:int= -10, vMax:int=10) -> np.ndarray:
     # generate random points
     # use to be normal distribution but it was wonky
     data_rng = np.random.default_rng(seed)
-    points = data_rng.random(size=(2, numPoints))
+    points = data_rng.random(size=(numPoints, 2))
+    x_points = points[:,0]
+    y_points = points[:,1]
     # here for testing with other distributions since they arent 0,1
     # xMin = min(points[0])
     # xMax = max(points[0])
@@ -54,23 +56,24 @@ angle:int=0, center:tuple=(0,0), vMin:int= -10, vMax:int=10) -> np.ndarray:
     yMax = 1
     # scale to vMin, vMax
     for index in range(numPoints):
-        points[0][index] = scale(xMin, xMax, vMin, vMax, points[0][index])
-        points[1][index] = scale(yMin, yMax, vMin, vMax, points[1][index])
+        x_points[index] = scale(xMin, xMax, vMin, vMax, x_points[index])
+        y_points[index] = scale(yMin, yMax, vMin, vMax, y_points[index])
     
     # get distance from ellipse to point
     # boundary line is 1
     # results in array with numpoints points with each value as distance to ellipse
     cos_angle = np.cos(np.radians(180.-angle))
     sin_angle = np.sin(np.radians(180.-angle))
-    xc = points[0] - center[0]
-    yc = points[1] - center[1]
+    xc = x_points - center[0]
+    yc = y_points - center[1]
     xct = xc * cos_angle - yc * sin_angle
     yct = xc * sin_angle + yc * cos_angle
     rad_cc = (xct**2/(width/2.)**2) + (yct**2/(height/2.)**2)
 
-    # fill outside with 1, inside with 0
-    labels = np.full(numPoints, 1)
-    labels[np.where(rad_cc <= 1)[0]] = 0
+    # fill outside with 0, inside with 1
+    # RED 0 BLUE 1
+    labels = np.full(numPoints, 0)
+    labels[np.where(rad_cc <= 1)[0]] = 1
     
     # apply noise
 
