@@ -12,7 +12,7 @@ sm_path = path_to_file[:index_in_path]
 sys.path.insert(0, sm_path)
 
 from Utils import seeding
-from Datasets import Ellipse, GaussianBoundary
+from Datasets import Ellipse, GaussianBoundary, Polynomial
 
 """Gets a dataset of a specific type for the provided options
 
@@ -28,13 +28,24 @@ def getDataset(dataType, options=None):
             numPoints=options.numPoints,
             seed=options.seed,
             noise=options.noise,
+            vMin=options.vMin,
+            vMax=options.vMax,
             width=options.width,
             height=options.height,
             angle=options.angle,
-            center=options.center,
+            center=options.center)
+
+    elif dataType is DataTypes.POLYNOMIAL:
+        options = DataTypes.PolynomialOptions() if options is None else options
+        dataset = Polynomial.getPoints(
+            numPoints=options.numPoints,
+            seed=options.seed,
+            noise=options.noise,
             vMin=options.vMin,
-            vMax=options.vMax)
+            vMax=options.vMax,
+            coefficients=options.coefficients)
     
+    # deprecated, use POLYNOMIAL
     elif dataType is DataTypes.GAUSSIAN_BOUNDARY:
         options = DataTypes.GaussianBoundaryOptions() if options is None else options
         dataset = GaussianBoundary.getPoints(
@@ -66,6 +77,7 @@ Noise generation:
 """
 class DataTypes():
     ELLIPSE = "ellipse"
+    POLYNOMIAL = "poly"
     GAUSSIAN_BOUNDARY = "gaussian_boundary"
 
     class EllipseOptions():
@@ -73,20 +85,35 @@ class DataTypes():
         # self explanatory, look in ellipse class for info on noise (distance/chance)
         # vMin, vMax is size of sample
         def __init__(
-          self, numPoints=2000, seed=seeding.getSeed(), distance=2, chance=0.5, center=(0,0),
-          width=10, height=13, angle=0, vMin=-10, vMax=10):
+          self, numPoints=2000, seed=seeding.getSeed(), distance=2, chance=0.5, vMin=-10, vMax=10,
+          center=(0,0), width=10, height=13, angle=0):
             self.numPoints = numPoints
             self.seed = seed
             self.distance = distance
             self.chance = chance
             self.noise = self.distance, self.chance
+            self.vMin = vMin
+            self.vMax = vMax
             self.center = center
             self.width = width
             self.height = height
             self.angle = angle
+    
+    # look in Polynomial class for info
+    class PolynomialOptions():
+        name = "poly"
+        def __init__(self, numPoints=2000, seed=seeding.getSeed(), distance=1, chance=0.5, vMin=-10, vMax=10,
+          coefficients=[.25, 0, -2]):
+            self.numPoints = numPoints
+            self.seed = seed
+            self.distance = distance
+            self.chance = chance
+            self.noise = self.distance, self.chance
             self.vMin = vMin
             self.vMax = vMax
-    
+            self.coefficients = coefficients
+
+    # use Polynomial
     class GaussianBoundaryOptions():
         name = "gaussian_boundary"
         def __init__(self,
@@ -103,6 +130,6 @@ class DataTypes():
             self.yMax = yMax
 
 
-# options = DataTypes.GaussianBoundaryOptions()
-# name = DataTypes.GAUSSIAN_BOUNDARY
+# options = DataTypes.PolynomialOptions()
+# name = DataTypes.POLYNOMIAL
 # points = getDataset(name, options)

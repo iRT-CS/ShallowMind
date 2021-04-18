@@ -25,8 +25,8 @@ from Datasets import ds_utils
 :param vMax: int - max range of dataset
 :returns: np.ndarray: [[x_array, y_array], [label_array]] the dataset with labels
 """
-def getPoints(numPoints:int, seed:int, noise:tuple, width:int, height:int,
-angle:int=0, center:tuple=(0,0), vMin:int= -10, vMax:int=10) -> np.ndarray:
+def getPoints(numPoints:int, seed:int, noise:tuple, vMin:int, vMax:int, width:int, height:int,
+angle:int, center:tuple) -> np.ndarray:
 
     distance, chance = noise
     # scale down to 0,1
@@ -114,35 +114,35 @@ def plotEllipse(width, height, angle=0, center=(0,0), vMin= -10, vMax=10, datase
 
 
 
-numPoints=2000
-seed=2
-distance = 2
-chance = 0.5
-noise = distance, chance
-center = 0, 0
-width = 10
-height = 20
-angle = 45
-vMin = -10
-vMax = 10
+# numPoints=2000
+# seed=2
+# distance = 2
+# chance = 0.5
+# noise = distance, chance
+# center = 0, 0
+# width = 10
+# height = 20
+# angle = 45
+# vMin = -10
+# vMax = 10
 
-dataset = getPoints(
-    numPoints=numPoints,
-    seed=seed,
-    noise=noise,
-    center=center,
-    width=width,
-    height=height,
-    angle=angle,
-    vMin=vMin,
-    vMax=vMax
-)
-plotEllipse(
-    center=center,
-    width=width,
-    height=height,
-    angle=angle,
-    vMin=vMin,
-    vMax=vMax,
-    dataset=dataset
-)
+# dataset = getPoints(
+#     numPoints=numPoints,
+#     seed=seed,
+#     noise=noise,
+#     center=center,
+#     width=width,
+#     height=height,
+#     angle=angle,
+#     vMin=vMin,
+#     vMax=vMax
+# )
+# plotEllipse(
+#     center=center,
+#     width=width,
+#     height=height,
+#     angle=angle,
+#     vMin=vMin,
+#     vMax=vMax,
+#     dataset=dataset
+# )

@@ -81,9 +81,8 @@ MODEL_LOAD_PATH = ".local\\models\\exp-{exp_num}\\model-{model_id}\\model"
 CHECKPOINT_LOAD_PATH = ".local\\models\\exp-{exp_num}\\model-{model_id}\\checkpoints\\{checkpoint}"
 VIS_SAVE_PATH = ".local\\visualizations\\exp-{exp_num}\\dataset-{dataset}\\model-{model_id}"
 DATAPLOT_SAVE_PATH = ".local\\visualizations\\exp-{exp_num}\\dataset-{dataset}"
-ds_options = dg.DataTypes.GaussianBoundaryOptions()
-ds_options.peak, ds_options.sigma = ds_options.sigma, ds_options.peak
-exp_num = 2
+ds_options = dg.DataTypes.PolynomialOptions()
+exp_num = 3
 seed = 2
 seeding.setSeed(seed)
 epochs = 4

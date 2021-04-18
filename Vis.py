@@ -26,7 +26,6 @@ import matplotlib as mpl
 from pathlib import Path
 import Utils.VisColormaps as vcmap
 from Datasets import DatasetGenerator as dg
-from VisModel import VisualizationModel
 
 
 """Graphs the dataset provided and saves
@@ -140,7 +139,6 @@ def saveFigure(save_path:str, figure:plt.Figure, name:str):
 :param plotDataset: boolean - whether to plot the generated dataset or not
 """
 def getVisualizations(model:tf.keras.models, save_path:str, name:str, dataset_options:dg.DataTypes, plotDataset:bool =False):
-    network = VisualizationModel(seeding.getSeed())
     dataset = dg.getDataset(dataset_options.name, dataset_options)
     if plotDataset:
         index = save_path.index("seed-")

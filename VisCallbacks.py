@@ -6,7 +6,7 @@ from Utils import seeding
 import os
 import math
 from pathlib import Path
-# from Vis import graphDataset
+import Vis
 
 class VisualizationCallbacks(tf.keras.callbacks.Callback):
 
