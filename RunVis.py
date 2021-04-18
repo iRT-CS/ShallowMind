@@ -19,11 +19,11 @@ import Vis as vis
 """
 def runModelBatch(model_list, dataset_options):
     plotDataset=True
-    for id in model_list:
-        model_path = MODEL_LOAD_PATH.format(exp_num, id)
-        save_path = VIS_SAVE_PATH.format(exp_num, seed, id)
+    for model_id in model_list:
+        model_path = MODEL_LOAD_PATH.format(exp_num=exp_num, model_id=model_id)
+        save_path = VIS_SAVE_PATH.format(exp_num=exp_num, dataset=dataset_options.name, model_id=model_id) 
         model = tf.keras.models.load_model(model_path)
-        vis.getVisualizations(model=model, dataset_options=dataset_options, save_path=save_path, name=id, plotDataset=plotDataset)
+        vis.getVisualizations(model=model, dataset_options=dataset_options, save_path=save_path, name=model_id, plotDataset=plotDataset)
         plotDataset=False
 
 """Gets visualizations for checkpoints within a list of models
@@ -44,7 +44,7 @@ def runCheckpointBatch(model_list:list, dataset_options:dg.DataTypes, checkpoint
         for checkpoint in checkpoint_list:
             model_path = CHECKPOINT_LOAD_PATH.format(exp_num=exp_num, model_id=model_id, checkpoint=checkpoint)
             model = tf.keras.models.load_model(model_path)
-            save_path = VIS_SAVE_PATH.format(exp_num=exp_num, seed=seed, model_id=model_id)
+            save_path = VIS_SAVE_PATH.format(exp_num=exp_num, dataset=dataset_options.name, model_id=model_id)
             vis.getVisualizations(model=model, dataset_options=dataset_options, save_path=save_path, name=checkpoint, plotDataset=plotDataset)
             plotDataset=False
 
@@ -74,18 +74,23 @@ def getCheckpoints(model_path:str, step_percent:float=0.2) -> list:
 def createNetworkSet(layer_shape_list:list):
     for shape in layer_shape_list:
         network = VisualizationModel(exp_num, seed)
-        network.trainNewNetwork(epochs=epochs, shape=shape, dataset_options=dataset_options)
+        network.trainNewNetwork(epochs=epochs, shape=shape, dataset_options=ds_options)
         
 
-MODEL_LOAD_PATH = ".local\\models\\exp-{exp_num}\\model-{id}\\model"
+MODEL_LOAD_PATH = ".local\\models\\exp-{exp_num}\\model-{model_id}\\model"
 CHECKPOINT_LOAD_PATH = ".local\\models\\exp-{exp_num}\\model-{model_id}\\checkpoints\\{checkpoint}"
-VIS_SAVE_PATH = ".local\\visualizations\\exp-{exp_num}\\seed-{seed}\\model-{model_id}"
-
-dataset_options = dg.DataTypes.EllipseOptions()
+VIS_SAVE_PATH = ".local\\visualizations\\exp-{exp_num}\\dataset-{dataset}\\model-{model_id}"
+DATAPLOT_SAVE_PATH = ".local\\visualizations\\exp-{exp_num}\\dataset-{dataset}"
+ds_options = dg.DataTypes.GaussianBoundaryOptions()
+ds_options.peak, ds_options.sigma = ds_options.sigma, ds_options.peak
 exp_num = 2
-seed = 1
+seed = 2
+seeding.setSeed(seed)
 epochs = 4
 
 model_list = ["0000-[4]"]
-runCheckpointBatch(model_list=model_list, dataset_options=dataset_options, useAuto=True)
+# runCheckpointBatch(model_list=model_list, dataset_options=dataset_options, useAuto=True)
+dataset = dg.getDataset(dataType=ds_options.name, options=ds_options)
+data_save_path = DATAPLOT_SAVE_PATH.format(exp_num=exp_num, dataset=ds_options.name)
+vis.graphDataset(dataset, data_save_path)
 

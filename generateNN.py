@@ -1,8 +1,9 @@
 from numpy.random import seed
 import tensorflow
+import numpy as np
 from keras.models import Sequential
 from keras.layers import Dense, Activation
-import numpy as np
+
 import keras
 
 

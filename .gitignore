@@ -46,3 +46,6 @@ rsconnect/
 
 # visual studio configs
 .vscode
+
+# virtual environment
+.venv

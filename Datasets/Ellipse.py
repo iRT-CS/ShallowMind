@@ -5,22 +5,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import patches
 from matplotlib import cm
-
+import os, sys
+path_to_file = os.path.abspath(os.path.dirname(__file__))
+index_in_path = path_to_file.rfind("ShallowMind") + len("ShallowMind") # get path after "ShallowMind" (i cant count)
+sm_path = path_to_file[:index_in_path]
+sys.path.insert(0, sm_path)
+from Datasets import ds_utils
 """Generates an ellipse dataset
     
-    Noise generation:
-        1. distance:
-            If the ellipse is on a graph with values from 0-10,
-            how far from the ellipse boundary should the noise occur
-        2. chance
-            What chance should the points within the noise distance have of
-            performing a coin flip on which value to take
-        
-        Chance could have also been generated as:
-            What chance should the points within the noise distance have of
-            flipping their value
-        But I changed this because that results in circular layers around the ellipse if its
-        too high.
+
 :param numPoints: int - the number of points to generate
 :param seed: int - the seed of the dataset for reproducabiity (noise doesnt care about seed tho, someone can fix that)
 :param noise: tuple (distance, chance) - see above
@@ -37,7 +30,7 @@ angle:int=0, center:tuple=(0,0), vMin:int= -10, vMax:int=10) -> np.ndarray:
 
     distance, chance = noise
     # scale down to 0,1
-    distance = scale(0, 10, 0, 1, distance)
+    distance = ds_utils.scale(0, 10, 0, 1, distance)
 
     # generate random points
     # use to be normal distribution but it was wonky
@@ -56,8 +49,8 @@ angle:int=0, center:tuple=(0,0), vMin:int= -10, vMax:int=10) -> np.ndarray:
     yMax = 1
     # scale to vMin, vMax
     for index in range(numPoints):
-        x_points[index] = scale(xMin, xMax, vMin, vMax, x_points[index])
-        y_points[index] = scale(yMin, yMax, vMin, vMax, y_points[index])
+        x_points[index] = ds_utils.scale(xMin, xMax, vMin, vMax, x_points[index])
+        y_points[index] = ds_utils.scale(yMin, yMax, vMin, vMax, y_points[index])
     
     # get distance from ellipse to point
     # boundary line is 1
@@ -86,13 +79,14 @@ angle:int=0, center:tuple=(0,0), vMin:int= -10, vMax:int=10) -> np.ndarray:
     # probLambda = lambda x: abs(int(chance + random()) - labels[x]) # chance to flip value, not used
 
     # chance to 50/50
-    def chanceForNoise(current):
+    def chanceForNoiseUnvectorized(x):
         if (chance + random() >= 1):
             return abs(int(0.5 + random()))
-        return labels[current]
-    probVectorized = np.vectorize(chanceForNoise)
+        return labels[x]
+    chanceForNoise = np.vectorize(chanceForNoiseUnvectorized)
+
     if len(noiseRange) > 0:
-        labels[noiseRange] = probVectorized(noiseRange)
+        labels[noiseRange] = chanceForNoise(noiseRange) #broke
     # labels[underNoise] = probVectorized(underNoise)
     # labels[overNoise] = probVectorized(overNoise)
     dataset = np.array([points, []], dtype=object)
@@ -101,13 +95,13 @@ angle:int=0, center:tuple=(0,0), vMin:int= -10, vMax:int=10) -> np.ndarray:
 
 # plots an ellpise from a dataset with a background ellipse for comparison
 # for a description of params, see getPoints()
-def plotEllipse(numPoints, seed, noise, width, height, angle=0, center=(0,0), vMin= -10, vMax=10, dataset=None):
-    cmap = cm.get_cmap("coolwarm")
+def plotEllipse(width, height, angle=0, center=(0,0), vMin= -10, vMax=10, dataset=None):
+    cmap = cm.get_cmap("RdYlBu")
     # data_rng = np.random.default_rng(seed)
     # points = data_rng.normal(size=(2, numPoints))
     fig = plt.figure()
     ax = fig.add_subplot()
-    ellipse = patches.Ellipse(center, width, height, angle, zorder=0, facecolor=cmap(0.2))
+    ellipse = patches.Ellipse(center, width, height, angle, zorder=0, facecolor=cmap(.8))
     ax.add_patch(ellipse)
     # labels = np.array(["#FF0000"] * len(points[0]))
     # for index, point in enumerate(points):
@@ -115,46 +109,40 @@ def plotEllipse(numPoints, seed, noise, width, height, angle=0, center=(0,0), vM
     #         labels[index] = "#0000FF"
     points = dataset[0]
     labels=dataset[1]
-    plt.scatter(points[0], points[1], c=labels, zorder=1, cmap=cmap)
+    plt.scatter(points[:,0], points[:,1], c=labels, zorder=1, cmap=cmap)
     plt.show()
 
-# scale value from current range to target range
-def scale(cMin, cMax, tMin, tMax, value): 
-    value = (((value - cMin) * (tMax - tMin)) / (cMax - cMin)) + tMin
-    return value
 
-# numPoints=2000
-# seed=2
-# distance = 2
-# chance = 0.5
-# noise = distance, chance
-# center = 0, 0
-# width = 10
-# height = 20
-# angle = 45
-# vMin = -10
-# vMax = 10
 
-# dataset = getPoints(
-#     numPoints=numPoints,
-#     seed=seed,
-#     noise=noise,
-#     center=center,
-#     width=width,
-#     height=height,
-#     angle=angle,
-#     vMin=vMin,
-#     vMax=vMax
-# )
-# plotEllipse(
-#     numPoints=numPoints,
-#     seed=seed,
-#     noise=noise,
-#     center=center,
-#     width=width,
-#     height=height,
-#     angle=angle,
-#     vMin=vMin,
-#     vMax=vMax,
-#     dataset=dataset
-# )
+numPoints=2000
+seed=2
+distance = 2
+chance = 0.5
+noise = distance, chance
+center = 0, 0
+width = 10
+height = 20
+angle = 45
+vMin = -10
+vMax = 10
+
+dataset = getPoints(
+    numPoints=numPoints,
+    seed=seed,
+    noise=noise,
+    center=center,
+    width=width,
+    height=height,
+    angle=angle,
+    vMin=vMin,
+    vMax=vMax
+)
+plotEllipse(
+    center=center,
+    width=width,
+    height=height,
+    angle=angle,
+    vMin=vMin,
+    vMax=vMax,
+    dataset=dataset
+)

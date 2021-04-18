@@ -49,7 +49,21 @@ def getDataset(dataType, options=None):
             yMax=options.yMax)
     
     return dataset
+"""
+Noise generation:
+    1. distance:
+        If the function is on a graph with values from 0-10,
+        how far from the function boundary should the noise occur
+    2. chance
+        What chance should the points within the noise distance have of
+        performing a coin flip on which value to take
     
+    Chance could have also been generated as:
+        What chance should the points within the noise distance have of
+        flipping their value
+    But I changed this because that results in layers around the function if its
+    too high.
+"""
 class DataTypes():
     ELLIPSE = "ellipse"
     GAUSSIAN_BOUNDARY = "gaussian_boundary"
