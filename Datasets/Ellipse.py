@@ -1,18 +1,20 @@
 from random import random, randrange
+from matplotlib.transforms import Bbox
 from numpy.lib.arraysetops import intersect1d
 from numpy.random import seed as np_seed
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import patches
 from matplotlib import cm
+import matplotlib as mpl
 import os, sys
 path_to_file = os.path.abspath(os.path.dirname(__file__))
 index_in_path = path_to_file.rfind("ShallowMind") + len("ShallowMind") # get path after "ShallowMind" (i cant count)
 sm_path = path_to_file[:index_in_path]
 sys.path.insert(0, sm_path)
 from Datasets import ds_utils
+
 """Generates an ellipse dataset
-    
 
 :param numPoints: int - the number of points to generate
 :param seed: int - the seed of the dataset for reproducabiity (noise doesnt care about seed tho, someone can fix that)
@@ -112,6 +114,39 @@ def plotEllipse(width, height, angle=0, center=(0,0), vMin= -10, vMax=10, datase
     plt.scatter(points[:,0], points[:,1], c=labels, zorder=1, cmap=cmap)
     plt.show()
 
+"""Gets the boundary of an ellipse as a matplotlib patch
+see getPoints for an explanation of ellipse params
+:param linewidth: float - the thickness of the line
+:param linecolor: string - the color of the line
+"""
+def getBoundary(vMin, vMax, width, height, angle, center, linewidth, linecolor):
+    patch = patches.Ellipse(
+        xy=center,
+        width=width, 
+        height=height,
+        angle=angle,
+        zorder=4,
+        fill=False,
+        linewidth=linewidth,
+        color=linecolor,)
+    return patch
+
+"""Sets the boundary onto an axis
+see getPoints for an explanation of ellipse params
+:param linewidth: float - the thickness of the line
+:param linecolor: string - the color of the line
+"""
+def setBoundary(ax, vMin, vMax, width, height, angle, center, linewidth, linecolor):
+    patch = getBoundary(
+        width=width,
+        height=height,
+        angle=angle,
+        center=center,
+        vMin=vMin,
+        vMax=vMax,
+        linewidth=linewidth,
+        linecolor=linecolor)
+    ax.add_patch(patch)
 
 
 # numPoints=2000

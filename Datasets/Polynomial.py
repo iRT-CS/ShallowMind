@@ -1,4 +1,6 @@
 from random import random, randrange
+import matplotlib as mpl
+from matplotlib.transforms import Bbox
 import numpy as np
 from numpy.core.defchararray import array
 from numpy.polynomial import Polynomial
@@ -93,7 +95,7 @@ Coefficient/vMin/vMax should be same as what was inputted for the dataset
 :param vMax: int - the maximum value for the data points
 :param dataset: np.ndarray - the dataset to plot the line with
 """
-def plotPolynomial(coefficients:list, vMin, vMax, dataset=None):
+def plotPolynomial(coefficients:list, vMin:int, vMax:int, dataset=None):
     # reverse list because thats how the poly class uses it, but its
     # confusing to input in reverse order
     ascendingCoeff = coefficients[::-1]
@@ -128,6 +130,36 @@ def createPolyLinspace(ascendingCoeff, num, domain):
     polyLinspace = ply.Polynomial._val(xvals, ascendingCoeff)
     polypoints = np.array([xvals, polyLinspace])
     return polypoints
+
+"""Gets the boundary of an polynomial as a matplotlib line
+see getPoints for an explanation of boundary params
+:param linewidth: float - the thickness of the line
+:param linecolor: string - the color of the line
+"""
+def getBoundary(vMin, vMax, coefficients:list, linewidth, linecolor):
+    ascendingCoeff = coefficients[::-1]
+    polyLinspace = createPolyLinspace(ascendingCoeff=ascendingCoeff, num=1000, domain=(vMin, vMax))
+    line = plt.plot(
+        polyLinspace[0],
+        polyLinspace[1],
+        linewidth=linewidth,
+        color=linecolor)
+    return line[0]
+
+"""Sets the boundary onto an axis
+see getPoints for an explanation of polynomial params
+:param linewidth: float - the thickness of the line
+:param linecolor: string - the color of the line
+"""
+def setBoundary(ax, vMin, vMax, coefficients:list, linewidth, linecolor):
+    line = getBoundary(
+        coefficients=coefficients,
+        vMin=vMin,
+        vMax=vMax, 
+        linewidth=linewidth,
+        linecolor=linecolor)
+    ax.add_line(line)
+
 
 # numPoints = 2000
 # seed = 1

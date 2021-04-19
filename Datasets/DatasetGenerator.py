@@ -20,8 +20,8 @@ from Datasets import Ellipse, GaussianBoundary, Polynomial
 :param options: ds.DataTypes(.options) - the options for the dataset. If not provided, defaults are used
 :returns: np.ndarray - the dataset in [[[x], [y]], label] format
 """
-def getDataset(dataType, options=None):
-    _ = 0
+def getDataset(dataType=None, options=None):
+    dataType == options.name if dataType is None else dataType
     if dataType == DataTypes.ELLIPSE:
         options = DataTypes.EllipseOptions() if options is None else options
         dataset = Ellipse.getPoints(
@@ -58,7 +58,8 @@ def getDataset(dataType, options=None):
             xMax=options.xMax,
             yMin=options.yMin,
             yMax=options.yMax)
-    
+    else:
+        raise ValueError("Either a data type or data options must be provided and valid")
     return dataset
 """
 Noise generation:
@@ -77,7 +78,7 @@ Noise generation:
 """
 class DataTypes():
     ELLIPSE = "ellipse"
-    POLYNOMIAL = "poly"
+    POLYNOMIAL = "polynomial"
     GAUSSIAN_BOUNDARY = "gaussian_boundary"
 
     class EllipseOptions():
@@ -101,7 +102,7 @@ class DataTypes():
     
     # look in Polynomial class for info
     class PolynomialOptions():
-        name = "poly"
+        name = "polynomial"
         def __init__(self, numPoints=2000, seed=seeding.getSeed(), distance=1, chance=0.5, vMin=-10, vMax=10,
           coefficients=[.25, 0, -2]):
             self.numPoints = numPoints
@@ -133,3 +134,33 @@ class DataTypes():
 # options = DataTypes.PolynomialOptions()
 # name = DataTypes.POLYNOMIAL
 # points = getDataset(name, options)
+
+def setDatasetBoundaryPlot(ax, dataType=None, options=None, linewidth=1, linecolor="#1967b0"):
+    dataType = options.name if dataType is None else dataType
+    if dataType is DataTypes.ELLIPSE:
+        options = DataTypes.EllipseOptions() if options is None else options
+        Ellipse.setBoundary(
+            ax=ax,
+            vMin=options.vMin,
+            vMax=options.vMax,
+            width=options.width,
+            height=options.height,
+            angle=options.angle,
+            center=options.center,
+            linewidth=linewidth,
+            linecolor=linecolor)
+    
+    elif dataType is DataTypes.POLYNOMIAL:
+        options = DataTypes.PolynomialOptions() if options is None else options
+        Polynomial.setBoundary(
+            ax=ax,
+            vMin=options.vMin,
+            vMax=options.vMax,
+            coefficients=options.coefficients,
+            linewidth=linewidth,
+            linecolor=linecolor)
+    else:
+        raise ValueError("Either a data type or data options must be provided and valid")
+
+    ax.set_ylim(options.vMin-0.5, options.vMax+0.5)
+    ax.set_xlim(options.vMin-0.5, options.vMax+0.5)

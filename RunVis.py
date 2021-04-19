@@ -23,7 +23,9 @@ def runModelBatch(model_list, dataset_options):
         model_path = MODEL_LOAD_PATH.format(exp_num=exp_num, model_id=model_id)
         save_path = VIS_SAVE_PATH.format(exp_num=exp_num, dataset=dataset_options.name, model_id=model_id) 
         model = tf.keras.models.load_model(model_path)
-        vis.getVisualizations(model=model, dataset_options=dataset_options, save_path=save_path, name=model_id, plotDataset=plotDataset)
+        vis.getVisualizations(
+            model=model, dataset_options=dataset_options, save_path=save_path,
+            name=model_id, plotDataset=plotDataset)
         plotDataset=False
 
 """Gets visualizations for checkpoints within a list of models
@@ -71,25 +73,67 @@ def getCheckpoints(model_path:str, step_percent:float=0.2) -> list:
 
 :param layer_shape_list: list - the list of shapes for the networks
 """
-def createNetworkSet(layer_shape_list:list):
+def createNetworkSet(layer_shape_list:list, dataset_options:dg.DataTypes):
     for shape in layer_shape_list:
         network = VisualizationModel(exp_num, seed)
-        network.trainNewNetwork(epochs=epochs, shape=shape, dataset_options=ds_options)
+        network.trainNewNetwork(epochs=epochs, shape=shape, dataset_options=dataset_options)
         
 
 MODEL_LOAD_PATH = ".local\\models\\exp-{exp_num}\\model-{model_id}\\model"
 CHECKPOINT_LOAD_PATH = ".local\\models\\exp-{exp_num}\\model-{model_id}\\checkpoints\\{checkpoint}"
 VIS_SAVE_PATH = ".local\\visualizations\\exp-{exp_num}\\dataset-{dataset}\\model-{model_id}"
 DATAPLOT_SAVE_PATH = ".local\\visualizations\\exp-{exp_num}\\dataset-{dataset}"
-ds_options = dg.DataTypes.PolynomialOptions()
-exp_num = 3
-seed = 2
-seeding.setSeed(seed)
-epochs = 4
+SAVE_SEQUENCE_PATH = ".local\\visualizations\\exp-{exp_num}\\{dataset}\\{model_id}\\sequence\\{filename}"
+RAW_SEQUENCE_PATH = ".local\\visualizations\\exp-{exp_num}\\{dataset}\\{model_id}\\sequence\\raw"
 
-model_list = ["0000-[4]"]
+ds_options = dg.DataTypes.PolynomialOptions()
+# ds_options.coefficients = [
+#     0.03,
+#     0,
+#     -1.08,
+#     0,
+#     5
+# ]
+ds_options.coefficients = [
+    0.05,
+    0,
+    0,
+    0
+]
+ds_options.noise = (0.2, ds_options.chance)
+
+exp_num = 4
+seed = 3
+seeding.setSeed(seed)
+epochs = 900
+
+model_list = ["0004-[4]"]
 # runCheckpointBatch(model_list=model_list, dataset_options=dataset_options, useAuto=True)
 dataset = dg.getDataset(dataType=ds_options.name, options=ds_options)
 data_save_path = DATAPLOT_SAVE_PATH.format(exp_num=exp_num, dataset=ds_options.name)
-vis.graphDataset(dataset, data_save_path)
+# vis.graphDataset(dataset=dataset, save_path=data_save_path, dataset_options=ds_options)
+# runModelBatch(model_list=model_list, dataset_options=ds_options)
+
+
+layer_shapes_list = [
+    [4],
+    [4,4],
+    [4,4,4],
+    [4,4,4,4]
+]
+
+createNetworkSet(layer_shape_list=layer_shapes_list, dataset_options=ds_options)
+
+
+# seq_model_id = "0001-[4]"
+# filename = f"s-sequence_exp-{exp_num}_{seq_model_id}.gif"
+# save_seq_path = SAVE_SEQUENCE_PATH.format(exp_num=exp_num, dataset=ds_options.name, model_id=seq_model_id, filename=filename)
+# raw_seq_path = RAW_SEQUENCE_PATH.format(exp_num=exp_num, dataset=ds_options.name, model_id=seq_model_id)
+
+# plot_list = os.listdir(raw_seq_path)
+# duration_arr = np.full(shape=len(plot_list), fill_value=0.5)
+# duration_arr[[0, len(plot_list)-1]] = 3
+# duration_list = list(duration_arr)
+
+# vis.createSequence(image_path=raw_seq_path, save_path=save_seq_path, duration_list=duration_list)
 

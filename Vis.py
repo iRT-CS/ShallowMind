@@ -26,15 +26,17 @@ import matplotlib as mpl
 from pathlib import Path
 import Utils.VisColormaps as vcmap
 from Datasets import DatasetGenerator as dg
+import imageio
 
 
 """Graphs the dataset provided and saves
 :param dataset: np.ndarray - the dataset to graph
 :param save_path: str - the save location
+:param plot_name: str - the name of the plot
 """
-def graphDataset(dataset:np.ndarray, save_path:str):
+def graphDataset(dataset:np.ndarray, save_path:str, plot_name:str=None, dataset_options=None):
     print(f"Dataset boundary, seed {seeding.getSeed()}")
-    name = f"dataset_{seeding.getSeed()}"
+    name = f"!ds_seed-{seeding.getSeed()}"
     coords, labels = dataset
     xcoords = coords[:,0]
     ycoords = coords[:,1]
@@ -42,7 +44,13 @@ def graphDataset(dataset:np.ndarray, save_path:str):
     ax = fig.add_subplot()
     scatter = ax.scatter(xcoords, ycoords, s=10, c=labels, cmap="RdYlBu")
     # plt.show()
+    if plot_name is not None:
+        plt.title(plot_name, loc="left")
+    if dataset_options is not None:
+        dg.setDatasetBoundaryPlot(ax, options=dataset_options)
+    # plt.show()
     saveFigure(save_path=save_path, figure=fig, name=name)
+    plt.close()
 
 """Graphs the given model's predictions agaisnt the actual results
 also displays confidence in predictions as a contour map
@@ -52,10 +60,11 @@ also displays confidence in predictions as a contour map
 :param save_path: str - the path to save the visualizations to
 :param name: str - the name of the model
 """
-def graphPredictions(dataset:np.ndarray, model:tf.keras.models, save_path:str, name:str):
+def graphPredictions(dataset:np.ndarray, model:tf.keras.models, save_path:str, name:str, plot_name:str=None, dataset_options=None):
     print(f"Prediction boundary, b_{name}, seed {seeding.getSeed()}")
-    name = f"b_{name}"
+    save_name = f"b_{name}"
     fig = plt.figure()
+    ax = fig.add_subplot()
 
     coords, y_true = dataset
     y_pred = model.predict(coords)
@@ -119,7 +128,14 @@ def graphPredictions(dataset:np.ndarray, model:tf.keras.models, save_path:str, n
             coords[incorrect_rows, 0], coords[incorrect_rows, 1], s=size,
             color=color[class_value+2])
     # plt.show()
-    saveFigure(save_path=save_path, name=name, figure=fig)
+    if plot_name is not None:
+        plt.title(plot_name, loc="left")
+    if dataset_options is not None:
+        dg.setDatasetBoundaryPlot(ax, options=dataset_options)
+
+    # plt.show()
+    saveFigure(save_path=save_path, name=save_name, figure=fig)
+    plt.close()
 
 """Saves a figure to the given path with the given filename
 :param save_path: str - the path to save the file to
@@ -130,6 +146,7 @@ def saveFigure(save_path:str, figure:plt.Figure, name:str):
     Path(save_path).mkdir(parents=True, exist_ok=True)
     file_path = f"{save_path}\\{name}.png"
     figure.savefig(file_path, bbox_inches='tight', pad_inches=0.25, dpi=400)
+    
 
 """Gets visualizations for a model
 :param model: tf.keras.model - the model to use
@@ -141,9 +158,16 @@ def saveFigure(save_path:str, figure:plt.Figure, name:str):
 def getVisualizations(model:tf.keras.models, save_path:str, name:str, dataset_options:dg.DataTypes, plotDataset:bool =False):
     dataset = dg.getDataset(dataset_options.name, dataset_options)
     if plotDataset:
-        index = save_path.index("seed-")
+        index = save_path.index("dataset-")
         data_save_path = save_path[:save_path.index("\\", index)]
-        graphDataset(dataset, data_save_path)
-    graphPredictions(dataset=dataset, model=model, save_path=save_path, name=name)
+        graphDataset(dataset, data_save_path, dataset_options=dataset_options)
+    graphPredictions(dataset=dataset, model=model, save_path=save_path, name=name, dataset_options=dataset_options)
 
 
+def createSequence(image_path, save_path, duration_list):
+    writer = imageio.get_writer(save_path, mode='I', duration=duration_list)
+    plot_list = os.listdir(image_path)
+    for plot in plot_list:
+        # use long for the first and last
+        image = imageio.imread(f"{image_path}\\{plot}")
+        writer.append_data(image)

@@ -50,10 +50,7 @@ class VisualizationModel():
             seedNum=seed)
         return model
     
-
-
-    def trainNetwork(self, model, epochs, training_data, validation_data):
-        self.modelId = f"{self.getModelId(self.overwrite)}-{self.layer_shape}"
+    def createModelCallbacks(self, epochs):
         dateStr = datetime.datetime.now().strftime("%d-%mT%H-%M")
         logdir = os.path.join(".local\\logs", f"exp-{self.exp_num}\\{self.modelId}_{dateStr}")
         tensorboard_callback = tf.keras.callbacks.TensorBoard(logdir, histogram_freq=1)
@@ -62,7 +59,7 @@ class VisualizationModel():
         # also adjust min_delta, and consider restoring best weights
         early_stop_callback = tf.keras.callbacks.EarlyStopping(
             monitor="val_acc",
-            patience=30,
+            patience=15,
             restore_best_weights=False)
         
         # create model checkpoint callback
@@ -73,21 +70,30 @@ class VisualizationModel():
             monitor='val_acc',
             save_best_only=True)
 
-        visualizer = VisualizationCallbacks(self.modelId, self.exp_num, self.datasetId)
+        visualizer_callback = VisualizationCallbacks(
+            model_name=self.modelId,
+            exp_num=self.exp_num,
+            dataset_options=self.dataset_options,
+            target_epochs=epochs)
+        
+        return [tensorboard_callback, early_stop_callback, checkpoint_callback, visualizer_callback]
+
+    def trainNetwork(self, model, epochs, training_data, validation_data):
+        self.modelId = f"{self.getModelId(self.overwrite)}-{self.layer_shape}"
+        
+        callback_list = self.createModelCallbacks(epochs=epochs)
 
         tCoords, tLabels = training_data
+        vCoords, vLabels = validation_data
         # start timer
         start_time = time.time()
         # f i t
         model.fit(
         x=tCoords,
         y=tLabels,
-        validation_data=validation_data,
+        validation_data=(vCoords, vLabels),
         epochs=epochs,
-        callbacks=[
-            early_stop_callback,
-            tensorboard_callback,
-            checkpoint_callback])
+        callbacks=callback_list)
         
         self.saveModel(model)
 
@@ -134,8 +140,7 @@ class VisualizationModel():
     def getModelId(self, getCurrent=False):
         add = 1 if getCurrent is False else 0
         # if theres no exp folder, make it
-        if os.path.isdir(self.modelFolder) is False:
-            os.mkdir(self.modelFolder)
+        Path(self.modelFolder).mkdir(parents=True, exist_ok=True)
         # look at the last file in the exp folder and extract the id
         # if theres none, its '0000'
         folderList = os.listdir(self.modelFolder)
@@ -149,6 +154,7 @@ class VisualizationModel():
         return indexStr
     
     def trainNewNetwork(self, epochs, shape, dataset_options, model=None, overwrite=False):
+        self.dataset_options = dataset_options
         self.overwrite = overwrite
         # training_data = self.generateTrainingDataset()
         # validation_data = self.generateValidationDataset()
