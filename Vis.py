@@ -96,7 +96,7 @@ def graphPredictions(dataset:np.ndarray, model:tf.keras.models, save_path:str, n
     # plot the grid of x, y and z values as a surface
     # issue with this was that it wasnt scaled
     # old RdBu
-    cmap = vcmap.createColormap()
+    cmap = vcmap.createContourColormap()
     plt.contourf(xx, yy, zz, cmap=cmap, vmin=0, vmax=1)
     redCmp1 = mpl.cm.get_cmap("seismic")
     redCmp2 = mpl.cm.get_cmap("YlOrRd")

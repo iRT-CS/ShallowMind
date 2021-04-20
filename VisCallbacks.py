@@ -22,7 +22,7 @@ class VisualizationCallbacks(tf.keras.callbacks.Callback):
     :param dataset_options: ds.Datatypes(.options) - the options for the dataset
     :param target_epochs: the max epochs to train the model for
     """
-    def __init__(self, model_name, exp_num, dataset_options, target_epochs):
+    def __init__(self, model_name:str, exp_num:int, dataset_options:dg.DataTypes, target_epochs:int):
         self.model_name = model_name
         self.exp_num = exp_num
         self.dataset_options = dataset_options
@@ -53,7 +53,7 @@ class VisualizationCallbacks(tf.keras.callbacks.Callback):
     :param epoch: int - the current epoch
     :param logs: dict - logs containing metrics for the model
     """
-    def on_epoch_end(self, epoch, logs=None):
+    def on_epoch_end(self, epoch:int, logs:dict=None):
         epochStr = str(epoch).zfill(self.epoch_zFill)
         acc = logs["val_acc"]
         filename=f"ep-{epochStr}_vAcc-{acc:.2f}"
@@ -68,7 +68,7 @@ class VisualizationCallbacks(tf.keras.callbacks.Callback):
 
     :param logs: dict - logs containing metrics for the model
     """
-    def on_train_end(self, logs=None):
+    def on_train_end(self, logs:dict=None):
         # graph final model predictions
         acc = logs["val_acc"]
         filename = f"final_eps-{self.lastEpoch+1}_vAcc-{acc:.2f}"
@@ -91,11 +91,11 @@ class VisualizationCallbacks(tf.keras.callbacks.Callback):
 
     """Graphs predictions for the model
     saves to .local
-    
+
     :param filename: str - the filename to save the model as
     :param plot_name: str - the title of the plot
     """
-    def graphModelPredictions(self, filename, plot_name):
+    def graphModelPredictions(self, filename:str, plot_name:str):
         Vis.graphPredictions(
             dataset=self.dataset,
             model=self.model,

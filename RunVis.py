@@ -1,3 +1,4 @@
+from tensorflow.core.framework.types_pb2 import DataType
 from tensorflow.python.keras.backend import switch
 from VisModel import VisualizationModel
 from numpy.random import seed as np_seed
@@ -14,10 +15,10 @@ import Vis as vis
 
 
 """Gets visualizations for a list of models
-:param model_list: the list of models to use
+:param model_list: list - the list of models to use
 :param dataset_options: ds.DataTypes(.options) - the options for the dataset
 """
-def runModelBatch(model_list, dataset_options):
+def runModelBatch(model_list:list, dataset_options:dg.DataTypes):
     plotDataset=True
     for model_id in model_list:
         model_path = MODEL_LOAD_PATH.format(exp_num=exp_num, model_id=model_id)
