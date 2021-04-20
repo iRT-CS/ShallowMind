@@ -10,21 +10,31 @@ import math
 from pathlib import Path
 from VisCallbacks import VisualizationCallbacks
 import Datasets.DatasetGenerator as dg
+from Utils import VisUtils
 # import runExp
 
 class VisualizationModel():
-    def __init__(self, exp_num, seed=1):
+    """Initialize the model instance
+    :param exp_num: int - the experiment number for the model
+    :param seed: int - the seed number for the randomizations
+    """
+    def __init__(self, exp_num:int, seed:int=seeding.getSeed()):
         seed = seed
         seeding.setSeed(seed)
         np.random.seed(seed) # fix random seed
         tf.random.set_seed(seed)
-
+        # set base save path for models 
         self.exp_num = exp_num
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
         self.modelFolder = f".local\\models\\exp-{self.exp_num}"
         
+    """Creates the network with the given specifications
 
-    def createNetwork(self, hidden_layer_shape):
+    :param hidden_layer_shape: array-like - the shape of the network, with the
+    length of the array as the number of hidden layers and the element as the nodes in that layer
+    :returns: tf.keras.model - the model generated
+    """
+    def createNetwork(self, hidden_layer_shape:list):
         self.layer_shape = hidden_layer_shape # shape of hidden layers
         # too lazy to install pymongo, importing these from runExp isnt working so here
         MAX_NODES = 6
@@ -50,19 +60,32 @@ class VisualizationModel():
             seedNum=seed)
         return model
     
-    def createModelCallbacks(self, epochs):
+    """Creates a set of model callbacks and returns them as a list
+
+    :param epochs: int - the max number of epochs to train the network for
+    :returns: list - the model callbacks
+    """
+    def createModelCallbacks(self, epochs:int):
+        # tensorboard callback, basically stores info about the model as it trains
+        # and lets you view it on tensorboard. for info on tensorboard, either
+        # look it up or there's a comment on it somewhere (on Vis, might move to here tho)
         dateStr = datetime.datetime.now().strftime("%d-%mT%H-%M")
         logdir = os.path.join(".local\\logs", f"exp-{self.exp_num}\\{self.modelId}_{dateStr}")
         tensorboard_callback = tf.keras.callbacks.TensorBoard(logdir, histogram_freq=1)
+
         # create early stopping metric
-        # using loss rn, maybe switch to accuracy
         # also adjust min_delta, and consider restoring best weights
+        # ^ not restoring best weights because its just the last checkpoint saved
+        # basically, monitors the supplied metric and stops training if the network hasn't improved this metric
+        # after patience epochs
         early_stop_callback = tf.keras.callbacks.EarlyStopping(
             monitor="val_acc",
             patience=15,
             restore_best_weights=False)
         
         # create model checkpoint callback
+        # as the network trains, if the validation accuracy improves, it saves the network
+        # you can make predictions using these saved models later or even train them more
         checkpoint_dir = f"{self.modelFolder}\\model-{self.modelId}\\checkpoints" + "\\ep-{epoch}_vAcc-{val_acc:.3f}"
         checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
             filepath=checkpoint_dir,
@@ -70,6 +93,8 @@ class VisualizationModel():
             monitor='val_acc',
             save_best_only=True)
 
+        # custom callback for saving visualizations as the network trains
+        # see class for more info
         visualizer_callback = VisualizationCallbacks(
             model_name=self.modelId,
             exp_num=self.exp_num,
@@ -77,10 +102,16 @@ class VisualizationModel():
             target_epochs=epochs)
         
         return [tensorboard_callback, early_stop_callback, checkpoint_callback, visualizer_callback]
+    """Trains the network
 
-    def trainNetwork(self, model, epochs, training_data, validation_data):
+    :param model: tf.keras.model - the model to train
+    :param epochs: int - the number of epochs to train for
+    :param training_data: np.ndarray - the training data for the model
+    :param validation_data: np.ndarray - the validation data for the model
+    """
+    def trainNetwork(self, model:tf.keras.models, epochs:int, training_data:np.ndarray, validation_data:np.ndarray):
         self.modelId = f"{self.getModelId(self.overwrite)}-{self.layer_shape}"
-        
+        # get callbacks
         callback_list = self.createModelCallbacks(epochs=epochs)
 
         tCoords, tLabels = training_data
@@ -100,17 +131,14 @@ class VisualizationModel():
         end_time = time.time()
         self.evaluateNetwork(model, validation_data)
         time_elapsed = end_time - start_time
-        timeStr = self.time_convert(time_elapsed)
+        # make time look pretty
+        timeStr = VisUtils.time_convert(time_elapsed)
         print(f"Completed training in {timeStr}")
     
-    def time_convert(self, sec):
-        mins = math.floor(sec // 60)
-        sec = sec % 60
-        hours = math.floor(mins // 60)
-        mins = mins % 60
-        return f"{hours}h, {mins}m, {sec:.2f}s"
-    
-    def saveModel(self, model):
+    """Saves the model so it can be sent around and loaded again later
+    :param model: tf.keras.model - the model to save
+    """
+    def saveModel(self, model:tf.keras.models):
         # try to save to exp-#/model-####/model
         try:
             indexStr = self.modelId
@@ -128,8 +156,13 @@ class VisualizationModel():
             print(f"Error occured while saving, saved to backup at: {backup}")
             # raise error AFTER it saved
             raise
-
-    def evaluateNetwork(self, model, data, isVerbose=True):
+        
+    """Evaluates the network and prints scores
+    :param model: tf.keras.model - the model to evaluate
+    :param data: np.ndarray - the data to evaluate the model against
+    :param isVerbose: boolean - whether to show the progress bar or not
+    """
+    def evaluateNetwork(self, model:tf.keras.models, data:np.ndarray, isVerbose:bool=True):
         verbose = 1 if isVerbose else 0
         coords, labels = data
         score = model.evaluate(x=coords, y=labels, verbose=verbose)
@@ -137,7 +170,15 @@ class VisualizationModel():
         print('Test loss:', score[0])
         print('Test accuracy:', score[1])
 
-    def getModelId(self, getCurrent=False):
+    """Gets the model id for the current model
+    Pretty much looks into the model folder and if its set to override,
+    it returns the id of the last model in the folder (0000 if none)
+    and if its set to get a new one, it adds one to whatever the last one is
+
+    :param getCurrent: boolean - whether to get the last model id or make a new one
+    :returns: str - the string of the model id (####)
+    """
+    def getModelId(self, getCurrent:bool=False):
         add = 1 if getCurrent is False else 0
         # if theres no exp folder, make it
         Path(self.modelFolder).mkdir(parents=True, exist_ok=True)
@@ -153,7 +194,15 @@ class VisualizationModel():
             indexStr = str(index+add).zfill(4)
         return indexStr
     
-    def trainNewNetwork(self, epochs, shape, dataset_options, model=None, overwrite=False):
+    """Trains a new network with the provided specs
+
+    :param epochs: int - the numebr of epochs to train for
+    :parma shape: array_like - the shape of the network
+    :param dataset_options: DataTypes(.options) - the options for the dataset
+    :param model: tf.keras.model - optionally provide a model to train further
+    :param overwrite: boolean - whether to overwrite the last model or save a new one
+    """
+    def trainNewNetwork(self, epochs:int, shape:list, dataset_options:dg.DataTypes, model:tf.keras.models=None, overwrite:bool=False):
         self.dataset_options = dataset_options
         self.overwrite = overwrite
         # training_data = self.generateTrainingDataset()
