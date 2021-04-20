@@ -6,6 +6,8 @@ from Utils.distanceToCurve import distanceToCurve
 from Utils import seeding
 #import timeit
 
+# DEPRECATED, USE Polynomial.py
+
 # seed for reproduceable datasets
 seedNum = seeding.getSeed()
 
