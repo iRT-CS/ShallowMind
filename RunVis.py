@@ -4,7 +4,7 @@ from VisModel import VisualizationModel
 from numpy.random import seed as np_seed
 import tensorflow as tf
 import numpy as np
-from Utils import seeding
+from Utils import seeding, VisUtils
 import os
 import math
 import matplotlib.pyplot as plt
@@ -12,7 +12,7 @@ import matplotlib as mpl
 from pathlib import Path
 from Datasets import DatasetGenerator as dg
 import Vis as vis
-
+import time
 
 """Gets visualizations for a list of models
 :param model_list: list - the list of models to use
@@ -70,14 +70,18 @@ def getCheckpoints(model_path:str, step_percent:float=0.2) -> list:
     checkpoint_list.append(all_checkpoints[length-1])
     return checkpoint_list
 
-"""Trains a set of networks for the given layer shape list
 
-:param layer_shape_list: list - the list of shapes for the networks
-"""
-def createNetworkSet(layer_shape_list:list, dataset_options:dg.DataTypes):
+def createNetworkSet(layer_shape_list:list, dataset_options:dg.DataTypes, useEarlyStopping:bool=True, saveVisualizations:bool=True):
+    """Trains a set of networks for the given layer shape list
+    Args:
+
+        layer_shape_list: list - the list of shapes for the networks
+        useEarlyStopping: bool - whether to use early stopping
+        saveVisualizations: bool - whether to save intermediate visualizations
+    """
     for shape in layer_shape_list:
         network = VisualizationModel(exp_num, seed)
-        network.trainNewNetwork(epochs=epochs, shape=shape, dataset_options=dataset_options)
+        network.trainNewNetwork(epochs=epochs, shape=shape, dataset_options=dataset_options, useEarlyStopping=useEarlyStopping, saveVisualizations=saveVisualizations)
         
 
 MODEL_LOAD_PATH = ".local\\models\\exp-{exp_num}\\model-{model_id}\\model"
@@ -87,44 +91,58 @@ DATAPLOT_SAVE_PATH = ".local\\visualizations\\exp-{exp_num}\\dataset-{dataset}"
 SAVE_SEQUENCE_PATH = ".local\\visualizations\\exp-{exp_num}\\{dataset}\\{model_id}\\sequence\\{filename}"
 RAW_SEQUENCE_PATH = ".local\\visualizations\\exp-{exp_num}\\{dataset}\\{model_id}\\sequence\\raw"
 
-ds_options = dg.DataTypes.PolynomialOptions()
-# ds_options.coefficients = [
-#     0.03,
-#     0,
-#     -1.08,
-#     0,
-#     5
-# ]
-ds_options.coefficients = [
-    0.05,
-    0,
-    0,
-    0
-]
-ds_options.noise = (0.2, ds_options.chance)
-
-exp_num = 4
-seed = 3
+seed = 1
 seeding.setSeed(seed)
+exp_num = 5
+
+
+ds_options = dg.PolynomialOptions()
+ds_options.setNoise(distance=1, chance=.7)
+
 epochs = 900
+shouldSave=False
 
-model_list = ["0004-[4]"]
-# runCheckpointBatch(model_list=model_list, dataset_options=dataset_options, useAuto=True)
+model_list = [
+    "0001-[1]",
+    "0002-[6, 6, 6, 6]",
+    "0003-[1, 6, 1, 6]",
+    "0004-[6, 1, 6, 1]",
+    "0005-[4, 4, 4, 4]",
+    "0006-[6, 4, 6, 4]",
+    "0007-[6, 5, 4, 3]",
+    "0008-[4, 3, 2, 1]",
+    "0009-[1, 2, 3, 4]",
+    "0010-[3, 4, 5, 6]"]
+
 dataset = dg.getDataset(dataType=ds_options.name, options=ds_options)
-data_save_path = DATAPLOT_SAVE_PATH.format(exp_num=exp_num, dataset=ds_options.name)
-# vis.graphDataset(dataset=dataset, save_path=data_save_path, dataset_options=ds_options)
-# runModelBatch(model_list=model_list, dataset_options=ds_options)
 
+
+
+
+data_save_path = DATAPLOT_SAVE_PATH.format(exp_num=exp_num, dataset=ds_options.name)
+# vis.graphDataset(dataset=dataset, save_path=data_save_path, dataset_options=ds_options, shouldSave=shouldSave)
+runModelBatch(model_list=model_list, dataset_options=ds_options)
+# runCheckpointBatch(model_list=model_list, dataset_options=dataset_options, useAuto=True)
 
 layer_shapes_list = [
-    [4],
-    [4,4],
-    [4,4,4],
-    [4,4,4,4]
+    [1],
+    # [6,6,6,6],
+    # [1,6,1,6],
+    # [6,1,6,1],
+    # [4,4,4,4],
+    # [6,4,6,4],
+    # [6,5,4,3],
+    # [4,3,2,1],
+    # [1,2,3,4],
+    # [3,4,5,6]
 ]
 
-createNetworkSet(layer_shape_list=layer_shapes_list, dataset_options=ds_options)
-
+# layer_shapes_list = [[1]]
+# start_time = time.time()
+# createNetworkSet(layer_shape_list=layer_shapes_list, dataset_options=ds_options, saveVisualizations=False, useEarlyStopping=False)
+# end_time = time.time()
+# timeStr = VisUtils.time_convert(end_time-start_time)
+# print(f"Model set completed training in {timeStr}")
 
 # seq_model_id = "0001-[4]"
 # filename = f"s-sequence_exp-{exp_num}_{seq_model_id}.gif"

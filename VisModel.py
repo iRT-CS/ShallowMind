@@ -60,29 +60,39 @@ class VisualizationModel():
             seedNum=seed)
         return model
     
-    """Creates a set of model callbacks and returns them as a list
 
-    :param epochs: int - the max number of epochs to train the network for
-    :returns: list - the model callbacks
-    """
-    def createModelCallbacks(self, epochs:int):
+    def createModelCallbacks(self, epochs:int, saveVisualizations:bool, useEarlyStopping:bool):
+        """Creates a set of model callbacks and returns them as a list
+        
+        args:
+            epochs: int - the max number of epochs to train the network for
+            saveVisualizations: bool - whether to save intermediate visualizations for the network per epoch
+            useEarlyStopping: bool - whether to use early stopping in the model
+            
+            returns: list - the model callbacks
+        """
+
+        # list of callbacks
+        callbackList = []
         # tensorboard callback, basically stores info about the model as it trains
         # and lets you view it on tensorboard. for info on tensorboard, either
         # look it up or there's a comment on it somewhere (on Vis, might move to here tho)
         dateStr = datetime.datetime.now().strftime("%d-%mT%H-%M")
         logdir = os.path.join(".local\\logs", f"exp-{self.exp_num}\\{self.modelId}_{dateStr}")
         tensorboard_callback = tf.keras.callbacks.TensorBoard(logdir, histogram_freq=1)
-
+        callbackList.append(tensorboard_callback)
         # create early stopping metric
         # also adjust min_delta, and consider restoring best weights
         # ^ not restoring best weights because its just the last checkpoint saved
         # basically, monitors the supplied metric and stops training if the network hasn't improved this metric
         # after patience epochs
-        early_stop_callback = tf.keras.callbacks.EarlyStopping(
-            monitor="val_acc",
-            patience=15,
-            restore_best_weights=False)
-        
+        if useEarlyStopping:
+            early_stop_callback = tf.keras.callbacks.EarlyStopping(
+                monitor="val_acc",
+                patience=15,
+                restore_best_weights=False)
+            callbackList.append(early_stop_callback)
+
         # create model checkpoint callback
         # as the network trains, if the validation accuracy improves, it saves the network
         # you can make predictions using these saved models later or even train them more
@@ -92,27 +102,35 @@ class VisualizationModel():
             save_weights_only=False,
             monitor='val_acc',
             save_best_only=True)
+        callbackList.append(checkpoint_callback)
 
         # custom callback for saving visualizations as the network trains
         # see class for more info
-        visualizer_callback = VisualizationCallbacks(
-            model_name=self.modelId,
-            exp_num=self.exp_num,
-            dataset_options=self.dataset_options,
-            target_epochs=epochs)
+        if saveVisualizations:
+            visualizer_callback = VisualizationCallbacks(
+                model_name=self.modelId,
+                exp_num=self.exp_num,
+                dataset_options=self.dataset_options,
+                target_epochs=epochs)
+            callbackList.append(visualizer_callback)
         
-        return [tensorboard_callback, early_stop_callback, checkpoint_callback, visualizer_callback]
-    """Trains the network
+        return callbackList
 
-    :param model: tf.keras.model - the model to train
-    :param epochs: int - the number of epochs to train for
-    :param training_data: np.ndarray - the training data for the model
-    :param validation_data: np.ndarray - the validation data for the model
-    """
-    def trainNetwork(self, model:tf.keras.models, epochs:int, training_data:np.ndarray, validation_data:np.ndarray):
+    def trainNetwork(self, model:tf.keras.models, epochs:int, training_data:np.ndarray,
+        validation_data:np.ndarray, saveVisualizations:bool,  useEarlyStopping:bool):
+        """Trains the network
+
+        args:
+            model: tf.keras.model - the model to train
+            epochs: int - the number of epochs to train for
+            training_data: np.ndarray - the training data for the model
+            validation_data: np.ndarray - the validation data for the model
+            saveVisualizations: bool - whether to save intermediate visualizations for the network per epoch
+            useEarlyStopping: bool - whether to use early stopping in the model
+        """
         self.modelId = f"{self.getModelId(self.overwrite)}-{self.layer_shape}"
         # get callbacks
-        callback_list = self.createModelCallbacks(epochs=epochs)
+        callback_list = self.createModelCallbacks(epochs=epochs, saveVisualizations=saveVisualizations, useEarlyStopping=useEarlyStopping)
 
         tCoords, tLabels = training_data
         vCoords, vLabels = validation_data
@@ -186,28 +204,35 @@ class VisualizationModel():
         # if theres none, its '0000'
         folderList = os.listdir(self.modelFolder)
         indexStr = ""
-        if len(folderList) == 0:
+        if len(folderList) == 0 or folderList[0].find("model") is -1:
             indexStr = "0000"
         else:
             latestFolder = folderList[len(folderList)-1]
+            # this is a really bad setup lol someone should make this loop through all
+            if latestFolder.find("model") is -1:
+                latestFolder = folderList[len(folderList)-2]
             index = int(latestFolder[6:10])
             indexStr = str(index+add).zfill(4)
         return indexStr
     
-    """Trains a new network with the provided specs
 
-    :param epochs: int - the numebr of epochs to train for
-    :parma shape: array_like - the shape of the network
-    :param dataset_options: DataTypes(.options) - the options for the dataset
-    :param model: tf.keras.model - optionally provide a model to train further
-    :param overwrite: boolean - whether to overwrite the last model or save a new one
-    """
-    def trainNewNetwork(self, epochs:int, shape:list, dataset_options:dg.DataTypes, model:tf.keras.models=None, overwrite:bool=False):
+    def trainNewNetwork(self, epochs:int, shape:list, dataset_options:dg.DataTypes,
+      model:tf.keras.models=None, overwrite:bool=False, saveVisualizations:bool=True, useEarlyStopping:bool=True):
+        """Trains a new network with the provided specs
+
+        Args:
+            epochs: int - the numebr of epochs to train for
+            shape: array_like - the shape of the network
+            dataset_options: DataTypes(.options) - the options for the dataset
+            model: tf.keras.model - optionally provide a model to train further
+            overwrite: boolean - whether to overwrite the last model or save a new one
+            saveVisualizations: boolean - whether to save intermediate visualizations
+            useEarlyStopping: boolean - whether to use early stopping
+        """
         self.dataset_options = dataset_options
         self.overwrite = overwrite
         # training_data = self.generateTrainingDataset()
         # validation_data = self.generateValidationDataset()
-        seed = seeding.getSeed()
         training_data = dg.getDataset(dataset_options.name, dataset_options)
         val_options = dataset_options
         val_options.seed = dataset_options.seed * 2
@@ -215,4 +240,6 @@ class VisualizationModel():
 
         model = self.createNetwork(shape) if model is None else model
         print(model.summary())
-        self.trainNetwork(model=model, training_data=training_data, validation_data=validation_data, epochs=epochs)
+        self.trainNetwork(
+            model=model, training_data=training_data, validation_data=validation_data,
+            epochs=epochs, saveVisualizations=saveVisualizations, useEarlyStopping=useEarlyStopping)

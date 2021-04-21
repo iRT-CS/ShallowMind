@@ -1,6 +1,6 @@
 import math
 
-def time_convert(self, sec):
+def time_convert(sec):
     mins = math.floor(sec // 60)
     sec = sec % 60
     hours = math.floor(mins // 60)

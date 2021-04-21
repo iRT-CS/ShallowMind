@@ -1,0 +1,171 @@
+Title: Examining the extent of overfitting on networks within current node/layer parameters
+Local experiment number: 5
+Global experiment number: 001
+Date performed: 4/20/21
+Conducted by: Olivia Taylor
+
+Hypothesis: Overfitting cannot occur on networks within our set of parameters
+to a significant degree due to the noncomplexity of these networks
+
+Additional info:
+    Current network parameters:
+        MAX_NODES = 6
+        MAX_LAYERS = 4
+
+        IN_SHAPE = (2,)
+        OUT_SHAPE = (1,)
+
+        NODES_INLAYER = 2
+        NODES_OUTLAYER = 1
+
+    The focus of this experiment is mainly on the effect of the amount of layers and nodes per layer.
+
+
+Experimental Prodecure:
+
+    Run networks with the following hidden layer shapes for a set number of epochs each without
+    early stopping. Networks were chosen for their varying levels of complexity and volatility.
+    All networks were confined to the set of network parameters we currently use
+
+    Epochs: 900
+
+    Hidden layers shapes (Total: 10):
+    1.  [1]
+    2.  [6,6,6,6]
+    3.  [1,6,1,6]
+    4.  [6,1,6,1]
+    5.  [4,4,4,4]
+    6.  [6,4,6,4]
+    7.  [6,5,4,3]
+    8.  [4,3,2,1]
+    9.  [1,2,3,4]
+    10. [3,4,5,6]
+
+   The following datasets were used to train the network:
+        Type (both): Parabolic
+
+        Training Dataset:
+            - Seed = 1
+            - numPoints = 2000
+            - distance = 1,
+            - chance = 0.7
+            - vMin = -10
+            - vMax = 10,
+            - coefficients = [.25, 0, -2]
+
+        Validation Dataset:
+            - Seed = 2
+            - Besides seed, same dataset specifications
+
+    Visualize networks using the training dataset to see if overfitting occurs and to what degree.
+    Overfitting is loosely measured by how many points across the boundary line are correctly classified,
+    despite representing random noise that should be ignored in a generalizable network.
+    (Additionally, overfitting could be measured by the target accuracy based on the true amount of points on each side
+    vs the model's predicted accuracy. This can optionally be done later, but the initial visualization should be enough
+    to determine whether further analysis needs to be conducted)
+
+    For this experiment, signs of overfitting were classified as the following:
+        1. Specific points being classified as a different color than that of the general prediction line side they reside on
+            Especially if these points were correctly classified, this would point clearly to overfitting.
+            (ex, a blue point on the red side of the contour map)
+        2. High training accuracy with low validation accuracy as training progressed
+        3. Strange contour map colors around areas with noise (ex. dots of red or blue around the red or blue noise)
+
+
+    The final network predictions are considered in this experiment. Intermediate predictions and visualizations were
+    not recorded, although checkpoint models were saved whenever accuracy increased. Accuracy was only viewable up to ##.#% due to rounding (this can be changed).
+
+
+Experiment:
+
+    Model-0000 was used as a test prior to the experiment to ensure setup was correct.
+
+    Setup was not correct. All models ended up being named model-0000 followed by
+    their unique layer structure. This likely occured either due to the addition of the
+    "experiment-info.txt" file to the model folder or due to the new network naming conventions
+    which include structure, though likely the former since the latter was already implemented successfully.
+    Since they had the unique layer structure, they could be identified and renamed. However, the first model
+    with 1 node and 1 layer had the same structure as the setup model and had to be rerun.
+    This model was renamed as model-0001 and model-0000 is now nonexistent.
+
+    Tensorflow logs may also have been messed up as a result. Only experiments 0000-0002 logs show up.
+    This is a problem, so the experiment should be rerun.
+
+    Other than that, training completed in about 30 minutes.
+
+    Visualizations were then produced of the final models for each structure.
+    The visualizations were produced without error.
+
+
+Results:
+
+    Visualizations showed that all structures were able to achieve the parabolic shape necessary to
+    fit the dataset. All structures reached upwards of 90% accuracy relatively quickly.
+    The highest validation accuracy is listed below, along with the epoch number it was reached at.
+
+    1.  [1]         - Epoch 687, vAcc 95.7%
+    2.  [6,6,6,6]   - Epoch 408, vAcc 95.1%
+    3.  [1,6,1,6]   - Epoch 198, vAcc 95.0%
+    4.  [6,1,6,1]   - Epoch 306, vAcc 94.8%
+    5.  [4,4,4,4]   - Epoch 682, vAcc 95.6%
+    6.  [6,4,6,4]   - Epoch 628, vAcc 95.0%
+    7.  [6,5,4,3]   - Epoch 284, vAcc 95.1%
+    8.  [4,3,2,1]   - Epoch 364, vAcc 96.2%
+    9.  [1,2,3,4]   - Epoch 226, vAcc 94.9%
+    10. [3,4,5,6]   - Epoch 306, vAcc 94.3
+
+    Note that these are VALIDATION accuracies and thus, are expected to decrease as overfiting occurs.
+    Unforunately, the training accuracies aren't available due to the logging issue. Additionally, it is worth
+    noting that certain structures such as Structure 6 achieved this high accuracy with about 600 epochs between
+    it and the previous checkpoint (previous was at epoch 89, with 94.9%, so not a huge difference to 95.0%, but worth noting regardless).
+
+    Visualizations additionally showed that all model point predictions showed all points as the same color as that of the contour color they were
+    above. In other words, blue points were above the blue background, and same with red. There were no instances of points being predicted either
+    correctly or incorrectly on the opposite side from their general color, indicating that the first sign of overfitting did not occur.
+
+    The second sign was not able to be evaluated due to the logging issue. The models could be manually evaluated with model.evaluate(), but
+    since the experiment needs to be rerun anyway, I decided not to pursue this. This can be done easily though, since model files are included in
+    this experiment folder.
+
+    All contour maps appeared regular, without any signs of miscoloring at certain areas.
+
+    In general, models followed the parabolic shape, although they did not follow the dataset boundary line exactly.
+    Certain structures would set their boundary on one side of the noise in an apparent attempt to adjust.
+
+
+Conclusions:
+
+    Although the accuracy data wasn't available for the structures,
+    the visualizations provided enough information to make a conclusion.
+
+    Overfitting does not occur to a significant degree on these structures, likely due to their lack of complexity.
+
+    The signs of overfitting were considered as the following:
+        1. Specific points being classified as a different color than that of the general prediction line side they reside on
+            Especially if these points were correctly classified, this would point clearly to overfitting.
+            (ex, a blue point on the red side of the contour map)
+        2. High training accuracy with low validation accuracy as training progressed
+        3. Strange contour map colors around areas with noise (ex. dots of red or blue around the red or blue noise)
+
+    Out of these three, none were observed. The second was not able to be observed, and as a result, the experiment will be repeated,
+    but it is unlikely that there will be any significant difference in this conclusion.
+
+    As a result, I've drawn the conclusion that overfitting does not occur in these structures due to their lack of complexity.
+    It is possible that with a vastly increased amount of epochs, overfitting could possibly occur, but this doesn't seem very likely
+    due to the final shape of the model's predictions. If overfitting were in progress, it is likely that there would have been point
+    misclassification and/or an irregular contour shape. However, neither of these occured, despite these models being at the least about 300
+    epochs after when training would have been stopped, although it likely would have been stopped around 300 epochs at the latest, not 600.
+
+    Therefore, I don't believe we need to worry about overfitting in these models, at least not for the parabolic dataset. If we wish to investigate
+    the effect of overfitting on various structures, we would need to expand our network parameters to include larger networks, or, more preferably, 
+    create a different set of experiments with medium-large networks to see the level of complexity at which overfitting begins.
+
+    These models could be further trained in future experiments to see if there is a point at which overfitting occurs, but it might never happen
+    since the models may have settled in a well generalizable local minimum. A new initialization with a different seed may also yield new results,
+    although it is unlikely.
+
+    Those interested in investigation into whether smaller models such as these are capable of overfitting may be interested in this paper:
+        https://papers.nips.cc/paper/1988/file/3def184ad8f4755ff269862ea77393dd-Paper.pdf
+
+
+Experiment 1 concluded by Olivia Taylor on 4/20/21.

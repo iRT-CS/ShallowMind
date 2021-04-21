@@ -1,7 +1,9 @@
 from enum import Enum
 from operator import index
 import os
+from re import S
 import sys
+import numpy as np
 # to import files from sibling subfolders, you need to basically search from the top
 # so this adds the shallowmind folder to the paths it searches for
 # honestly, we should maybe restructure this as a package maybe so this is easier?
@@ -14,16 +16,19 @@ sys.path.insert(0, sm_path)
 from Utils import seeding
 from Datasets import Ellipse, GaussianBoundary, Polynomial
 
-"""Gets a dataset of a specific type for the provided options
 
-:param dataType: ds.DataTypes(.name) - the datatype to get
-:param options: ds.DataTypes(.options) - the options for the dataset. If not provided, defaults are used
-:returns: np.ndarray - the dataset in [[[x], [y]], label] format
-"""
-def getDataset(dataType=None, options=None):
+def getDataset(dataType=None, options=None) -> np.ndarray:
+    """Gets a dataset of a specific type for the provided options
+
+    Args:
+        dataType: ds.DataTypes(.name) - the datatype to get
+        options: ds.DataTypes(.options) - the options for the dataset. If not provided, defaults are used
+        
+        returns: np.ndarray - the dataset in [[[x], [y]], label] format
+    """
     dataType == options.name if dataType is None else dataType
-    if dataType == DataTypes.ELLIPSE:
-        options = DataTypes.EllipseOptions() if options is None else options
+    if dataType == EllipseOptions.name:
+        options = EllipseOptions() if options is None else options
         dataset = Ellipse.getPoints(
             numPoints=options.numPoints,
             seed=options.seed,
@@ -35,8 +40,8 @@ def getDataset(dataType=None, options=None):
             angle=options.angle,
             center=options.center)
 
-    elif dataType is DataTypes.POLYNOMIAL:
-        options = DataTypes.PolynomialOptions() if options is None else options
+    elif dataType is PolynomialOptions.name:
+        options = PolynomialOptions() if options is None else options
         dataset = Polynomial.getPoints(
             numPoints=options.numPoints,
             seed=options.seed,
@@ -47,7 +52,7 @@ def getDataset(dataType=None, options=None):
     
     # deprecated, use POLYNOMIAL
     elif dataType is DataTypes.GAUSSIAN_BOUNDARY:
-        options = DataTypes.GaussianBoundaryOptions() if options is None else options
+        options = GaussianBoundaryOptions() if options is None else options
         dataset = GaussianBoundary.getPoints(
             coVec=options.coVec,
             seed=options.seed,
@@ -77,68 +82,87 @@ Noise generation:
     too high.
 """
 class DataTypes():
+
     ELLIPSE = "ellipse"
     POLYNOMIAL = "polynomial"
     GAUSSIAN_BOUNDARY = "gaussian_boundary"
 
-    class EllipseOptions():
-        name = "ellipse"
-        # self explanatory, look in ellipse class for info on noise (distance/chance)
-        # vMin, vMax is size of sample
-        def __init__(
-          self, numPoints=2000, seed=seeding.getSeed(), distance=2, chance=0.5, vMin=-10, vMax=10,
-          center=(0,0), width=10, height=13, angle=0):
-            self.numPoints = numPoints
-            self.seed = seed
-            self.distance = distance
-            self.chance = chance
-            self.noise = self.distance, self.chance
-            self.vMin = vMin
-            self.vMax = vMax
-            self.center = center
-            self.width = width
-            self.height = height
-            self.angle = angle
+    def setNoise(self, distance, chance):
+        """Sets noise for a dataset
+        All other variables can be set directly, but noise components cant
+        unless you chance the actual noise variable, so this exists to make it easier
+
+        Args:
+            distance:int - see noise generation comment
+            chance:int - see noise generation comment
+        """
+        self.noise = (distance, chance)
+
+
+class EllipseOptions(DataTypes):
+    name = DataTypes.ELLIPSE
+    # self explanatory, look in ellipse class for info on noise (distance/chance)
+    # vMin, vMax is size of sample
+    def __init__(
+        self, numPoints=2000, seed=seeding.getSeed(), distance=2, chance=0.5, vMin=-10, vMax=10,
+        center=(0,0), width=10, height=13, angle=0):
+        super().__init__()
+        self.numPoints = numPoints
+        self.seed = seed
+        self.distance = distance
+        self.chance = chance
+        self.noise = self.distance, self.chance
+        self.vMin = vMin
+        self.vMax = vMax
+        self.center = center
+        self.width = width
+        self.height = height
+        self.angle = angle
+
+
     
-    # look in Polynomial class for info
-    class PolynomialOptions():
-        name = "polynomial"
-        def __init__(self, numPoints=2000, seed=seeding.getSeed(), distance=1, chance=0.5, vMin=-10, vMax=10,
-          coefficients=[.25, 0, -2]):
-            self.numPoints = numPoints
-            self.seed = seed
-            self.distance = distance
-            self.chance = chance
-            self.noise = self.distance, self.chance
-            self.vMin = vMin
-            self.vMax = vMax
-            self.coefficients = coefficients
 
-    # use Polynomial
-    class GaussianBoundaryOptions():
-        name = "gaussian_boundary"
-        def __init__(self,
-          coVec=[.25, 0, -5], seed=seeding.getSeed(), numPoints=2000, sigma=.2,
-          peak=.075, xMin=-10, xMax=10, yMin=-10, yMax=10):
-            self.coVec = coVec
-            self.seed=seed
-            self.numPoints = numPoints
-            self.sigma = sigma
-            self.peak =  peak
-            self.xMin = xMin
-            self.xMax = xMax
-            self.yMin = yMin
-            self.yMax = yMax
+# look in Polynomial class for info
+class PolynomialOptions(DataTypes):
+    name = DataTypes.POLYNOMIAL
+    def __init__(self, numPoints=2000, seed=seeding.getSeed(), distance=1, chance=0.5, vMin=-10, vMax=10,
+        coefficients=[.25, 0, -2]):
+        super().__init__()
+        self.numPoints = numPoints
+        self.seed = seed
+        self.distance = distance
+        self.chance = chance
+        self.noise = self.distance, self.chance
+        self.vMin = vMin
+        self.vMax = vMax
+        self.coefficients = coefficients
+
+# use Polynomial
+class GaussianBoundaryOptions(DataTypes):
+    name = DataTypes.GAUSSIAN_BOUNDARY
+    def __init__(self,
+      coVec=[.25, 0, -5], seed=seeding.getSeed(), numPoints=2000, sigma=.2,
+      peak=.075, xMin=-10, xMax=10, yMin=-10, yMax=10):
+        super().__init__()
+        self.coVec = coVec
+        self.seed=seed
+        self.numPoints = numPoints
+        self.sigma = sigma
+        self.peak =  peak
+        self.xMin = xMin
+        self.xMax = xMax
+        self.yMin = yMin
+        self.yMax = yMax
 
 
-# options = DataTypes.PolynomialOptions()
+# options = PolynomialOptions()
 # name = DataTypes.POLYNOMIAL
 # points = getDataset(name, options)
 
 def setDatasetBoundaryPlot(ax, dataType=None, options=None, linewidth=1, linecolor="#1967b0"):
     dataType = options.name if dataType is None else dataType
     if dataType is DataTypes.ELLIPSE:
-        options = DataTypes.EllipseOptions() if options is None else options
+        options = EllipseOptions() if options is None else options
         Ellipse.setBoundary(
             ax=ax,
             vMin=options.vMin,
@@ -151,7 +175,7 @@ def setDatasetBoundaryPlot(ax, dataType=None, options=None, linewidth=1, linecol
             linecolor=linecolor)
     
     elif dataType is DataTypes.POLYNOMIAL:
-        options = DataTypes.PolynomialOptions() if options is None else options
+        options = PolynomialOptions() if options is None else options
         Polynomial.setBoundary(
             ax=ax,
             vMin=options.vMin,

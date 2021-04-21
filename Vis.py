@@ -3,9 +3,15 @@ Setup venv:
     $ Set-ExecutionPolicy -Scope CurrentUser remotesigned
     $ .local\.venv\Scripts\Activate.ps1
 
-launch tensorboard:
+launch tensorboard (w anaconda):
     - open anaconda powershell
     - enter: tensorboard --logdir='C:\Users\okt28\OneDrive\Compsci_Main\ShallowMind\Clone\ShallowMind\.local\logs'
+
+common errors:
+
+    Error: Could not find module '[ommitted...]\ShallowMind\.venv\Library\bin\geos_c.dll' (or one of its dependencies).
+           Try using the full path with constructor syntax.
+    Fix: DISABLE ANACONDA, its broken. Do "conda deactivate" in vsc terminal
 """
 
 from tensorflow.python.keras.backend import switch
@@ -29,12 +35,16 @@ from Datasets import DatasetGenerator as dg
 import imageio
 
 
-"""Graphs the dataset provided and saves
-:param dataset: np.ndarray - the dataset to graph
-:param save_path: str - the save location
-:param plot_name: str - the name of the plot
-"""
-def graphDataset(dataset:np.ndarray, save_path:str, plot_name:str=None, dataset_options=None):
+
+def graphDataset(dataset:np.ndarray, save_path:str, plot_name:str=None, dataset_options=None, shouldSave:bool=True):
+    """Graphs the dataset provided and saves
+
+    Args:
+        dataset: np.ndarray - the dataset to graph
+        save_path: str - the save location
+        plot_name: str - the name of the plot
+        shouldSave: bool - whether the figure should be saved, otherwise directly plt.show()'d. Defaults to True
+    """
     print(f"Dataset boundary, seed {seeding.getSeed()}")
     name = f"!ds_seed-{seeding.getSeed()}"
     coords, labels = dataset
@@ -48,8 +58,12 @@ def graphDataset(dataset:np.ndarray, save_path:str, plot_name:str=None, dataset_
         plt.title(plot_name, loc="left")
     if dataset_options is not None:
         dg.setDatasetBoundaryPlot(ax, options=dataset_options)
-    # plt.show()
-    saveFigure(save_path=save_path, figure=fig, name=name)
+
+    if shouldSave:
+        saveFigure(save_path=save_path, figure=fig, name=name)
+    else:
+        plt.show()
+
     plt.close()
 
 """Graphs the given model's predictions agaisnt the actual results
