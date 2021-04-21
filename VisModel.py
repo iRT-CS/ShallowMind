@@ -26,7 +26,7 @@ class VisualizationModel():
         # set base save path for models 
         self.exp_num = exp_num
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
-        self.modelFolder = f".local\\models\\exp-{self.exp_num}"
+        self.modelFolder = f".local/models/exp-{self.exp_num}"
         
     """Creates the network with the given specifications
 
@@ -78,7 +78,7 @@ class VisualizationModel():
         # and lets you view it on tensorboard. for info on tensorboard, either
         # look it up or there's a comment on it somewhere (on Vis, might move to here tho)
         dateStr = datetime.datetime.now().strftime("%d-%mT%H-%M")
-        logdir = os.path.join(".local\\logs", f"exp-{self.exp_num}\\{self.modelId}_{dateStr}")
+        logdir = os.path.join(".local/logs", f"exp-{self.exp_num}/{self.modelId}_{dateStr}")
         tensorboard_callback = tf.keras.callbacks.TensorBoard(logdir, histogram_freq=1)
         callbackList.append(tensorboard_callback)
         # create early stopping metric
@@ -96,7 +96,7 @@ class VisualizationModel():
         # create model checkpoint callback
         # as the network trains, if the validation accuracy improves, it saves the network
         # you can make predictions using these saved models later or even train them more
-        checkpoint_dir = f"{self.modelFolder}\\model-{self.modelId}\\checkpoints" + "\\ep-{epoch}_vAcc-{val_acc:.3f}"
+        checkpoint_dir = f"{self.modelFolder}/model-{self.modelId}/checkpoints" + "/ep-{epoch}_vAcc-{val_acc:.3f}"
         checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
             filepath=checkpoint_dir,
             save_weights_only=False,
@@ -160,7 +160,7 @@ class VisualizationModel():
         # try to save to exp-#/model-####/model
         try:
             indexStr = self.modelId
-            new_folder = f"{self.modelFolder}\\model-{indexStr}\\model"
+            new_folder = f"{self.modelFolder}/model-{indexStr}/model"
             # make directory for the model folder
             Path(new_folder).mkdir(parents=True, exist_ok=True)
 
@@ -168,7 +168,7 @@ class VisualizationModel():
             print(f"Model saved successfully to: {new_folder}")
         # if it breaks, overwrite whatevers in save-error-backup with the model
         except:
-            backup = f".local\\models\\save-error-backup"
+            backup = f".local/models/save-error-backup"
             Path(backup).mkdir(parents=True, exist_ok=True)
             model.save(backup)
             print(f"Error occured while saving, saved to backup at: {backup}")
@@ -203,6 +203,7 @@ class VisualizationModel():
         # look at the last file in the exp folder and extract the id
         # if theres none, its '0000'
         folderList = os.listdir(self.modelFolder)
+        folderList.sort()
         modelList = []
         for modelFile in folderList:
             if "model" in modelFile:

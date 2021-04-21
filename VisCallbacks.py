@@ -29,8 +29,8 @@ class VisualizationCallbacks(tf.keras.callbacks.Callback):
         self.dataset = dg.getDataset(self.dataset_options.name, self.dataset_options)
         # zfill so it sorts alphabetically in folders
         self.epoch_zFill = len(str(target_epochs))
-        self.save_path = f".local\\visualizations\\exp-{self.exp_num}\\{self.dataset_options.name}\\{self.model_name}\\sequence"
-        self.save_path_raw = f"{self.save_path}\\raw"
+        self.save_path = f".local/visualizations/exp-{self.exp_num}/{self.dataset_options.name}/{self.model_name}/sequence"
+        self.save_path_raw = f"{self.save_path}/raw"
         self.lastEpoch = 0
         # self.data_array=[]
         self.graphDataset()
@@ -77,12 +77,13 @@ class VisualizationCallbacks(tf.keras.callbacks.Callback):
         
         # make file name and save path for full gif
         file_name = f"sequence_exp-{self.exp_num}_{self.model_name}.gif"
-        save_path = f"{self.save_path}\\{file_name}"
+        save_path = f"{self.save_path}/{file_name}"
 
         # so the gif creator thing can take in an array with times to display each frame,
         # so this creates that list and makes the first and last one display for 3 seconds
         # and the rest for 0.5
         plot_list = os.listdir(self.save_path_raw)
+        plot_list.sort()
         duration_arr = np.full(shape=len(plot_list), fill_value=0.5)
         duration_arr[[0, len(plot_list)-1]] = 3
         duration_list = list(duration_arr)

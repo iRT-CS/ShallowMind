@@ -159,7 +159,7 @@ def graphPredictions(dataset:np.ndarray, model:tf.keras.models, save_path:str, n
 """
 def saveFigure(save_path:str, figure:plt.Figure, name:str):
     Path(save_path).mkdir(parents=True, exist_ok=True)
-    file_path = f"{save_path}\\{name}.png"
+    file_path = f"{save_path}/{name}.png"
     figure.savefig(file_path, bbox_inches='tight', pad_inches=0.25, dpi=400)
     
 
@@ -173,8 +173,8 @@ def saveFigure(save_path:str, figure:plt.Figure, name:str):
 def getVisualizations(model:tf.keras.models, save_path:str, name:str, dataset_options:dg.DataTypes, plotDataset:bool =False):
     dataset = dg.getDataset(dataset_options.name, dataset_options)
     if plotDataset:
-        index = save_path.index("dataset-")
-        data_save_path = save_path[:save_path.index("\\", index)]
+        index = save_path.find("dataset-")
+        data_save_path = save_path[:save_path.find("/", index)]
         graphDataset(dataset, data_save_path, dataset_options=dataset_options)
     graphPredictions(dataset=dataset, model=model, save_path=save_path, name=name, dataset_options=dataset_options)
 
@@ -182,7 +182,8 @@ def getVisualizations(model:tf.keras.models, save_path:str, name:str, dataset_op
 def createSequence(image_path, save_path, duration_list):
     writer = imageio.get_writer(save_path, mode='I', duration=duration_list)
     plot_list = os.listdir(image_path)
+    plot_list.sort()
     for plot in plot_list:
         # use long for the first and last
-        image = imageio.imread(f"{image_path}\\{plot}")
+        image = imageio.imread(f"{image_path}/{plot}")
         writer.append_data(image)

@@ -93,12 +93,12 @@ def createNetworkSet(layer_shape_list:list, dataset_options:dg.DataTypes, useEar
         network.trainNewNetwork(epochs=epochs, shape=shape, dataset_options=dataset_options, useEarlyStopping=useEarlyStopping, saveVisualizations=saveVisualizations)
         
 
-MODEL_LOAD_PATH = ".local\\models\\exp-{exp_num}\\model-{model_id}\\model"
-CHECKPOINT_LOAD_PATH = ".local\\models\\exp-{exp_num}\\model-{model_id}\\checkpoints\\{checkpoint}"
-VIS_SAVE_PATH = ".local\\visualizations\\exp-{exp_num}\\dataset-{dataset}\\model-{model_id}"
-DATAPLOT_SAVE_PATH = ".local\\visualizations\\exp-{exp_num}\\dataset-{dataset}"
-SAVE_SEQUENCE_PATH = ".local\\visualizations\\exp-{exp_num}\\{dataset}\\{model_id}\\sequence\\{filename}"
-RAW_SEQUENCE_PATH = ".local\\visualizations\\exp-{exp_num}\\{dataset}\\{model_id}\\sequence\\raw"
+MODEL_LOAD_PATH = ".local/models/exp-{exp_num}/model-{model_id}/model"
+CHECKPOINT_LOAD_PATH = ".local/models/exp-{exp_num}/model-{model_id}/checkpoints/{checkpoint}"
+VIS_SAVE_PATH = ".local/visualizations/exp-{exp_num}/dataset-{dataset}/model-{model_id}"
+DATAPLOT_SAVE_PATH = ".local/visualizations/exp-{exp_num}/dataset-{dataset}"
+SAVE_SEQUENCE_PATH = ".local/visualizations/exp-{exp_num}/{dataset}/{model_id}/sequence/{filename}"
+RAW_SEQUENCE_PATH = ".local/visualizations/exp-{exp_num}/{dataset}/{model_id}/sequence/raw"
 
 seed = 1
 seeding.setSeed(seed)
@@ -126,7 +126,7 @@ model_list = [
 dataset = dg.getDataset(dataType=ds_options.name, options=ds_options)
 
 
-
+# vis.createSequence(".local/visualizations/exp-6/polynomial/0000-[1]/sequence/raw", ".local/test.gif", )
 
 data_save_path = DATAPLOT_SAVE_PATH.format(exp_num=exp_num, dataset=ds_options.name)
 # vis.graphDataset(dataset=dataset, save_path=data_save_path, dataset_options=ds_options, shouldSave=shouldSave)
@@ -134,8 +134,7 @@ data_save_path = DATAPLOT_SAVE_PATH.format(exp_num=exp_num, dataset=ds_options.n
 # runCheckpointBatch(model_list=model_list, dataset_options=dataset_options, useAuto=True)
 
 layer_shapes_list = [
-    [1],
-    [1,1]
+    [1]
     # [6,6,6,6],
     # [1,6,1,6],
     # [6,1,6,1],
