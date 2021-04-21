@@ -203,14 +203,17 @@ class VisualizationModel():
         # look at the last file in the exp folder and extract the id
         # if theres none, its '0000'
         folderList = os.listdir(self.modelFolder)
+        modelList = []
+        for modelFile in folderList:
+            if "model" in modelFile:
+                modelList.append(modelFile)
+        
         indexStr = ""
-        if len(folderList) == 0 or folderList[0].find("model") is -1:
+        if len(modelList) == 0:
             indexStr = "0000"
         else:
-            latestFolder = folderList[len(folderList)-1]
-            # this is a really bad setup lol someone should make this loop through all
-            if latestFolder.find("model") is -1:
-                latestFolder = folderList[len(folderList)-2]
+            latestFolder = modelList[len(modelList)-1]
+
             index = int(latestFolder[6:10])
             indexStr = str(index+add).zfill(4)
         return indexStr

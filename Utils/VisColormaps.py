@@ -7,23 +7,28 @@ import matplotlib as mpl
 from pathlib import Path
 from matplotlib import cm
 
-"""Plots the colorbar for a colormap
-:param colormap: cm.colormap - the colormap to show
-"""
+
 def plotColorbar(colormap:Colormap):
+    """Plots the colorbar for a colormap
+
+    Args:
+        colormap: cm.colormap - the colormap to show
+    """
     fig = plt.figure()
     ax = fig.add_subplot()
     fig.colorbar(cm.ScalarMappable(cmap=colormap))
     plt.show()
 # makes a more defined split between the colors
 
-"""Creates the colormap for displaying most visualization backgrounds
-Pretty much takes the RdBu colormap and makes a more defiend split between the colors
-See info on colormaps here: https://matplotlib.org/stable/tutorials/colors/colormaps.html
 
-:returns: mpl.colors.Colormap - the created colormap
-"""
 def createContourColormap() -> Colormap:
+    """Creates the colormap for displaying most visualization backgrounds
+    Pretty much takes the RdBu colormap and makes a more defiend split between the colors
+    See info on colormaps here: https://matplotlib.org/stable/tutorials/colors/colormaps.html
+    
+    Returns:
+        mpl.colors.Colormap - the created colormap
+    """
     orig = cm.get_cmap('RdBu', 256)
     colors = np.array(orig(np.linspace(0, 1, 256)))
     length = len(colors)
