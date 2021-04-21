@@ -66,15 +66,16 @@ def graphDataset(dataset:np.ndarray, save_path:str, plot_name:str=None, dataset_
 
     plt.close()
 
-"""Graphs the given model's predictions agaisnt the actual results
-also displays confidence in predictions as a contour map
-
-:param dataset: np.ndarray - the dataset to check predictions for
-:param model: tf.keras.model - the model use
-:param save_path: str - the path to save the visualizations to
-:param name: str - the name of the model
-"""
 def graphPredictions(dataset:np.ndarray, model:tf.keras.models, save_path:str, name:str, plot_name:str=None, dataset_options=None):
+    """Graphs the given model's predictions agaisnt the actual results
+    also displays confidence in predictions as a contour map
+
+    Args:
+        dataset: np.ndarray - the dataset to check predictions for
+        model: tf.keras.model - the model use
+        save_path: str - the path to save the visualizations to
+        name: str - the name of the model
+    """
     print(f"Prediction boundary, b_{name}, seed {seeding.getSeed()}")
     save_name = f"b_{name}"
     fig = plt.figure()
