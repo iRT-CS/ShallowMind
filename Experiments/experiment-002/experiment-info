@@ -1,0 +1,123 @@
+**LOCAL COPY, UPDATED VERSION IN: Experiment-002**
+
+Title: Determining if 4-node networks are capable of effectively learning an elliptic dataset
+Local experiment number: 7
+Global experiment number: 002
+Date performed: 4/22/21
+Conducted by: Olivia Taylor
+
+Background:
+
+    4-node models refer to all networks with between 1-4 hidden layers with all layers containing 4 nodes each.
+    Previous 4-node models trained on elliptic datasets were unable to achieve a better accuracy than simply
+    predicting 0 (traditionally red) for all values. However, these networks were set to stop training after 15
+    epochs without improvement in an effort to truncate unnecessary training epochs to produce more compact visualizations.
+
+    This experiment attempts to determine whether these networks were simply not complicated enough to learn an elliptic dataset,
+    or if their training was stopped too early.
+
+
+Hypothesis:
+    4-node networks are sufficiently complex to learn an elliptic dataset, but will take longer to train 
+    on such sets than on less complicated datasets (e.g. parabolic and cubic functions).
+
+
+Experimental Procedure:
+
+    All 4-node networks with layer counts ranging from 1 to 4 (inclusive) will be trained on the same elliptic dataset (specifications
+    listed below). The early stopping patience will be set at 50 epochs to allow these networks sufficient time to adjust to the
+    dataset. Prediction boundary visualizations will be produced at each epoch and tensorboard logs will be recorded as well.
+
+    Specifications:
+
+        Model architecture:
+            Hidden layers shapes (Total: 4):
+            1. [4]
+            2. [4, 4]
+            3. [4, 4, 4]
+            4. [4, 4, 4, 4]
+
+            Epochs (max): 900
+            Activations:
+                Input: tanh
+                Hidden: tanh
+                Output: sigmoid
+
+            Early stopping:
+                Active: Yes
+                Patience: 50
+                Monitor: Validation accuracy
+                Min delta: 0
+    
+        Dataset:
+            Type: Ellipse
+            seed:
+                Training: 1
+                Validation: 2
+
+            numPoints=2000
+            distance=1
+            chance=0.5
+            vMin=-10
+            vMax=10
+            center=(0,0)
+            width=10
+            height=13
+            angle=0
+
+            
+
+    Effective training is loosely measured as the network's ability to achieve a vaguely elliptic prediction boundary and
+    an accuracy of at least 90%. At the least, prediction of some blue (1) regions would be significant, as this has not occured
+    in previous models trained on elliptic datasets past approximately epoch 5.
+
+
+Experiment:
+
+    Prior to the experiment, model-0000 was used as a test to ensure setup was correct.
+    Tensorboard logs and visualizations were generated correctly for the test model.
+
+    The experimental networks were trained. Logs and visualizations were recorded without issue.
+
+    None of the networks were able to effectively train, as defined in the Experimental Procedure section.
+    However, model-0002-[4, 4] showed the most promising signs of a potential to predict blue. In particular, 
+    one area appeared to be well within the uncertainty range (essentially were much lighter than the surrounding areas, though still red). This area
+    can be seen clearly on in file "b_final_eps-55_vAcc-0.74.png" of the 0002-[4, 4] raw sequence visualization folder
+    (relative path: "visualizations\ellipse\0002-[4, 4]\sequence\raw\b_final_eps-55_vAcc-0.74.png"). The area appears as a
+    series of nested parabolic shapes with the innermost parabolic shape the most uncertain. This seemed to signify that this network
+    may have possibly began predicting blue if allowed to train for a longer amount of time. Additionally, this network had the lowest
+    training loss of all models. Training and validation loss for each model is listed below.
+
+        Hidden layers shapes (Total: 4):
+        1. [4]          - Train: 0.1905 | Val: 0.1816
+        2. [4, 4]       - Train: 0.1757 | Val: 0.1825 * (network in focus)
+        3. [4, 4, 4]    - Train: 0.1889 | Val: 0.1982
+        4. [4, 4, 4, 4] - Train: 0.1974 | Val: 0.1872
+    
+    Due to this result, a network with a patience of 250 epochs but an otherwise identical architecture to model-0002 was trained.
+    All other parameters remained the same, including the dataset and seed.
+
+    This model (model-0005-[4,4]) ran for 620 epochs and was actually able to predict blue. However, this blue appeared as a wide vertical line through the
+    circle and extending for the height of the plot. An actual elliptic shape was never achieved, although the model was able to achieve
+    a validation accuracy of about 82% (epoch 370), while previous models were only able to reach about 76%. As previously thought, the blue predictions originated
+    from the parabolic area. The Tensorboard loss and accuracy graphs displayed accuracy and loss beginning to plateu at around epoch 120. At this point, for both
+    the validation and training set, loss was at about 0.11 and accuracy was at about 81%.
+
+
+Conclusions:
+
+    Despite the interesting performance of model-0005, it can reasonably be concluded that these models are not deep enough to achieve a
+    clear elliptic shape at a reasonable epoch count without further modifications to their optimization methods. Optimizations that would possibly lead to
+    more positive training results would likely include a learning rate and experimenting with various optimizers. A future experiment could investigate
+    whether these models will ever be able to achieve this elliptic shape at far higher epoch limits than that of this experiment without said optimization
+    modifications.
+    
+    Based on model-0005's prediction boundary visualization, it seemed that the network would periodically become more confident about the blue results, but
+    only starting from the edge. This confidence would encounter increased loss due to the areas of red around the ellipse boundary and quickly retreat. This can be
+    observed at the higher epoch counts, occuring multiple times between 150 and 600 epochs. The confidence never reached the center due to this retraction,
+    and this may be why the elliptic shape never took form. A larger circle may allow for this confidence to reach the circle and might lead to different results.
+    Another experiment might examine this idea the future.
+
+    Logs, models, and visualizations can be viewed in their respective sections of this experiment folder.
+
+Experiment 002 concluded by Olivia Taylor on 4/22/21.
