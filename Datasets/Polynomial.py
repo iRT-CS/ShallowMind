@@ -95,7 +95,7 @@ Coefficient/vMin/vMax should be same as what was inputted for the dataset
 :param vMax: int - the maximum value for the data points
 :param dataset: np.ndarray - the dataset to plot the line with
 """
-def plotPolynomial(coefficients:list, vMin:int, vMax:int, dataset=None):
+def plotPolynomial(coefficients:list, vMin:int, vMax:int, dataset:np.ndarray):
     # reverse list because thats how the poly class uses it, but its
     # confusing to input in reverse order
     ascendingCoeff = coefficients[::-1]
