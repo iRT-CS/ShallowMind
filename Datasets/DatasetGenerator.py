@@ -26,7 +26,7 @@ def getDataset(dataType=None, options=None) -> np.ndarray:
         
         returns: np.ndarray - the dataset in [[[x], [y]], label] format
     """
-    dataType == options.name if dataType is None else dataType
+    dataType = options.name if dataType is None else dataType
     if dataType == EllipseOptions.name:
         options = EllipseOptions() if options is None else options
         dataset = Ellipse.getPoints(
@@ -40,7 +40,7 @@ def getDataset(dataType=None, options=None) -> np.ndarray:
             angle=options.angle,
             center=options.center)
 
-    elif dataType is PolynomialOptions.name:
+    elif dataType == PolynomialOptions.name:
         options = PolynomialOptions() if options is None else options
         dataset = Polynomial.getPoints(
             numPoints=options.numPoints,
@@ -51,7 +51,7 @@ def getDataset(dataType=None, options=None) -> np.ndarray:
             coefficients=options.coefficients)
     
     # deprecated, use POLYNOMIAL
-    elif dataType is DataTypes.GAUSSIAN_BOUNDARY:
+    elif dataType == DataTypes.GAUSSIAN_BOUNDARY:
         options = GaussianBoundaryOptions() if options is None else options
         dataset = GaussianBoundary.getPoints(
             coVec=options.coVec,

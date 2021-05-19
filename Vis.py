@@ -66,7 +66,7 @@ def graphDataset(dataset:np.ndarray, save_path:str, plot_name:str=None, dataset_
 
     plt.close()
 
-def graphPredictions(dataset:np.ndarray, model:tf.keras.models, save_path:str, name:str, plot_name:str=None, dataset_options=None):
+def graphPredictions(dataset:np.ndarray, model:tf.keras.models, save_path:str, name:str, plot_name:str=None, dataset_options=None, saveFigure=True):
     """Graphs the given model's predictions agaisnt the actual results
     also displays confidence in predictions as a contour map
 
@@ -148,8 +148,11 @@ def graphPredictions(dataset:np.ndarray, model:tf.keras.models, save_path:str, n
     if dataset_options is not None:
         dg.setDatasetBoundaryPlot(ax, options=dataset_options)
 
-    # plt.show()
-    saveFigure(save_path=save_path, name=save_name, figure=fig)
+    if saveFigure is True:
+        saveFigure(save_path=save_path, name=save_name, figure=fig)
+    else:
+        plt.show()
+    
     plt.close()
 
 """Saves a figure to the given path with the given filename
@@ -170,7 +173,7 @@ def saveFigure(save_path:str, figure:plt.Figure, name:str):
 :param dataset_options: dg.DataTypes(.options) - the options for dataset generation
 :param plotDataset: boolean - whether to plot the generated dataset or not
 """
-def getVisualizations(model:tf.keras.models, save_path:str, name:str, dataset_options:dg.DataTypes, plotDataset:bool =False):
+def getVisualizations(model:tf.keras.models, save_path:str, name:str, dataset_options:dg.DataTypes, plotDataset:bool=False):
     dataset = dg.getDataset(dataset_options.name, dataset_options)
     if plotDataset:
         index = save_path.find("dataset-")

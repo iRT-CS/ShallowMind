@@ -1,0 +1,79 @@
+import os
+from pathlib import Path
+import sys
+
+
+path_to_file = str(Path(os.path.abspath(os.path.dirname(__file__))).parent.absolute())
+sys.path.insert(0, path_to_file)
+
+from Datasets.DatasetGenerator import DataTypes
+import Datasets.DatasetGenerator as dg
+import Landscape.TrainableDirections as dir
+# import Landscape
+import numpy as np
+import tensorflow as tf
+import matplotlib.pyplot as plt
+from Datasets import Polynomial
+import matplotlib.colors as cmp
+
+def generateLandscape(model_path:str, vMin, vMax, numPoints, dataset:np.ndarray=None, dataset_options:DataTypes=None, seed:int=1):
+    model = tf.keras.models.load_model(model_path)
+    directions = dir.TrainableDirections(model, model_path, seed=seed)
+    directions.createDirections()
+    model_gen = directions.alteredModelGenerator(vMin, vMax, numPoints)
+
+    loss_grid = np.zeros((numPoints, numPoints))
+    dataset = dataset if dataset is not None else dg.getDataset(options=dataset_options)
+
+    fillLossGrid(loss_grid, model_gen, dataset)
+
+    lin = np.linspace(vMin, vMax, numPoints)
+    xvals, yvals = np.meshgrid(lin, lin)
+
+    plotLossGrid(loss_grid, xvals, yvals)
+
+def plotLossGrid(loss_grid, xvals, yvals):
+    contourf = plt.contourf(xvals, yvals, loss_grid, vmin=0, vmax=1, cmap="coolwarm")
+    plt.show()
+
+def fillLossGrid(loss_grid, model_gen, dataset):
+
+    hasNext = True
+    data, labels = dataset
+
+    while hasNext:
+        try:
+            new_model, coords = next(model_gen)
+            x, y = coords
+            loss_metrics = new_model.evaluate(data, labels)
+            loss = loss_metrics[0]
+            print(loss)
+            loss_grid[x, y] = loss
+        except (StopIteration):
+            hasNext = False
+
+# def getWeights(model:tf.keras.models) -> list:
+#     weightList = []
+
+#     for index, layer in enumerate(model.layers):
+#         weightList.append(layer.weights)
+#         # np.append(weightArr, layer.get_weights())
+#     return weightList
+
+
+
+model_path = ".local/models/exp-5/model-0005-[4, 4, 4, 4]/model"
+wMin = -1
+wMax = 1
+dNumPoints = 300
+sideLength = 10
+ds_options = dg.PolynomialOptions(numPoints=dNumPoints)
+seed=2
+
+# dataset = dg.getDataset(options=ds_options)
+# Polynomial.plotPolynomial(ds_options.coefficients, ds_options.vMin, ds_options.vMax, dataset)
+
+# plt.scatter(points[:,0], points[:,1])
+# plt.show()
+
+generateLandscape(model_path, wMin, wMax, sideLength, dataset_options=ds_options, seed=seed)
