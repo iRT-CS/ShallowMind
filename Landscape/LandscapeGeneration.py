@@ -51,9 +51,9 @@ def fillLossGrid(loss_grid, model_gen, dataset):
             print(loss)
             loss_grid[x, y] = loss
 
-            # vis_save_path = f".local/landscape/visualizations/landscape-{exp_num}"
-            # vis_name = f"nm-{counter}-({x}, {y})"
-            # vis.graphPredictions(dataset, new_model, vis_save_path, vis_name)
+            vis_save_path = f".local/landscape/visualizations/landscape-{exp_num}"
+            vis_name = f"nm-{counter}-({x}, {y})"
+            vis.graphPredictions(dataset, new_model, vis_save_path, vis_name)
             print(counter)
             counter += 1
         except (StopIteration):
@@ -76,7 +76,7 @@ dNumPoints = 300
 sideLength = 20
 ds_options = dg.PolynomialOptions(numPoints=dNumPoints)
 seed=3
-exp_num = 5 # this needs to be incremented each time until i automate it
+exp_num = 6 # this needs to be incremented each time until i automate it
 
 # dataset = dg.getDataset(options=ds_options)
 # Polynomial.plotPolynomial(ds_options.coefficients, ds_options.vMin, ds_options.vMax, dataset)

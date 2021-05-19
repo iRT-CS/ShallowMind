@@ -150,8 +150,7 @@ def graphPredictions(dataset:np.ndarray, model:tf.keras.models, save_path:str, n
 
     if save_figure is True:
         saveFigure(save_path=save_path, name=save_name, figure=fig)
-    else:
-        plt.show()
+        plt.close(fig)
     
     plt.close("all")
     plt.close(fig)

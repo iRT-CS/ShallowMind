@@ -37,7 +37,7 @@ class TrainableDirections():
 
         for rd_vect, md_vect in zip(rd_trainable, self.md_trainable):
             unnormalized_vect = rd_vect - md_vect # maybe other way around
-            diff_vect = unnormalized_vect / tf.math.abs(unnormalized_vect) 
+            diff_vect = unnormalized_vect / tf.math.abs(unnormalized_vect)
             dir_vectors.append(diff_vect)
 
         return dir_vectors
@@ -62,7 +62,6 @@ class TrainableDirections():
                 (alpha, beta), coords = next(grid_gen)
                 for mc_tensor, md_tensor, d1_tensor, d2_tensor in zip(model_copy.trainable_variables, self.md_trainable, self.dir1, self.dir2):
                     mc_tensor.assign(tf.add(md_tensor, tf.add(tf.multiply(d1_tensor, alpha), tf.multiply(d2_tensor, beta))))
-                    _=0
                 yield model_copy, coords
             except (StopIteration):
                 endLoop = True
