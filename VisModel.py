@@ -89,7 +89,7 @@ class VisualizationModel():
         if useEarlyStopping:
             early_stop_callback = tf.keras.callbacks.EarlyStopping(
                 monitor="val_acc",
-                patience=15,
+                patience=30,
                 restore_best_weights=False)
             callbackList.append(early_stop_callback)
 

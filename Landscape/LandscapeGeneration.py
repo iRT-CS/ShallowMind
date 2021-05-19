@@ -14,11 +14,12 @@ import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
 from Datasets import Polynomial
+import Vis as vis
 import matplotlib.colors as cmp
 
 def generateLandscape(model_path:str, vMin, vMax, numPoints, dataset:np.ndarray=None, dataset_options:DataTypes=None, seed:int=1):
     model = tf.keras.models.load_model(model_path)
-    directions = dir.TrainableDirections(model, model_path, seed=seed)
+    directions = dir.TrainableDirections(model, model_path, ds_options, seed=seed)
     directions.createDirections()
     model_gen = directions.alteredModelGenerator(vMin, vMax, numPoints)
 
@@ -33,14 +34,14 @@ def generateLandscape(model_path:str, vMin, vMax, numPoints, dataset:np.ndarray=
     plotLossGrid(loss_grid, xvals, yvals)
 
 def plotLossGrid(loss_grid, xvals, yvals):
-    contourf = plt.contourf(xvals, yvals, loss_grid, vmin=0, vmax=1, cmap="coolwarm")
+    contourf = plt.contourf(loss_grid, vmin=0, vmax=1, cmap="YlOrRd")
     plt.show()
 
 def fillLossGrid(loss_grid, model_gen, dataset):
 
     hasNext = True
     data, labels = dataset
-
+    counter = 0
     while hasNext:
         try:
             new_model, coords = next(model_gen)
@@ -49,6 +50,12 @@ def fillLossGrid(loss_grid, model_gen, dataset):
             loss = loss_metrics[0]
             print(loss)
             loss_grid[x, y] = loss
+
+            # vis_save_path = f".local/landscape/visualizations/landscape-{exp_num}"
+            # vis_name = f"nm-{counter}-({x}, {y})"
+            # vis.graphPredictions(dataset, new_model, vis_save_path, vis_name)
+            print(counter)
+            counter += 1
         except (StopIteration):
             hasNext = False
 
@@ -62,13 +69,14 @@ def fillLossGrid(loss_grid, model_gen, dataset):
 
 
 
-model_path = ".local/models/exp-5/model-0005-[4, 4, 4, 4]/model"
-wMin = -1
-wMax = 1
+model_path = ".local/models/exp-0/model-0002-[4, 4, 4, 4]/model"
+wMin = -10
+wMax = 10
 dNumPoints = 300
-sideLength = 10
+sideLength = 20
 ds_options = dg.PolynomialOptions(numPoints=dNumPoints)
-seed=2
+seed=3
+exp_num = 5 # this needs to be incremented each time until i automate it
 
 # dataset = dg.getDataset(options=ds_options)
 # Polynomial.plotPolynomial(ds_options.coefficients, ds_options.vMin, ds_options.vMax, dataset)

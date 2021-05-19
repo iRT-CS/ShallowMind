@@ -102,7 +102,7 @@ RAW_SEQUENCE_PATH = ".local/visualizations/exp-{exp_num}/{dataset}/{model_id}/se
 
 seed = 1
 seeding.setSeed(seed)
-exp_num = 6
+exp_num = 0
 
 
 ds_options = dg.PolynomialOptions()
@@ -134,7 +134,7 @@ data_save_path = DATAPLOT_SAVE_PATH.format(exp_num=exp_num, dataset=ds_options.n
 # runCheckpointBatch(model_list=model_list, dataset_options=dataset_options, useAuto=True)
 
 layer_shapes_list = [
-    [1]
+    [4, 4, 4, 4]
     # [6,6,6,6],
     # [1,6,1,6],
     # [6,1,6,1],
