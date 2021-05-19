@@ -66,7 +66,7 @@ def graphDataset(dataset:np.ndarray, save_path:str, plot_name:str=None, dataset_
 
     plt.close()
 
-def graphPredictions(dataset:np.ndarray, model:tf.keras.models, save_path:str, name:str, plot_name:str=None, dataset_options=None, saveFigure=True):
+def graphPredictions(dataset:np.ndarray, model:tf.keras.models, save_path:str, name:str, plot_name:str=None, dataset_options=None, save_figure=True):
     """Graphs the given model's predictions agaisnt the actual results
     also displays confidence in predictions as a contour map
 
@@ -148,12 +148,13 @@ def graphPredictions(dataset:np.ndarray, model:tf.keras.models, save_path:str, n
     if dataset_options is not None:
         dg.setDatasetBoundaryPlot(ax, options=dataset_options)
 
-    if saveFigure is True:
+    if save_figure is True:
         saveFigure(save_path=save_path, name=save_name, figure=fig)
     else:
         plt.show()
     
-    plt.close()
+    plt.close("all")
+    plt.close(fig)
 
 """Saves a figure to the given path with the given filename
 :param save_path: str - the path to save the file to
