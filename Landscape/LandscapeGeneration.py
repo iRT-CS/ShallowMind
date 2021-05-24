@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 import sys
-
+import gc
 
 path_to_file = str(Path(os.path.abspath(os.path.dirname(__file__))).parent.absolute())
 sys.path.insert(0, path_to_file)
@@ -53,11 +53,13 @@ def fillLossGrid(loss_grid, model_gen, dataset):
 
             vis_save_path = f".local/landscape/visualizations/landscape-{exp_num}"
             vis_name = f"nm-{counter}-({x}, {y})"
-            vis.graphPredictions(dataset, new_model, vis_save_path, vis_name)
+            vis.graphPredictions(dataset, new_model, vis_save_path, vis_name, save_figure=True)
             print(counter)
             counter += 1
         except (StopIteration):
             hasNext = False
+        if counter % 50 == 0:
+            gc.collect()
 
 # def getWeights(model:tf.keras.models) -> list:
 #     weightList = []
@@ -73,10 +75,10 @@ model_path = ".local/models/exp-0/model-0002-[4, 4, 4, 4]/model"
 wMin = -10
 wMax = 10
 dNumPoints = 300
-sideLength = 20
+sideLength = 50
 ds_options = dg.PolynomialOptions(numPoints=dNumPoints)
 seed=3
-exp_num = 6 # this needs to be incremented each time until i automate it
+exp_num = 8 # this needs to be incremented each time until i automate it
 
 # dataset = dg.getDataset(options=ds_options)
 # Polynomial.plotPolynomial(ds_options.coefficients, ds_options.vMin, ds_options.vMax, dataset)

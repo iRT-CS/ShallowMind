@@ -34,7 +34,8 @@ import Utils.VisColormaps as vcmap
 from Datasets import DatasetGenerator as dg
 import imageio
 
-
+gridCreated = False
+gridInfo = tuple()
 
 def graphDataset(dataset:np.ndarray, save_path:str, plot_name:str=None, dataset_options=None, shouldSave:bool=True):
     """Graphs the dataset provided and saves
@@ -66,25 +67,7 @@ def graphDataset(dataset:np.ndarray, save_path:str, plot_name:str=None, dataset_
 
     plt.close()
 
-def graphPredictions(dataset:np.ndarray, model:tf.keras.models, save_path:str, name:str, plot_name:str=None, dataset_options=None, save_figure=True):
-    """Graphs the given model's predictions agaisnt the actual results
-    also displays confidence in predictions as a contour map
-
-    Args:
-        dataset: np.ndarray - the dataset to check predictions for
-        model: tf.keras.model - the model use
-        save_path: str - the path to save the visualizations to
-        name: str - the name of the model
-    """
-    print(f"Prediction boundary, b_{name}, seed {seeding.getSeed()}")
-    save_name = f"b_{name}"
-    fig = plt.figure()
-    ax = fig.add_subplot()
-
-    coords, y_true = dataset
-    y_pred = model.predict(coords)
-    y_pred_rounded = np.around(y_pred)
-
+def createContourValues(coords):
     # define bounds of the domain
     min1, max1 = coords[:, 0].min()-1, coords[:, 0].max()+1
     min2, max2 = coords[:, 1].min()-1, coords[:, 1].max()+1
@@ -102,20 +85,53 @@ def graphPredictions(dataset:np.ndarray, model:tf.keras.models, save_path:str, n
 
     # horizontal stack vectors to create x1,x2 input for the model
     grid = np.hstack((r1,r2))
+    return grid, xx, yy
+
+
+def graphPredictions(dataset:np.ndarray, model:tf.keras.models, save_path:str, name:str, plot_name:str=None, dataset_options=None, save_figure=True):
+    """Graphs the given model's predictions agaisnt the actual results
+    also displays confidence in predictions as a contour map
+
+    Args:
+        dataset: np.ndarray - the dataset to check predictions for
+        model: tf.keras.model - the model use
+        save_path: str - the path to save the visualizations to
+        name: str - the name of the model
+    """
+    print(f"Prediction boundary, b_{name}, seed {seeding.getSeed()}")
+    save_name = f"b_{name}"
+    fig = plt.figure(1)
+    ax = fig.add_subplot()
+    print("figure created, doing math")
+
+    coords, y_true = dataset
+    y_pred = model.predict(coords)
+    y_pred_rounded = np.around(y_pred)
+
+    global gridCreated
+    global gridInfo
+    if gridCreated == False:
+        gridInfo = createContourValues(coords)
+        gridCreated = True
+    
+    grid, xx, yy =  gridInfo
 
     # make predictions for the grid
     y_grid = model.predict(grid)
     # reshape the predictions back into a grid
     zz = y_grid.reshape(xx.shape)
-
+    print("math done, creating contourf")
     # plot the grid of x, y and z values as a surface
     # issue with this was that it wasnt scaled
     # old RdBu
-    cmap = vcmap.createContourColormap()
-    plt.contourf(xx, yy, zz, cmap=cmap, vmin=0, vmax=1)
+    # moving up here to test if this is the bitmap issue
+    contourCmap = vcmap.createContourColormap()
     redCmp1 = mpl.cm.get_cmap("seismic")
     redCmp2 = mpl.cm.get_cmap("YlOrRd")
     blueCmp =  mpl.cm.get_cmap("coolwarm")
+
+    plt.contourf(xx, yy, zz, cmap=contourCmap, vmin=0, vmax=1)
+
     # old RdYlBu
     # dark points were classified as being that color, while theyre actually the other one
     # ^ i have no idea what that means
@@ -142,6 +158,8 @@ def graphPredictions(dataset:np.ndarray, model:tf.keras.models, save_path:str, n
         plt.scatter(
             coords[incorrect_rows, 0], coords[incorrect_rows, 1], s=size,
             color=color[class_value+2])
+
+    print("contourf created, saving")
     # plt.show()
     if plot_name is not None:
         plt.title(plot_name, loc="left")
@@ -150,10 +168,13 @@ def graphPredictions(dataset:np.ndarray, model:tf.keras.models, save_path:str, n
 
     if save_figure is True:
         saveFigure(save_path=save_path, name=save_name, figure=fig)
-        plt.close(fig)
-    
-    plt.close("all")
-    plt.close(fig)
+    """
+    For some ungodly reason, closing figures breaks everything, so instead reuse the same figure
+    and clear it each time.
+
+    The error it was throwing was "Fail to allocate bitmap" incase it happens again 
+    """
+    plt.clf()
 
 """Saves a figure to the given path with the given filename
 :param save_path: str - the path to save the file to
