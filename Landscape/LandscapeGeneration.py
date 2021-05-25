@@ -35,6 +35,7 @@ def generateLandscape(model_path:str, vMin, vMax, numPoints, dataset:np.ndarray=
 
 def plotLossGrid(loss_grid, xvals, yvals):
     contourf = plt.contourf(loss_grid, vmin=0, vmax=1, cmap="YlOrRd")
+    plt.savefig(f".local/landscape/visualizations/landscape-{exp_num}/landscape.png", bbox_inches='tight', pad_inches=0.25, dpi=400)
     plt.show()
 
 def fillLossGrid(loss_grid, model_gen, dataset):
@@ -77,8 +78,8 @@ wMax = 10
 dNumPoints = 300
 sideLength = 50
 ds_options = dg.PolynomialOptions(numPoints=dNumPoints)
-seed=3
-exp_num = 8 # this needs to be incremented each time until i automate it
+seed=6
+exp_num = 10 # this needs to be incremented each time until i automate it
 
 # dataset = dg.getDataset(options=ds_options)
 # Polynomial.plotPolynomial(ds_options.coefficients, ds_options.vMin, ds_options.vMax, dataset)
