@@ -14,7 +14,7 @@ import Vis as vis
 
 class TrainableDirections():
 
-    def __init__(self, trained_model:tf.keras.models, model_path:str, ds_options, seed=1):
+    def __init__(self, trained_model:tf.keras.models, model_path:str, ds_options:dg.DataTypes=None, dataset:np.ndarray=None, seed=1):
         self.trained_model = trained_model
         self.md_trainable = trained_model.trainable_variables
         self.model_path = model_path
