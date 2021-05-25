@@ -6,7 +6,7 @@ sys.path.insert(0, path_to_file)
 
 import tensorflow as tf
 import numpy as np
-
+# completely deprecated, just here for reference
 class DirectionalVectors():
 
     def __init__(self, modelWeights):
