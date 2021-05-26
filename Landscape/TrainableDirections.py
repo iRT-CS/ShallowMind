@@ -68,5 +68,7 @@ class TrainableDirections():
             
 
                 
-
+# lin = np.linspace(-1,1,2)
+# xvals, yvals = np.meshgrid(lin, lin)
+# _=0
 
