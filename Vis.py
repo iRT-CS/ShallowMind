@@ -168,6 +168,8 @@ def graphPredictions(dataset:np.ndarray, model:tf.keras.models, save_path:str, n
 
     if save_figure is True:
         saveFigure(save_path=save_path, name=save_name, figure=fig)
+    else:
+        plt.show()
     """
     For some ungodly reason, closing figures breaks everything, so instead reuse the same figure
     and clear it each time.

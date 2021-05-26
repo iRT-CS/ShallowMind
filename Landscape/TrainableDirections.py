@@ -42,8 +42,8 @@ class TrainableDirections():
 
         return dir_vectors
     
-    def gridScalarGenerator(self, vMin, vMax, numValues):
-        lin = np.linspace(vMin, vMax, numValues)
+    def gridScalarGenerator(self, dMin, dMax, numValues):
+        lin = np.linspace(dMin, dMax, numValues)
         xvals, yvals = np.meshgrid(lin, lin)
         for i in range(numValues):
             for j in range(numValues):
@@ -53,16 +53,17 @@ class TrainableDirections():
                 print(f"({i}, {j})")
                 yield (alpha, beta), (i, j)
     
-    def alteredModelGenerator(self, vMin, vMax, numValues):
-        grid_gen = self.gridScalarGenerator(vMin, vMax, numValues)
+    def alteredModelGenerator(self, dMin, dMax, numValues):
+        grid_gen = self.gridScalarGenerator(dMin, dMax, numValues)
         model_copy = tf.keras.models.load_model(self.model_path)
         endLoop = False
         while not endLoop:
             try:
-                (alpha, beta), coords = next(grid_gen)
+                scalars, coords = next(grid_gen)
+                alpha, beta = scalars
                 for mc_tensor, md_tensor, d1_tensor, d2_tensor in zip(model_copy.trainable_variables, self.md_trainable, self.dir1, self.dir2):
                     mc_tensor.assign(tf.add(md_tensor, tf.add(tf.multiply(d1_tensor, alpha), tf.multiply(d2_tensor, beta))))
-                yield model_copy, coords
+                yield model_copy, scalars, coords
             except (StopIteration):
                 endLoop = True
             
