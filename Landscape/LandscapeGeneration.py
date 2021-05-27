@@ -17,6 +17,8 @@ from Datasets import Polynomial
 import Vis as vis
 import matplotlib.colors as cmp
 import Utils.filesaver as fs
+import Utils.infologger as lg
+from datetime import datetime
 
 class LandscapeGenerator():
 
@@ -32,6 +34,7 @@ class LandscapeGenerator():
         self.directory = filesaver.getNextPath(createDir=True)
 
         self.vis_filesaver = fs.FileSaver(f"{self.directory}/visualizations", "vis")
+        self.logger = lg.InfoLogger(self.directory, "ls_log")
 
     def generateLandscape(
         self,
@@ -39,8 +42,7 @@ class LandscapeGenerator():
         dMin:int,
         dMax:int,
         modelSideLength:int,
-        dataset:np.ndarray=None,
-        dataset_options:DataTypes=None
+        dataset_options:DataTypes
         ):
         """Generate the loss landscape for the provided model
 
@@ -50,15 +52,31 @@ class LandscapeGenerator():
             dMax:int - the maxmimum value for the direction vector scalars
             modelSideLength:int - the dimensions of the lxl square to use to generate the models (so the square side length)
             
-            dataset:np.ndarray - optionally, the dataset to use for landscape generation
+            dataset_options:np.ndarray - the options for the dataset to use for landscape generation
         """
+
+        log_dict = {
+            "computer": os.environ['COMPUTERNAME'],
+            "model_path" : model_path,
+            "seed": self.seed,
+            "landscape_save_path": self.directory,
+            "dMin" : dMin,
+            "dMax": dMax,
+            "sideLength": sideLength,
+            "dataset_options": dataset_options.getInfoDict(),
+            "time_begin": datetime.now().strftime("%m/%d/%Y, %H:%M:%S"),
+            "completed_gracefully": False,
+        }
+
+        self.logger.writeInfo(log_dict)
+
         model = tf.keras.models.load_model(model_path)
         directions = dir.TrainableDirections(model, model_path, ds_options, seed=seed)
-        directions.createDirections()
+        directions.createDirections(f"{self.directory}/rand_vis")
         model_gen = directions.alteredModelGenerator(dMin, dMax, modelSideLength)
 
         loss_grid = np.zeros((modelSideLength, modelSideLength))
-        dataset = dataset if dataset is not None else dg.getDataset(options=dataset_options)
+        dataset = dg.getDataset(options=dataset_options)
 
         self.fillLossGrid(loss_grid, model_gen, dataset)
 
@@ -68,13 +86,43 @@ class LandscapeGenerator():
         self.plotLossGrid(loss_grid, xvals, yvals)
 
     def plotLossGrid(self, loss_grid, xvals, yvals):
+        """Plot the loss contour grid from the values
+        Saves two plots, one with a grid over it with the locations of the models evaluated and
+        one without that grid.
+        Also logs infomation about the completion
+
+        Args:
+            loss_grid:np.ndarray - the array of loss values to plot
+            xvals:np.ndarray - the x values, or the alpha values, used in the landscape
+            yvals:np.ndarray - the y values, or the beta values, used in the landscape
+        """
         # loss is between 0 and 1
-        contourf = plt.contourf(X=xvals, Y=yvals, Z=loss_grid, vMin=0, vMax=1, cmap="YlOrRd")
-        file_path = f"{self.directory}/landscape.png"
-        plt.savefig(file_path, bbox_inches='tight', pad_inches=0.25, dpi=400)
+        contourf = plt.contourf(xvals, yvals, loss_grid, vMin=0, vMax=1, cmap="YlOrRd")
+        pure_filepath = f"{self.directory}/landscape-pure.png"
+        plt.savefig(pure_filepath, bbox_inches='tight', pad_inches=0.25, dpi=400)
+
+        grid_filepath = f"{self.directory}/landscape-grid.png"
+        point_size = .3
+        plt.scatter(xvals, yvals, point_size)
+        plt.savefig(grid_filepath, bbox_inches='tight', pad_inches=0.25, dpi=400)
+        
+        log_dict = {
+            "completed_gracefully": True,
+            "time_end": datetime.now().strftime("%m/%d/%Y, %H:%M:%S"),
+        }
+        self.logger.writeInfo(log_dict)
+
         plt.show()
 
-    def fillLossGrid(self, loss_grid, model_gen, dataset):
+    def fillLossGrid(self, loss_grid, model_gen, dataset) -> None:
+        """Evaluates all the weights to fill the loss grid with values
+        Changes the loss grid in place, so returns nothing
+
+        Args:
+            loss_grid:np.ndarray - empty grid with the shape of the loss grid
+            model_gen:TrainableDirections.alteredModelGenerator - the generator used to get new models
+            dataset:np.ndarray - the dataset to evaluate the models on
+        """
 
         hasNext = True
         data, labels = dataset
@@ -90,8 +138,8 @@ class LandscapeGenerator():
                 loss_grid[x, y] = loss
 
                 # vis_save_path = f".local/landscape/visualizations/landscape-{exp_num}"
-                vis_name = f"{counter}-({alpha}, {beta})"
-                vis_save_path = self.vis_filesaver.getFilePath(vis_name)
+                vis_name = f"{counter}-({round(alpha, 3)}, {round(beta, 3)})"
+                vis_save_path = self.vis_filesaver.directory
                 
                 vis.graphPredictions(dataset, new_model, vis_save_path, vis_name, save_figure=True)
                 print(counter)
@@ -115,7 +163,7 @@ model_path = ".local/models/exp-0/model-0002-[4, 4, 4, 4]/model"
 dMin = -10
 dMax = 10
 dNumPoints = 300
-sideLength = 50
+sideLength = 3 # must be (multiple of 20) + 1 in order to get 0,0 which we need
 ds_options = dg.PolynomialOptions(numPoints=dNumPoints)
 seed=3
 #exp_num = 8 # this needs to be incremented each time until i automate it
@@ -125,5 +173,8 @@ seed=3
 
 # plt.scatter(points[:,0], points[:,1])
 # plt.show()
+ls = LandscapeGenerator(seed)
+ls.generateLandscape(model_path, dMin, dMax, sideLength, dataset_options=ds_options)
 
-# generateLandscape(model_path, wMin, wMax, sideLength, dataset_options=ds_options, seed=seed)
+# plt.scatter([1, 2, 3], [1, 2, 3], .3)
+# plt.show()
