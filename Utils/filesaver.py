@@ -106,7 +106,7 @@ class FileSaver():
         """
         return f"{self.directory}/{self.base_name}-{identifier}{additional}"
     
-    def getNextPath(self, additional:str=None, createDir:bool=False):
+    def getNextPath(self, additional:str="", createDir:bool=False):
         """
         Convenience method to get the next full path with the next id
 
@@ -124,14 +124,14 @@ class FileSaver():
             Path(filepath).mkdir(parents=True, exist_ok=True)
         return filepath
 
-path=".local/filesaver_test"
-base_name = "file"
-zfill=4
-filesaver = FileSaver(directory=path, base_name=base_name, zfill=zfill)
+# path=".local/filesaver_test"
+# base_name = "file"
+# zfill=4
+# filesaver = FileSaver(directory=path, base_name=base_name, zfill=zfill)
 
-print(filesaver.getLatestId())
-print(filesaver.incrementId(inc=1))
-print(filesaver.getFileList())
+# print(filesaver.getLatestId())
+# print(filesaver.incrementId(inc=1))
+# print(filesaver.getFileList())
 # filepath = filesaver.getFilePath(filesaver.incrementId(inc=1))
 
 # with open(f"{filepath}.txt", "w") as fp:
