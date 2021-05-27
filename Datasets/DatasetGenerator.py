@@ -97,6 +97,24 @@ class DataTypes():
             chance:int - see noise generation comment
         """
         self.noise = (distance, chance)
+    
+    def getInfoDict(self) -> dict:
+        """Gets a dictionary of the attributes for the dataset options
+
+        Returns:
+            dict - the dataset options in a dictionary with their attribute and value
+        """
+        attributes = dir(self)
+        attr_dict = {}
+        attr_dict["__class__"] = getattr(self, "__class__")
+        # doesnt include these
+        dont_include = ["getInfoDict", "ELLIPSE", "POLYNOMIAL", "GAUSSIAN_BOUNDARY", "setNoise"]
+
+        for attr in attributes:
+            if attr[0:2] != "__" and attr not in dont_include:
+                attr_dict[attr] = getattr(self, attr)
+        return attr_dict
+
 
 
 class EllipseOptions(DataTypes):
@@ -188,3 +206,6 @@ def setDatasetBoundaryPlot(ax, dataType=None, options=None, linewidth=1, linecol
 
     ax.set_ylim(options.vMin-0.5, options.vMax+0.5)
     ax.set_xlim(options.vMin-0.5, options.vMax+0.5)
+
+# dataset = EllipseOptions()
+# print(dataset.getInfoDict())
