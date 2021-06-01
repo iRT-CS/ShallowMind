@@ -90,11 +90,17 @@ class LandscapeGenerator():
         lin = np.linspace(dMin, dMax, modelSideLength)
         xvals, yvals = np.meshgrid(lin, lin)
         self.saveVtk(loss_grid)
+        self.saveNumpy(loss_grid, xvals, yvals)
         self.plotLossGrid(loss_grid, xvals, yvals)
 
     def saveVtk(self, loss_grid):
         vtkFormat = vtk.StructuredGrid(dataPoints=loss_grid, description=f"landscape-{self.exp_num}-{self.ls_id}")
         self.vtkwriter.writeVtk(vtkFormat)
+    
+    def saveNumpy(self, loss_grid, xvals, yvals):
+        np.savetxt(f"{self.directory}/loss_grid.txt", loss_grid)
+        np.savetxt(f"{self.directory}/xvals.txt", xvals)
+        np.savetxt(f"{self.directory}/yvals.txt", yvals)
 
     def plotLossGrid(self, loss_grid, xvals, yvals):
         """Plot the loss contour grid from the values
