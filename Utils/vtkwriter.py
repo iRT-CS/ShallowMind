@@ -1,5 +1,6 @@
 
 
+from ast import Str
 from pathlib import Path
 from typing import OrderedDict
 import numpy as np
@@ -33,7 +34,9 @@ class VtkDataFormats():
 
     def __init__(self, description, dataset, dimensions):
         self.format_dict = {
-            "ASCII": description,
+            "HEADER_NO-TITLE": "# vtk DataFile Version 2.0",
+            "DESCRIPTION_NO-TITLE": description,
+            "TYPE_NO-TITLE": "ASCII",
             "DATASET": dataset,
             "DIMENSIONS": dimensions,
         }
@@ -43,23 +46,34 @@ class StructuredGrid(VtkDataFormats):
 
     name = VtkDataFormats.STRUCTURED_GRID
 
-    def __init__(self, dimensions:str, numPoints:int, dataType, dataPoints:np.ndarray, description:str=""):
+    def __init__(self, dataPoints:np.ndarray, description:str="", dataType="float"):
+
+        numPoints = dataPoints.size
+        dimensions = (' '.join(map(str, dataPoints.shape))) + " 1"
+
         super().__init__(description=description, dataset=self.name, dimensions=dimensions)
         self.format_dict["POINTS"] = f"{numPoints} {dataType}"
-        self.format_dict["DATA_POINTS"] = dataPoints
+        self.format_dict["DATA_POINTS_NO-TITLE"] = self.getDataString(dataPoints)
     
     def convertDataToString(self):
         formatStr = ""
         for key, value in self.format_dict.items():
-            if key != "DATA_POINTS":
+            if "NO-TITLE" not in key:
                 formatStr += f"{key} {value}\n"
             else:
-                dataStr = self.getDataString(value)
-                formatStr += f"{dataStr}"
+                formatStr += f"{value}\n"
+        return formatStr
     
     def getDataString(self, data_arr:np.ndarray):
         dataStr = ""
         for index, x in np.ndenumerate(data_arr):
-            dataStr += f"{(' '.join(index))} {x}\n"
+            dataStr += f"{(' '.join(map(str, index)))} {x}\n"
         
         return dataStr
+
+# test_arr = np.array([[1, 2, 3], [3, 2, 1], [3, 3, 3]])
+
+# vtk_format = StructuredGrid(test_arr, "title here")
+
+# vtk_writer = VtkWriter(".local/vtk-test", "vtk-test")
+# vtk_writer.writeVtk(vtk_format)
